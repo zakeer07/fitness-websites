@@ -996,7 +996,7 @@
         color: var(--success);
       }
       .goal-met-cell.almost {
-        color: var(--accent);
+        color: #f1c40f;
         font-size: 14px;
         letter-spacing: 0.02em;
         text-transform: lowercase;
@@ -1907,6 +1907,7 @@
       const WATER_GOAL_BOTTLES = 6; // 3L
 
       const PRO_GOAL = 115;
+      const PRO_ALMOST_MIN = 90; // above this (and below goal) = almost
       const TRACKER_START = new Date(2026, 4, 7); // May 7, 2026
       const TRACKER_PRO_FIELDS = ["lunch", "snack", "shake", "dinner"];
 
@@ -1927,11 +1928,19 @@
         );
       }
 
-      /** no: below goal−2 · almost: goal−1 · met: at/above goal */
-      function getGoalTier(value, goal) {
+      /** Water: no below goal−2 · almost at goal−1 · met at/above goal */
+      function getWaterGoalTier(value, goal) {
         if (!value || value <= 0) return "none";
         if (value >= goal) return "met";
         if (value === goal - 1) return "almost";
+        return "no";
+      }
+
+      /** Protein: no at/below almostMin · almost above almostMin · met at/above goal */
+      function getProteinGoalTier(value, goal, almostMin) {
+        if (!value || value <= 0) return "none";
+        if (value >= goal) return "met";
+        if (value > almostMin) return "almost";
         return "no";
       }
 
@@ -1967,8 +1976,8 @@
         const left = Math.max(0, PRO_GOAL - total);
         const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
         const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
-        const proGoalTier = getGoalTier(total, PRO_GOAL);
-        const waterGoalTier = getGoalTier(bottles, WATER_GOAL_BOTTLES);
+        const proGoalTier = getProteinGoalTier(total, PRO_GOAL, PRO_ALMOST_MIN);
+        const waterGoalTier = getWaterGoalTier(bottles, WATER_GOAL_BOTTLES);
         const proGoalMet = proGoalTier === "met";
         const waterGoalMet = waterGoalTier === "met";
 
