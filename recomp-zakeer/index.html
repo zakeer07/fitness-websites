@@ -437,6 +437,11 @@
   .water-input:focus { outline: none; border-color: #5dade2; }
   .left-cell.water { color: #5dade2; }
   .check-cell.creatine.checked { background: #5dade2; border-color: #5dade2; }
+  .goal-met-cell {
+    font-family: 'Bebas Neue'; font-size: 18px; text-align: center;
+    color: var(--text-muted);
+  }
+  .goal-met-cell.yes { color: var(--success); }
   .target-cell { color: var(--info); font-weight: 600; }
 
   /* Tips */
@@ -706,6 +711,8 @@
               <th rowspan="2" class="th-hydro">💧<br><span style="font-weight:500;opacity:0.8">500ml</span></th>
               <th rowspan="2" class="th-hydro">H₂O left</th>
               <th rowspan="2" class="th-pro">Pro left<br><span style="font-weight:500;opacity:0.8">g</span></th>
+              <th rowspan="2" class="th-pro">Pro met</th>
+              <th rowspan="2" class="th-hydro">H₂O met</th>
             </tr>
             <tr>
               <th class="th-pro">Lunch</th>
@@ -1082,6 +1089,11 @@ function renderTracker() {
     if (total > 0) { sumP += total; daysWithP++; }
     if (total >= PRO_GOAL) proMet++;
 
+    const proGoalMet = total >= PRO_GOAL;
+    const waterGoalMet = bottles >= WATER_GOAL_BOTTLES;
+    const proMetDisplay = total === 0 ? '—' : (proGoalMet ? '✓' : '—');
+    const waterMetDisplay = bottles === 0 ? '—' : (waterGoalMet ? '✓' : '—');
+
     const tr = document.createElement('tr');
     if (isToday) tr.className = 'today';
     tr.innerHTML = `
@@ -1096,6 +1108,8 @@ function renderTracker() {
       <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ''}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
       <td><span class="left-cell water num ${waterLeft === 0 && bottles > 0 ? 'done' : ''}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num ${left === 0 && total > 0 ? 'done' : ''}">${leftDisplay}</span></td>
+      <td><span class="goal-met-cell ${proGoalMet ? 'yes' : ''}">${proMetDisplay}</span></td>
+      <td><span class="goal-met-cell ${waterGoalMet ? 'yes' : ''}">${waterMetDisplay}</span></td>
     `;
     rows.appendChild(tr);
   }
