@@ -896,7 +896,7 @@
       }
       @media (min-width: 768px) {
         .tracker-summary {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         }
       }
 
@@ -1491,6 +1491,16 @@
               <div class="kpi-value num" id="sum-pro">22</div>
               <div class="kpi-sub">days met</div>
             </div>
+            <div class="kpi">
+              <div class="kpi-label">Water Goals Met</div>
+              <div class="kpi-value num" id="sum-water">0</div>
+              <div class="kpi-sub">days</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">Creatine Days</div>
+              <div class="kpi-value num" id="sum-creatine">0</div>
+              <div class="kpi-sub">logged</div>
+            </div>
           </div>
 
           <div class="tracker-table-wrap">
@@ -2040,23 +2050,143 @@
       const WATER_GOAL_BOTTLES = 6; // 3L
 
       const PRO_GOAL = 90;
+      const TRACKER_START = new Date(2026, 4, 7);
+      const TRACKER_PRO_FIELDS = ["breakfast", "lunch", "snack", "shake", "dinner"];
 
-      function renderTracker() {
-        const start = new Date(2026, 4, 7);
-        const rows = document.getElementById("tracker-rows");
-        rows.innerHTML = "";
-        const today = new Date();
+      function toDateKey(d) {
+        return (
+          d.getFullYear() +
+          "-" +
+          String(d.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(d.getDate()).padStart(2, "0")
+        );
+      }
+
+      function getTrackerDayTotal(dayData) {
+        return TRACKER_PRO_FIELDS.reduce(
+          (sum, field) => sum + (parseInt(dayData[field], 10) || 0),
+          0
+        );
+      }
+
+      function computeTrackerDay(dayData) {
+        const target = dayData.isWorkout ? 1900 : 1700;
+        const total = getTrackerDayTotal(dayData);
+        const left = Math.max(0, PRO_GOAL - total);
+        const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
+        const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
+        const proGoalMet = total >= PRO_GOAL;
+        const waterGoalMet = bottles >= WATER_GOAL_BOTTLES;
+
+        let leftDisplay;
+        if (total === 0) leftDisplay = "—";
+        else if (left === 0) leftDisplay = "✓";
+        else leftDisplay = left + '<span class="cell-unit">g</span>';
+
+        let waterLeftDisplay;
+        if (bottles === 0) waterLeftDisplay = "—";
+        else if (waterLeft === 0) waterLeftDisplay = "✓";
+        else waterLeftDisplay = waterLeft + '<span class="cell-unit">btl</span>';
+
+        const proMetDisplay = total === 0 ? "—" : proGoalMet ? "✓" : "—";
+        const waterMetDisplay = bottles === 0 ? "—" : waterGoalMet ? "✓" : "—";
+
+        return {
+          target,
+          total,
+          left,
+          bottles,
+          waterLeft,
+          proGoalMet,
+          waterGoalMet,
+          leftDisplay,
+          waterLeftDisplay,
+          proMetDisplay,
+          waterMetDisplay,
+        };
+      }
+
+      function refreshTrackerRow(dateKey) {
+        const tr = document.querySelector(`#tracker-rows tr[data-date-key="${dateKey}"]`);
+        const dayData = state.trackerData[dateKey];
+        if (!tr || !dayData) return;
+        const m = computeTrackerDay(dayData);
+        const targetEl = tr.querySelector(".target-cell");
+        if (targetEl) targetEl.innerHTML = m.target + '<span class="cell-unit">kcal</span>';
+        const wLeft = tr.querySelector(".tracker-water-left");
+        if (wLeft) {
+          wLeft.innerHTML = m.waterLeftDisplay;
+          wLeft.classList.toggle("done", m.waterLeft === 0 && m.bottles > 0);
+        }
+        const pLeft = tr.querySelector(".tracker-pro-left");
+        if (pLeft) {
+          pLeft.innerHTML = m.leftDisplay;
+          pLeft.classList.toggle("done", m.left === 0 && m.total > 0);
+        }
+        const pMet = tr.querySelector(".tracker-pro-met");
+        if (pMet) {
+          pMet.textContent = m.proMetDisplay;
+          pMet.classList.toggle("yes", m.proGoalMet);
+        }
+        const wMet = tr.querySelector(".tracker-water-met");
+        if (wMet) {
+          wMet.textContent = m.waterMetDisplay;
+          wMet.classList.toggle("yes", m.waterGoalMet);
+        }
+      }
+
+      function updateTrackerSummary() {
         let totalWO = 0,
           sumP = 0,
           daysWithP = 0,
           proMet = 0,
           waterMet = 0,
           creatineDays = 0;
+        for (let i = 0; i < 30; i++) {
+          const d = new Date(TRACKER_START);
+          d.setDate(d.getDate() + i);
+          const dateKey = toDateKey(d);
+          const dow = d.getDay();
+          const defaultWorkout = [1, 2, 4, 5].includes(dow);
+          const dayData = state.trackerData[dateKey] || {
+            isWorkout: defaultWorkout,
+            breakfast: "",
+            lunch: "",
+            snack: "",
+            shake: "",
+            dinner: "",
+            creatine: false,
+            water: "",
+          };
+          const total = getTrackerDayTotal(dayData);
+          const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
+          if (dayData.isWorkout) totalWO++;
+          if (dayData.creatine) creatineDays++;
+          if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
+          if (total > 0) {
+            sumP += total;
+            daysWithP++;
+          }
+          if (total >= PRO_GOAL) proMet++;
+        }
+        document.getElementById("sum-workouts").textContent = totalWO;
+        document.getElementById("sum-protein").textContent =
+          daysWithP > 0 ? Math.round(sumP / daysWithP) : 0;
+        document.getElementById("sum-pro").textContent = proMet;
+        document.getElementById("sum-water").textContent = waterMet;
+        document.getElementById("sum-creatine").textContent = creatineDays;
+      }
 
+      function renderTracker() {
+        const start = TRACKER_START;
+        const rows = document.getElementById("tracker-rows");
+        rows.innerHTML = "";
+        const today = new Date();
         for (let i = 0; i < 30; i++) {
           const d = new Date(start);
           d.setDate(d.getDate() + i);
-          const dateKey = d.toISOString().slice(0, 10);
+          const dateKey = toDateKey(d);
           const isToday = d.toDateString() === today.toDateString();
           const dow = d.getDay();
           const defaultWorkout = [1, 2, 4, 5].includes(dow); // Mon Tue Thu Fri
@@ -2072,43 +2202,23 @@
           };
           state.trackerData[dateKey] = dayData;
 
-          const target = dayData.isWorkout ? 1900 : 1700;
-          const total =
-            (parseInt(dayData.breakfast) || 0) +
-            (parseInt(dayData.lunch) || 0) +
-            (parseInt(dayData.snack) || 0) +
-            (parseInt(dayData.shake) || 0) +
-            (parseInt(dayData.dinner) || 0);
-
-          if (dayData.isWorkout) totalWO++;
-          const left = Math.max(0, PRO_GOAL - total);
-          let leftDisplay;
-          if (total === 0) leftDisplay = "—";
-          else if (left === 0) leftDisplay = "✓";
-          else leftDisplay = left + '<span class="cell-unit">g</span>';
-
-          const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
-          const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
-          let waterLeftDisplay;
-          if (bottles === 0) waterLeftDisplay = "—";
-          else if (waterLeft === 0) waterLeftDisplay = "✓";
-          else waterLeftDisplay = waterLeft + '<span class="cell-unit">btl</span>';
-
-          if (dayData.creatine) creatineDays++;
-          if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
-
-          if (total > 0) {
-            sumP += total;
-            daysWithP++;
-          }
-          if (total >= PRO_GOAL) proMet++;
-
-          const proGoalMet = total >= PRO_GOAL;
-          const waterGoalMet = bottles >= WATER_GOAL_BOTTLES;
-          const proMetDisplay = total === 0 ? "—" : proGoalMet ? "✓" : "—";
-          const waterMetDisplay = bottles === 0 ? "—" : waterGoalMet ? "✓" : "—";
+          const m = computeTrackerDay(dayData);
+          const {
+            target,
+            total,
+            left,
+            bottles,
+            waterLeft,
+            proGoalMet,
+            waterGoalMet,
+            leftDisplay,
+            waterLeftDisplay,
+            proMetDisplay,
+            waterMetDisplay,
+          } = m;
 
           const tr = document.createElement("tr");
+          tr.dataset.dateKey = dateKey;
           if (isToday) tr.className = "today";
           tr.innerHTML = `
       <td><div class="day-cell"><div class="day-date num">${fmtDate(d)}</div><div class="day-name">${dayNames[dow]}</div></div></td>
@@ -2121,20 +2231,15 @@
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
       <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="5g creatine"></div></td>
       <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
-      <td><span class="left-cell water num ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
-      <td><span class="left-cell num ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
-      <td><span class="goal-met-cell ${proGoalMet ? "yes" : ""}">${proMetDisplay}</span></td>
-      <td><span class="goal-met-cell ${waterGoalMet ? "yes" : ""}">${waterMetDisplay}</span></td>
+      <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
+      <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
+      <td><span class="goal-met-cell tracker-pro-met ${proGoalMet ? "yes" : ""}">${proMetDisplay}</span></td>
+      <td><span class="goal-met-cell tracker-water-met ${waterGoalMet ? "yes" : ""}">${waterMetDisplay}</span></td>
     `;
           rows.appendChild(tr);
         }
 
-        document.getElementById("sum-workouts").textContent = totalWO;
-        document.getElementById("sum-protein").textContent =
-          daysWithP > 0 ? Math.round(sumP / daysWithP) : 0;
-        document.getElementById("sum-pro").textContent = proMet;
-        document.getElementById("sum-water").textContent = waterMet;
-        document.getElementById("sum-creatine").textContent = creatineDays;
+        updateTrackerSummary();
 
         document.querySelectorAll(".protein-input, .water-input").forEach((input) => {
           input.addEventListener("input", (e) => {
@@ -2142,8 +2247,9 @@
             const field = e.target.dataset.field;
             state.trackerData[dateKey][field] = e.target.value;
             saveState();
+            refreshTrackerRow(dateKey);
+            updateTrackerSummary();
           });
-          input.addEventListener("blur", renderTracker);
         });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
           cell.addEventListener("click", () => {
