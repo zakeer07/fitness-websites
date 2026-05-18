@@ -1565,6 +1565,23 @@
       .profile-saved-msg.show {
         opacity: 1;
       }
+      .profile-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+      .profile-toggle input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
       .meals-target-banner {
         padding: 14px 18px;
         margin-bottom: 20px;
@@ -1657,6 +1674,64 @@
           height: 140px;
           left: -14%;
         }
+      }
+
+      /* IBS Guide */
+      .ibs-section {
+        margin-bottom: 24px;
+      }
+      .ibs-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 14px;
+      }
+      .ibs-header.safe {
+        background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(39, 174, 96, 0.05));
+        border: 1px solid rgba(39, 174, 96, 0.3);
+      }
+      .ibs-header.avoid {
+        background: linear-gradient(135deg, rgba(233, 69, 96, 0.15), rgba(233, 69, 96, 0.05));
+        border: 1px solid rgba(233, 69, 96, 0.3);
+      }
+      .ibs-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 20px;
+        letter-spacing: 0.04em;
+      }
+      .ibs-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      @media (min-width: 640px) {
+        .ibs-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .ibs-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bg-card);
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+      .ibs-emoji {
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      .ibs-name {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .ibs-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
       }
 
       /* Section header */
@@ -1857,6 +1932,14 @@
                     <input type="number" id="profile-creatine-g" min="0" max="20" step="0.5" />
                   </div>
                 </div>
+                <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Features</div>
+                  <label class="profile-toggle" for="profile-ibs-enabled">
+                    <input type="checkbox" id="profile-ibs-enabled" />
+                    <span>Show IBS Guide tab</span>
+                  </label>
+                  <div class="field-hint">Safer foods, triggers, and flare-day tips</div>
+                </div>
               </div>
               <div class="profile-actions">
                 <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
@@ -1871,6 +1954,7 @@
         <nav class="nav-tabs">
           <button class="nav-tab active" data-tab="dashboard">⚡ Dashboard</button>
           <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
+          <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs" hidden>🌿 IBS Guide</button>
           <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
           <button class="nav-tab" data-tab="tips">💡 Tips</button>
         </nav>
@@ -2060,6 +2144,56 @@
           </div>
 
           <div id="meal-cards"></div>
+        </section>
+
+        <!-- IBS SECTION -->
+        <section class="section" id="ibs-section" hidden>
+          <div class="section-header">
+            <div>
+              <div class="section-title">IBS Guide</div>
+              <div class="section-subtitle">Track your triggers · eat with confidence</div>
+            </div>
+          </div>
+
+          <div class="ibs-section">
+            <div class="ibs-header safe">
+              <div style="font-size: 28px">✅</div>
+              <div>
+                <div class="ibs-title">Safer Foods</div>
+                <div style="font-size: 11px; color: var(--text-muted)">
+                  Eat freely · low risk of triggering
+                </div>
+              </div>
+            </div>
+            <div class="ibs-grid" id="safe-foods"></div>
+          </div>
+
+          <div class="ibs-section">
+            <div class="ibs-header avoid">
+              <div style="font-size: 28px">❌</div>
+              <div>
+                <div class="ibs-title">Triggers to Limit</div>
+                <div style="font-size: 11px; color: var(--text-muted)">
+                  Watch carefully · skip during flares
+                </div>
+              </div>
+            </div>
+            <div class="ibs-grid" id="avoid-foods"></div>
+          </div>
+
+          <div class="card" style="margin-top: 24px">
+            <div class="card-title">
+              <span class="card-title-dot"></span>⚠️ Flare Day Adjustments
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7">
+              On flare days, lower protein slightly and simplify meals:<br />
+              • Use water instead of milk in shake<br />
+              • Cooked veg only (skip raw salads)<br />
+              • Plain rice + chicken + cooked carrots is a safe meal<br />
+              • Avoid dairy, spice, and high-fibre raw foods<br />
+              • Note it in the Tracker if you use notes
+            </div>
+          </div>
         </section>
 
         <!-- TRACKER SECTION -->
@@ -2290,6 +2424,30 @@
         },
       ];
 
+      const SAFE_FOODS = [
+        { emoji: "🍚", name: "Rice", desc: "Easy carb base, very gentle" },
+        { emoji: "🌾", name: "Oats", desc: "Soluble fibre, great for breakfast" },
+        { emoji: "🥔", name: "Potatoes", desc: "Plain/boiled, very safe" },
+        { emoji: "🍞", name: "Sourdough", desc: "Fermented = easier to digest" },
+        { emoji: "🥛", name: "Lactose-free dairy", desc: "Probiotic without trigger" },
+        { emoji: "🍗", name: "Chicken/Fish/Eggs", desc: "Easy proteins" },
+        { emoji: "🥦", name: "Cooked vegetables", desc: "Cook them rather than raw" },
+        { emoji: "🍌", name: "Bananas & berries", desc: "Low-FODMAP fruits" },
+        { emoji: "🫖", name: "Peppermint tea", desc: "Soothes bloating" },
+        { emoji: "🫒", name: "Olive oil (moderate)", desc: "Healthy fat, small amounts" },
+      ];
+
+      const AVOID_FOODS = [
+        { emoji: "🌶️", name: "Spicy food", desc: "Irritates gut lining" },
+        { emoji: "🍟", name: "Fried/oily meals", desc: "Slows digestion" },
+        { emoji: "🍦", name: "Cream sauces", desc: "High fat triggers symptoms" },
+        { emoji: "🥗", name: "Raw salads", desc: "Hard to digest, especially in flare" },
+        { emoji: "🍬", name: "Maltitol/sorbitol", desc: "Common in protein bars - check!" },
+        { emoji: "☕", name: "Excess coffee", desc: "Stay under 2 cups/day" },
+        { emoji: "🍺", name: "Alcohol", desc: "Disrupts gut microbiome" },
+        { emoji: "🥤", name: "Carbonated drinks", desc: "Gas causes bloating" },
+      ];
+
       const TIPS = [
         {
           icon: "🎯",
@@ -2366,6 +2524,7 @@
         waterBottles: 6,
         waterBottleMl: 500,
         creatineG: 5,
+        ibsTabEnabled: false,
       };
       const defaultState = {
         isWorkoutDay: true,
@@ -2396,6 +2555,9 @@
           merged[k] = Number.isFinite(n) ? n : DEFAULT_PROFILE[k];
         }
         merged.name = String(merged.name || DEFAULT_PROFILE.name).trim() || DEFAULT_PROFILE.name;
+        if (typeof merged.ibsTabEnabled !== "boolean") {
+          merged.ibsTabEnabled = DEFAULT_PROFILE.ibsTabEnabled;
+        }
         state.profile = merged;
         saveState();
       }
@@ -2683,6 +2845,8 @@
         document.getElementById("profile-water-bottles").value = p.waterBottles;
         document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
         document.getElementById("profile-creatine-g").value = p.creatineG;
+        const ibsEl = document.getElementById("profile-ibs-enabled");
+        if (ibsEl) ibsEl.checked = !!p.ibsTabEnabled;
       }
 
       function applyProfileToUI() {
@@ -2716,6 +2880,24 @@
         const mealsMeta = document.getElementById("meals-meta-target");
         if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
         updateMealsBanner();
+        applyIbsTabVisibility();
+      }
+
+      function applyIbsTabVisibility() {
+        const enabled = !!getProfile().ibsTabEnabled;
+        const navTab = document.getElementById("nav-tab-ibs");
+        const section = document.getElementById("ibs-section");
+        if (navTab) navTab.hidden = !enabled;
+        if (section) section.hidden = !enabled;
+        if (section && !enabled && section.classList.contains("active")) {
+          document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
+          document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
+          const dash = document.querySelector('.nav-tab[data-tab="dashboard"]');
+          const dashSec = document.getElementById("dashboard-section");
+          if (dash) dash.classList.add("active");
+          if (dashSec) dashSec.classList.add("active");
+        }
+        if (typeof updateNavIndicator === "function") updateNavIndicator();
       }
 
       function updateMealsBanner() {
@@ -2747,6 +2929,9 @@
           waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
           waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
           creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
+          ibsTabEnabled:
+            document.getElementById("profile-ibs-enabled")?.checked ??
+            DEFAULT_PROFILE.ibsTabEnabled,
         };
         saveState();
         initProfile();
@@ -2760,6 +2945,23 @@
           setTimeout(() => msg.classList.remove("show"), 1800);
         }
         closeUserMenu();
+      }
+
+      function renderIBS() {
+        const safe = document.getElementById("safe-foods");
+        const avoid = document.getElementById("avoid-foods");
+        if (!safe || !avoid) return;
+        const item = (f) =>
+          '<div class="ibs-item"><div class="ibs-emoji">' +
+          f.emoji +
+          '</div><div><div class="ibs-name">' +
+          f.name +
+          '</div><div class="ibs-desc">' +
+          f.desc +
+          "</div></div></div>";
+        const fix = (s) => s.split("<div").join("<div").split("</div>").join("</div>");
+        safe.innerHTML = SAFE_FOODS.map((f) => fix(item(f))).join("");
+        avoid.innerHTML = AVOID_FOODS.map((f) => fix(item(f))).join("");
       }
 
       document.getElementById("profile-save-btn").addEventListener("click", () => {
@@ -3147,12 +3349,14 @@
       initUserMenu();
       initProfile();
       applyProfileToUI();
+      applyIbsTabVisibility();
       renderHero();
       renderWorkoutToggle();
       renderTodayMeals();
       updateDashboardStats();
       renderMeals();
       renderTracker();
+      renderIBS();
       renderTips();
       updateNavIndicator();
     </script>
