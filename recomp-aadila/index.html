@@ -419,14 +419,6 @@
   .total-cell { font-family: 'Bebas Neue'; font-size: 18px; color: var(--accent); }
   .target-cell { color: var(--success); font-weight: 600; }
 
-  .status-badge {
-    font-size: 11px; padding: 4px 8px; border-radius: 100px;
-    font-weight: 600; white-space: nowrap;
-  }
-  .status-yes { background: rgba(39,174,96,0.15); color: var(--success); }
-  .status-close { background: rgba(243,156,18,0.15); color: var(--warning); }
-  .status-no { background: rgba(233,30,99,0.15); color: var(--accent); }
-
   .tip-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
   @media (min-width: 768px) { .tip-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -747,7 +739,6 @@
               <th rowspan="2" class="th-hydro">💧<br><span style="font-weight:500;opacity:0.8">500ml</span></th>
               <th rowspan="2" class="th-hydro">H₂O left</th>
               <th rowspan="2" class="th-pro">Pro left<br><span style="font-weight:500;opacity:0.8">g</span></th>
-              <th rowspan="2">Status</th>
             </tr>
             <tr>
               <th class="th-pro">B'fast</th>
@@ -1082,7 +1073,6 @@ const WATER_BOTTLE_ML = 500;
 const WATER_GOAL_BOTTLES = 6; // 3L
 
 const PRO_GOAL = 90;
-const PRO_CLOSE = 75;
 
 function renderTracker() {
   const start = new Date(2026, 4, 7);
@@ -1131,12 +1121,6 @@ function renderTracker() {
     if (total > 0) { sumP += total; daysWithP++; }
     if (total >= PRO_GOAL) proMet++;
 
-    let status, statusClass;
-    if (total === 0) { status = '—'; statusClass = ''; }
-    else if (total >= PRO_GOAL) { status = '✅ Protein OK'; statusClass = 'status-yes'; }
-    else if (total >= PRO_CLOSE) { status = '🟡 Almost'; statusClass = 'status-close'; }
-    else { status = '❌ Low protein'; statusClass = 'status-no'; }
-
     const tr = document.createElement('tr');
     if (isToday) tr.className = 'today';
     tr.innerHTML = `
@@ -1152,7 +1136,6 @@ function renderTracker() {
       <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ''}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
       <td><span class="left-cell water num ${waterLeft === 0 && bottles > 0 ? 'done' : ''}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num ${left === 0 && total > 0 ? 'done' : ''}">${leftDisplay}</span></td>
-      <td><span class="status-badge ${statusClass}">${status}</span></td>
     `;
     rows.appendChild(tr);
   }
