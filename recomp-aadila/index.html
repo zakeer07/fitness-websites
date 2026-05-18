@@ -390,6 +390,10 @@
       .nav-tab.active {
         color: white;
       }
+      .nav-tab.nav-tab-hidden,
+      .nav-tab[hidden] {
+        display: none !important;
+      }
 
       .card {
         background: var(--bg-card);
@@ -2401,7 +2405,11 @@
           merged[k] = Number.isFinite(n) ? n : DEFAULT_PROFILE[k];
         }
         merged.name = String(merged.name || DEFAULT_PROFILE.name).trim() || DEFAULT_PROFILE.name;
-        if (typeof merged.ibsTabEnabled !== "boolean") {
+        if (merged.ibsTabEnabled === true || merged.ibsTabEnabled === "true") {
+          merged.ibsTabEnabled = true;
+        } else if (merged.ibsTabEnabled === false || merged.ibsTabEnabled === "false") {
+          merged.ibsTabEnabled = false;
+        } else if (typeof merged.ibsTabEnabled !== "boolean") {
           merged.ibsTabEnabled = DEFAULT_PROFILE.ibsTabEnabled;
         }
         state.profile = merged;
@@ -2670,7 +2678,7 @@
         document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
         document.getElementById("profile-creatine-g").value = p.creatineG;
         const ibsEl = document.getElementById("profile-ibs-enabled");
-        if (ibsEl) ibsEl.checked = !!p.ibsTabEnabled;
+        if (ibsEl) ibsEl.checked = p.ibsTabEnabled === true;
       }
 
       function applyProfileToUI() {
@@ -2708,12 +2716,21 @@
       }
 
       function applyIbsTabVisibility() {
-        const enabled = !!getProfile().ibsTabEnabled;
+        const enabled = getProfile().ibsTabEnabled === true;
         const navTab = document.getElementById("nav-tab-ibs");
         const section = document.getElementById("ibs-section");
-        if (navTab) navTab.hidden = !enabled;
-        if (section) section.hidden = !enabled;
-        if (section && !enabled && section.classList.contains("active")) {
+        if (navTab) {
+          navTab.hidden = !enabled;
+          navTab.classList.toggle("nav-tab-hidden", !enabled);
+          navTab.setAttribute("aria-hidden", enabled ? "false" : "true");
+          if (!enabled) navTab.classList.remove("active");
+        }
+        const ibsWasActive = section?.classList.contains("active");
+        if (section) {
+          section.hidden = !enabled;
+          if (!enabled) section.classList.remove("active");
+        }
+        if (!enabled && ibsWasActive) {
           document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
           document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
           const dash = document.querySelector('.nav-tab[data-tab="dashboard"]');
@@ -2753,9 +2770,10 @@
           waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
           waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
           creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
-          ibsTabEnabled:
-            document.getElementById("profile-ibs-enabled")?.checked ??
-            DEFAULT_PROFILE.ibsTabEnabled,
+          ibsTabEnabled: (() => {
+            const el = document.getElementById("profile-ibs-enabled");
+            return el ? el.checked : DEFAULT_PROFILE.ibsTabEnabled;
+          })(),
         };
         saveState();
         initProfile();
