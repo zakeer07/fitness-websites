@@ -390,6 +390,10 @@
       .nav-tab.active {
         color: white;
       }
+      .nav-tab.nav-tab-hidden,
+      .nav-tab[hidden] {
+        display: none !important;
+      }
 
       .card {
         background: var(--bg-card);
@@ -1569,6 +1573,23 @@
       .profile-saved-msg.show {
         opacity: 1;
       }
+      .profile-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+      .profile-toggle input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
       .meals-target-banner {
         padding: 14px 18px;
         margin-bottom: 20px;
@@ -1729,6 +1750,14 @@
                     <input type="number" id="profile-creatine-g" min="0" max="20" step="0.5" />
                   </div>
                 </div>
+                <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Features</div>
+                  <label class="profile-toggle" for="profile-ibs-enabled">
+                    <input type="checkbox" id="profile-ibs-enabled" />
+                    <span>Show IBS Guide tab</span>
+                  </label>
+                  <div class="field-hint">Safer foods, triggers, and flare-day tips</div>
+                </div>
               </div>
               <div class="profile-actions">
                 <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
@@ -1743,7 +1772,7 @@
         <nav class="nav-tabs">
           <button class="nav-tab active" data-tab="dashboard">🌸 Dashboard</button>
           <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
-          <button class="nav-tab" data-tab="ibs">🌿 IBS Guide</button>
+          <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs">🌿 IBS Guide</button>
           <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
           <button class="nav-tab" data-tab="tips">💡 Tips</button>
         </nav>
@@ -1932,7 +1961,7 @@
           <div id="meal-cards"></div>
         </section>
 
-        <section class="section" id="ibs-section">
+        <section class="section" id="ibs-section" hidden>
           <div class="section-header">
             <div>
               <div class="section-title">IBS Guide</div>
@@ -2349,6 +2378,7 @@
         waterBottles: 6,
         waterBottleMl: 500,
         creatineG: 5,
+        ibsTabEnabled: true,
       };
       const defaultState = { isWorkoutDay: true, mealsEaten: {}, trackerData: {} };
       let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || defaultState;
@@ -2375,6 +2405,13 @@
           merged[k] = Number.isFinite(n) ? n : DEFAULT_PROFILE[k];
         }
         merged.name = String(merged.name || DEFAULT_PROFILE.name).trim() || DEFAULT_PROFILE.name;
+        if (merged.ibsTabEnabled === true || merged.ibsTabEnabled === "true") {
+          merged.ibsTabEnabled = true;
+        } else if (merged.ibsTabEnabled === false || merged.ibsTabEnabled === "false") {
+          merged.ibsTabEnabled = false;
+        } else if (typeof merged.ibsTabEnabled !== "boolean") {
+          merged.ibsTabEnabled = DEFAULT_PROFILE.ibsTabEnabled;
+        }
         state.profile = merged;
         saveState();
       }
@@ -2640,6 +2677,8 @@
         document.getElementById("profile-water-bottles").value = p.waterBottles;
         document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
         document.getElementById("profile-creatine-g").value = p.creatineG;
+        const ibsEl = document.getElementById("profile-ibs-enabled");
+        if (ibsEl) ibsEl.checked = p.ibsTabEnabled === true;
       }
 
       function applyProfileToUI() {
@@ -2673,6 +2712,33 @@
         const mealsMeta = document.getElementById("meals-meta-target");
         if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
         updateMealsBanner();
+        applyIbsTabVisibility();
+      }
+
+      function applyIbsTabVisibility() {
+        const enabled = getProfile().ibsTabEnabled === true;
+        const navTab = document.getElementById("nav-tab-ibs");
+        const section = document.getElementById("ibs-section");
+        if (navTab) {
+          navTab.hidden = !enabled;
+          navTab.classList.toggle("nav-tab-hidden", !enabled);
+          navTab.setAttribute("aria-hidden", enabled ? "false" : "true");
+          if (!enabled) navTab.classList.remove("active");
+        }
+        const ibsWasActive = section?.classList.contains("active");
+        if (section) {
+          section.hidden = !enabled;
+          if (!enabled) section.classList.remove("active");
+        }
+        if (!enabled && ibsWasActive) {
+          document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
+          document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
+          const dash = document.querySelector('.nav-tab[data-tab="dashboard"]');
+          const dashSec = document.getElementById("dashboard-section");
+          if (dash) dash.classList.add("active");
+          if (dashSec) dashSec.classList.add("active");
+        }
+        if (typeof updateNavIndicator === "function") updateNavIndicator();
       }
 
       function updateMealsBanner() {
@@ -2704,6 +2770,10 @@
           waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
           waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
           creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
+          ibsTabEnabled: (() => {
+            const el = document.getElementById("profile-ibs-enabled");
+            return el ? el.checked : DEFAULT_PROFILE.ibsTabEnabled;
+          })(),
         };
         saveState();
         initProfile();
@@ -3108,6 +3178,7 @@
       initUserMenu();
       initProfile();
       applyProfileToUI();
+      applyIbsTabVisibility();
       renderHero();
       renderWorkoutToggle();
       renderTodayMeals();
