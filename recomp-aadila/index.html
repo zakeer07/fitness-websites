@@ -600,7 +600,7 @@
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-icon">👤</div><div class="kpi-label">Height</div><div class="kpi-value num">5'3"</div></div>
         <div class="kpi"><div class="kpi-icon">⚖️</div><div class="kpi-label">Weight</div><div class="kpi-value num">53<span class="kpi-unit">kg</span></div></div>
-        <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-label">Calorie goal</div><div class="kpi-value num" id="kpi-cal">1900<span class="kpi-unit"> kcal</span></div></div>
+        <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-label">Calorie goal</div><div class="kpi-value num" id="kpi-cal-wrap"><span id="kpi-cal">1900</span><span class="kpi-unit"> kcal</span></div></div>
         <div class="kpi"><div class="kpi-icon">💪</div><div class="kpi-label">Protein goal</div><div class="kpi-value num">90-105<span class="kpi-unit">g</span></div></div>
         <div class="kpi"><div class="kpi-icon">🏋️</div><div class="kpi-label">Workouts</div><div class="kpi-value num">3<span class="kpi-unit">/4</span></div></div>
       </div>
@@ -704,7 +704,6 @@
       <div class="tracker-summary">
         <div class="kpi"><div class="kpi-label">Workout Days</div><div class="kpi-value num" id="sum-workouts">12</div><div class="kpi-sub">this period</div></div>
         <div class="kpi"><div class="kpi-label">Avg Protein</div><div class="kpi-value num" id="sum-protein">95<span class="kpi-unit">g</span></div><div class="kpi-sub">per day</div></div>
-        <div class="kpi"><div class="kpi-label">Cal Goals</div><div class="kpi-value num" id="sum-cal">18</div><div class="kpi-sub">days met</div></div>
         <div class="kpi"><div class="kpi-label">Protein Goals</div><div class="kpi-value num" id="sum-pro">22</div><div class="kpi-sub">days met</div></div>
       </div>
 
@@ -1052,7 +1051,7 @@ function renderTracker() {
   const rows = document.getElementById('tracker-rows');
   rows.innerHTML = '';
   const today = new Date();
-  let totalWO = 0, sumP = 0, daysWithP = 0, calMet = 0, proMet = 0;
+  let totalWO = 0, sumP = 0, daysWithP = 0, proMet = 0;
 
   for (let i = 0; i < 30; i++) {
     const d = new Date(start);
@@ -1102,7 +1101,6 @@ function renderTracker() {
   document.getElementById('sum-workouts').textContent = totalWO;
   document.getElementById('sum-protein').textContent = daysWithP > 0 ? Math.round(sumP/daysWithP) : 0;
   document.getElementById('sum-pro').textContent = proMet;
-  document.getElementById('sum-cal').textContent = Math.floor(totalWO * 0.6);
 
   document.querySelectorAll('.protein-input').forEach(input => {
     input.addEventListener('input', (e) => {
