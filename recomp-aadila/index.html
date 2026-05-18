@@ -160,7 +160,41 @@
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
   }
-  .ring-value { font-family: 'Bebas Neue'; font-size: 42px; line-height: 1; }
+  .ring-value { font-family: 'Bebas Neue'; font-size: 42px; line-height: 1; display: flex; align-items: baseline; gap: 4px; }
+  .ring-unit { font-family: 'Inter'; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .ring-target .unit-hint { font-size: 10px; color: var(--text-muted); }
+  .tracking-legend {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+  }
+  @media (max-width: 520px) { .tracking-legend { grid-template-columns: 1fr; } }
+  .legend-item {
+    padding: 12px 14px; border-radius: 12px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    font-size: 12px; line-height: 1.45; color: var(--text-secondary);
+  }
+  .legend-item strong { display: block; font-size: 13px; color: var(--text-primary); margin-bottom: 4px; }
+  .legend-item.cal { border-left: 3px solid var(--gold); }
+  .legend-item.pro { border-left: 3px solid var(--accent); }
+  .legend-item .metric-tag {
+    display: inline-block; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 4px; margin-bottom: 6px;
+  }
+  .legend-item.cal .metric-tag { background: rgba(255,179,0,0.2); color: var(--gold); }
+  .legend-item.pro .metric-tag { background: rgba(233,30,99,0.2); color: var(--accent); }
+  th.th-cal { color: var(--gold); }
+  th.th-pro { color: var(--accent); }
+  th.th-group { text-align: center; font-size: 9px; border-bottom: 1px solid var(--border); background: rgba(233,30,99,0.06); }
+  .cell-unit { font-size: 10px; color: var(--text-muted); font-weight: 500; margin-left: 2px; }
+  .tracker-guide {
+    padding: 14px 18px; margin-bottom: 16px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 12px; font-size: 12px; color: var(--text-secondary); line-height: 1.55;
+  }
+  .tracker-guide strong { color: var(--text-primary); }
+  .chart-unit-hint { font-size: 11px; color: var(--text-muted); margin: -8px 0 12px; }
+  .protein-input::placeholder { color: var(--text-muted); font-size: 10px; }
+  .target-cell { color: var(--gold); font-weight: 600; }
   .ring-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px; }
   .ring-target { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
 
@@ -485,6 +519,19 @@
 
     <section class="section active" id="dashboard-section">
 
+<div class="tracking-legend">
+        <div class="legend-item cal">
+          <span class="metric-tag">Calories · kcal</span>
+          <strong>Today dashboard</strong>
+          Tap meals below to add up calories & protein automatically.
+        </div>
+        <div class="legend-item pro">
+          <span class="metric-tag">Protein · grams</span>
+          <strong>Tracker tab</strong>
+          Type protein (g) per meal slot in the 30-day log.
+        </div>
+      </div>
+
       <div class="hero">
         <div class="hero-top">
           <div>
@@ -512,17 +559,17 @@
                 stroke-dasharray="427" stroke-dashoffset="427" stroke-linecap="round"/>
             </svg>
             <div class="ring-inner">
-              <div class="ring-value num" id="cal-current">0</div>
-              <div class="ring-label">Calories</div>
-              <div class="ring-target num">/ <span id="cal-target">1900</span></div>
+              <div class="ring-value num"><span id="cal-current">0</span><span class="ring-unit">kcal</span></div>
+              <div class="ring-label">Calories eaten</div>
+              <div class="ring-target num">of <span id="cal-target">1900</span> <span class="unit-hint">kcal goal</span></div>
             </div>
           </div>
 
           <div class="stats-stack">
             <div class="stat-bar">
               <div class="stat-bar-top">
-                <div class="stat-bar-label">💪 Protein</div>
-                <div class="stat-bar-value num"><span id="prot-current">0</span>g / 100g</div>
+                <div class="stat-bar-label">💪 Protein (grams)</div>
+                <div class="stat-bar-value num"><span id="prot-current">0</span><span class="kpi-unit">g</span> / 100g daily</div>
               </div>
               <div class="stat-bar-track">
                 <div class="stat-bar-fill" id="prot-fill" style="width:0%; background:var(--accent);"></div>
@@ -553,24 +600,26 @@
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-icon">👤</div><div class="kpi-label">Height</div><div class="kpi-value num">5'3"</div></div>
         <div class="kpi"><div class="kpi-icon">⚖️</div><div class="kpi-label">Weight</div><div class="kpi-value num">53<span class="kpi-unit">kg</span></div></div>
-        <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-label">Cal Target</div><div class="kpi-value num" id="kpi-cal">1900</div></div>
-        <div class="kpi"><div class="kpi-icon">💪</div><div class="kpi-label">Protein</div><div class="kpi-value num">90-105<span class="kpi-unit">g</span></div></div>
+        <div class="kpi"><div class="kpi-icon">🎯</div><div class="kpi-label">Calorie goal</div><div class="kpi-value num" id="kpi-cal">1900<span class="kpi-unit"> kcal</span></div></div>
+        <div class="kpi"><div class="kpi-icon">💪</div><div class="kpi-label">Protein goal</div><div class="kpi-value num">90-105<span class="kpi-unit">g</span></div></div>
         <div class="kpi"><div class="kpi-icon">🏋️</div><div class="kpi-label">Workouts</div><div class="kpi-value num">3<span class="kpi-unit">/4</span></div></div>
       </div>
 
       <div class="card card-accent" style="margin-bottom:24px;">
         <div class="card-title"><span class="card-title-dot"></span>Today's Schedule</div>
         <div class="meal-list" id="today-meals"></div>
-        <div class="edit-hint">Tap a meal to mark it as eaten</div>
+        <div class="edit-hint">Tap a meal — adds kcal & protein to today's totals</div>
       </div>
 
       <div class="charts-grid">
         <div class="card">
           <div class="card-title"><span class="card-title-dot"></span>Protein by Meal</div>
+          <div class="chart-unit-hint">Grams (g) per meal — from checked meals</div>
           <canvas id="protein-chart" width="400" height="280"></canvas>
         </div>
         <div class="card">
           <div class="card-title"><span class="card-title-dot"></span>Calories by Meal</div>
+          <div class="chart-unit-hint">Kilocalories (kcal) per meal — from checked meals</div>
           <canvas id="calorie-chart" width="400" height="280"></canvas>
         </div>
       </div>
@@ -643,9 +692,13 @@
       <div class="section-header">
         <div>
           <div class="section-title">Daily Tracker</div>
-          <div class="section-subtitle">30-day rolling log</div>
+          <div class="section-subtitle">Log protein in grams (g) · Cal target column = kcal</div>
         </div>
         <div class="section-meta">From <strong id="tracker-start">May 7, 2026</strong></div>
+      </div>
+
+      <div class="tracker-guide">
+        <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for <strong>calories (kcal)</strong> + <strong>protein (g)</strong>. <strong>Tracker</strong> rows are <strong>protein grams only</strong> — green <strong>Cal target</strong> = daily kcal goal (not protein).
       </div>
 
       <div class="tracker-summary">
@@ -659,16 +712,19 @@
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>WO</th>
-              <th>Target</th>
-              <th>B'fast</th>
-              <th>Lunch</th>
-              <th>Snack</th>
-              <th>Shake</th>
-              <th>Dinner</th>
-              <th>Total</th>
-              <th>Status</th>
+              <th rowspan="2">Date</th>
+              <th rowspan="2">WO</th>
+              <th rowspan="2" class="th-cal">Cal target<br><span style="font-weight:500;opacity:0.8">kcal</span></th>
+              <th colspan="5" class="th-group">Protein per meal — enter grams (g)</th>
+              <th rowspan="2" class="th-pro">Total<br><span style="font-weight:500;opacity:0.8">g</span></th>
+              <th rowspan="2" class="th-pro">Protein<br><span style="font-weight:500;opacity:0.8">goal</span></th>
+            </tr>
+            <tr>
+              <th class="th-pro">B'fast</th>
+              <th class="th-pro">Lunch</th>
+              <th class="th-pro">Snack</th>
+              <th class="th-pro">Shake</th>
+              <th class="th-pro">Dinner</th>
             </tr>
           </thead>
           <tbody id="tracker-rows"></tbody>
@@ -1022,22 +1078,22 @@ function renderTracker() {
 
     let status, statusClass;
     if (total === 0) { status = '—'; statusClass = ''; }
-    else if (total >= 90) { status = '✅ Goal'; statusClass = 'status-yes'; }
-    else if (total >= 75) { status = '🟡 Close'; statusClass = 'status-close'; }
-    else { status = '❌ Low'; statusClass = 'status-no'; }
+    else if (total >= 90) { status = '✅ Protein OK'; statusClass = 'status-yes'; }
+    else if (total >= 75) { status = '🟡 Almost'; statusClass = 'status-close'; }
+    else { status = '❌ Low protein'; statusClass = 'status-no'; }
 
     const tr = document.createElement('tr');
     if (isToday) tr.className = 'today';
     tr.innerHTML = `
       <td><div class="day-cell"><div class="day-date num">${fmtDate(d)}</div><div class="day-name">${dayNames[dow]}</div></div></td>
       <td><div class="check-cell ${dayData.isWorkout ? 'checked' : ''}" data-date="${dateKey}" data-field="isWorkout"></div></td>
-      <td><span class="target-cell num">${target}</span></td>
-      <td><input class="protein-input num" type="number" placeholder="—" value="${dayData.breakfast}" data-date="${dateKey}" data-field="breakfast"></td>
-      <td><input class="protein-input num" type="number" placeholder="—" value="${dayData.lunch}" data-date="${dateKey}" data-field="lunch"></td>
-      <td><input class="protein-input num" type="number" placeholder="—" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
-      <td><input class="protein-input num" type="number" placeholder="—" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
-      <td><input class="protein-input num" type="number" placeholder="—" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
-      <td><span class="total-cell num">${total > 0 ? total + 'g' : '—'}</span></td>
+      <td><span class="target-cell num">${target}<span class="cell-unit">kcal</span></span></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.breakfast}" data-date="${dateKey}" data-field="breakfast"></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.lunch}" data-date="${dateKey}" data-field="lunch"></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
+      <td><span class="total-cell num">${total > 0 ? total + '<span class="cell-unit">g</span>' : '—'}</span></td>
       <td><span class="status-badge ${statusClass}">${status}</span></td>
     `;
     rows.appendChild(tr);
