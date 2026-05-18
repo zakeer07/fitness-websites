@@ -1,31 +1,35 @@
 # Dev / staging: https://zakeer07.github.io/fitness-websites/dev/
-# Runs on every push to dev.
+# Deploys the PR branch when you open or update a pull request into main.
 
-name: Deploy dev
+name: Deploy dev (PR preview)
 
 on:
-  push:
-    branches: [dev]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
-  group: pages-dev
+  group: pages-dev-pr-${{ github.event.pull_request.number || 'manual' }}
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy to GitHub Pages (dev)
+    name: Deploy PR to GitHub Pages (dev)
     runs-on: ubuntu-latest
     environment:
       name: development
       url: https://zakeer07.github.io/fitness-websites/dev/
 
     steps:
-      - name: Checkout
+      - name: Checkout PR branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Prepare static site
         run: |
@@ -41,4 +45,34 @@ jobs:
           publish_dir: ./_site
           destination_dir: dev
           keep_files: true
-          commit_message: "deploy(dev): ${{ github.sha }}"
+          commit_message: "deploy(dev): PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}"
+
+      - name: Comment on PR with dev URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `### Dev preview deployed\n\n**https://zakeer07.github.io/fitness-websites/dev/**\n\nUpdates on each push to this PR branch. Production updates when this PR is merged to \`main\`.`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Dev preview deployed')
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

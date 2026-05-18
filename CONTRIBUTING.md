@@ -40,37 +40,33 @@ pre-commit run --all-files
 | Prettier                  | Consistent HTML & Markdown formatting |
 | Codespell                 | Typos in Markdown (HTML skipped)      |
 
-## Branch workflow (dev → production)
+## Branch workflow (PR preview → production)
 
-| Branch | When            | Live URL                                         |
-| ------ | --------------- | ------------------------------------------------ |
-| `dev`  | Push to `dev`   | https://zakeer07.github.io/fitness-websites/dev/ |
-| `main` | Merge to `main` | https://zakeer07.github.io/fitness-websites/     |
+| When                                | What deploys                | URL                                              |
+| ----------------------------------- | --------------------------- | ------------------------------------------------ |
+| Open or update a **PR into `main`** | That PR’s branch → dev site | https://zakeer07.github.io/fitness-websites/dev/ |
+| **Merge PR to `main`**              | Production                  | https://zakeer07.github.io/fitness-websites/     |
 
 **Typical flow:**
 
 ```bash
-git checkout dev
-# make changes, commit
-git push origin dev
-# → dev site updates in ~1 minute
-
 git checkout main
-git merge dev
-git push origin main
-# → production site updates in ~1 minute
+git pull origin main
+git checkout -b feature/my-change
+
+# edit, commit
+git push -u origin feature/my-change
 ```
 
-Feature branches: open a PR into `dev` (or `main`). CI runs on every PR.
+Open a **pull request → `main`** on GitHub. Within ~1 minute:
 
-## Pull requests
+- CI runs checks on the PR
+- **Deploy dev (PR preview)** puts your branch on the dev site
+- A comment on the PR links to the dev URL
 
-1. Branch from `dev` (for features) or `main` (for hotfixes)
-2. Make changes
-3. `make lint` passes locally
-4. Open a PR — GitHub Actions runs checks
-5. Merge to `dev` to preview on the dev site
-6. Merge `dev` → `main` when ready for production
+When you **merge** the PR, production updates automatically.
+
+You do not need a long-lived `dev` branch — your **feature branch + PR** is the dev preview.
 
 ## GitHub Pages setup (one time)
 
