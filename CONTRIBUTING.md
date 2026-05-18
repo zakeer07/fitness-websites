@@ -40,18 +40,52 @@ pre-commit run --all-files
 | Prettier                  | Consistent HTML & Markdown formatting |
 | Codespell                 | Typos in Markdown (HTML skipped)      |
 
+## Branch workflow (dev → production)
+
+| Branch | When            | Live URL                                         |
+| ------ | --------------- | ------------------------------------------------ |
+| `dev`  | Push to `dev`   | https://zakeer07.github.io/fitness-websites/dev/ |
+| `main` | Merge to `main` | https://zakeer07.github.io/fitness-websites/     |
+
+**Typical flow:**
+
+```bash
+git checkout dev
+# make changes, commit
+git push origin dev
+# → dev site updates in ~1 minute
+
+git checkout main
+git merge dev
+git push origin main
+# → production site updates in ~1 minute
+```
+
+Feature branches: open a PR into `dev` (or `main`). CI runs on every PR.
+
 ## Pull requests
 
-1. Branch from `main`
+1. Branch from `dev` (for features) or `main` (for hotfixes)
 2. Make changes
 3. `make lint` passes locally
-4. Open a PR — GitHub Actions runs the same checks
+4. Open a PR — GitHub Actions runs checks
+5. Merge to `dev` to preview on the dev site
+6. Merge `dev` → `main` when ready for production
 
-## Live site
+## GitHub Pages setup (one time)
 
-Merging to `main` updates GitHub Pages (~30 seconds):
+In the repo on GitHub: **Settings → Pages**
 
-- https://zakeer07.github.io/fitness-websites/
+1. **Source:** Deploy from a branch
+2. **Branch:** `gh-pages` / `/ (root)`
+3. Save
+
+Deployments are pushed to the `gh-pages` branch by GitHub Actions (`deploy-dev.yml` and `deploy-production.yml`). You do not need to push to `gh-pages` yourself.
+
+## Live sites
+
+- **Production:** https://zakeer07.github.io/fitness-websites/
+- **Dev:** https://zakeer07.github.io/fitness-websites/dev/
 
 ## App structure
 

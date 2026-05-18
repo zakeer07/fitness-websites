@@ -1,0 +1,44 @@
+# Dev / staging: https://zakeer07.github.io/fitness-websites/dev/
+# Runs on every push to dev.
+
+name: Deploy dev
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages (dev)
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://zakeer07.github.io/fitness-websites/dev/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+          cp -r recomp-zakeer recomp-aadila _site/
+
+      - name: Deploy to gh-pages (/dev)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./_site
+          destination_dir: dev
+          keep_files: true
+          commit_message: "deploy(dev): ${{ github.sha }}"
