@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Apps</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f0f0f;
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    main { max-width: 22rem; width: 100%; text-align: center; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+    p { color: #a3a3a3; font-size: 0.95rem; margin-bottom: 2rem; }
+    .links { display: flex; flex-direction: column; gap: 0.75rem; }
+    a {
+      display: block;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    a:active { transform: scale(0.98); }
+    .recomp {
+      background: linear-gradient(135deg, #ea580c, #c2410c);
+      color: #fff;
+    }
+    .bloom {
+      background: linear-gradient(135deg, #db2777, #9d174d);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Fitness Apps</h1>
+    <p>Choose your tracker</p>
+    <nav class="links">
+      <a class="recomp" href="recomp-zakeer/">RECOMP — Zakeer</a>
+      <a class="bloom" href="recomp-aadila/">BLOOM — Aadila</a>
+    </nav>
+  </main>
+</body>
+</html>
