@@ -39,23 +39,19 @@ Install **VS Code** (free) and the **"Live Server"** extension. Then:
 
 ---
 
-## 🌐 How to Deploy to GitHub Pages (Free Hosting)
+## 🌐 Live sites (auto-deploy)
 
-Each app deploys separately to its own URL. Here's how:
+| Environment    | Branch | URL                                              |
+| -------------- | ------ | ------------------------------------------------ |
+| **Production** | `main` | https://zakeer07.github.io/fitness-websites/     |
+| **Dev**        | `dev`  | https://zakeer07.github.io/fitness-websites/dev/ |
 
-### For RECOMP (Zakeer's app):
+Push to `dev` to preview changes. Merge `dev` → `main` when ready for production. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
-1. Sign in to [github.com](https://github.com)
-2. Create a new public repo called `recomp` (or `zakeer-fitness`)
-3. Click **"uploading an existing file"**
-4. Drag everything from the `recomp-zakeer` folder (including the hidden `.nojekyll`)
-5. Commit changes
-6. Go to **Settings → Pages**, select `main` branch, save
-7. Your app goes live at `https://YOUR_USERNAME.github.io/recomp/`
+**Apps on production:**
 
-### For BLOOM (Aadila's app):
-
-Same steps, but create a separate repo called `bloom` (or `aadila-fitness`). It gets its own URL.
+- https://zakeer07.github.io/fitness-websites/recomp-zakeer/
+- https://zakeer07.github.io/fitness-websites/recomp-aadila/
 
 ---
 

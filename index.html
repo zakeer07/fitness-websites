@@ -76,5 +76,26 @@
         <a class="bloom" href="recomp-aadila/">BLOOM — Aadila</a>
       </nav>
     </main>
+    <script>
+      if (/\/dev(\/|$)/.test(location.pathname)) {
+        const b = document.createElement("div");
+        b.textContent = "DEV PREVIEW — not production";
+        Object.assign(b.style, {
+          position: "fixed",
+          top: "0",
+          left: "0",
+          right: "0",
+          padding: "8px",
+          background: "#2563eb",
+          color: "#fff",
+          fontSize: "12px",
+          fontWeight: "700",
+          textAlign: "center",
+          letterSpacing: "0.08em",
+          zIndex: "9999",
+        });
+        document.body.appendChild(b);
+      }
+    </script>
   </body>
 </html>

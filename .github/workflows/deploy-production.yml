@@ -1,0 +1,43 @@
+# Production: https://zakeer07.github.io/fitness-websites/
+# Runs on every push to main (including merges).
+
+name: Deploy production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages (production)
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://zakeer07.github.io/fitness-websites/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+          cp -r recomp-zakeer recomp-aadila _site/
+
+      - name: Deploy to gh-pages (root)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./_site
+          keep_files: true
+          commit_message: "deploy(production): ${{ github.sha }}"
