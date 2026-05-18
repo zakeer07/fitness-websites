@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fitness Apps</title>
+    <title>Fitness Apps · Sign in</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       * {
         box-sizing: border-box;
@@ -11,91 +16,491 @@
         padding: 0;
       }
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background: #0f0f0f;
-        color: #f5f5f5;
+        font-family: Inter, system-ui, sans-serif;
+        background: #0a0c12;
+        color: #f2f6ff;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 1.5rem;
       }
-      main {
-        max-width: 22rem;
+      .shell {
         width: 100%;
-        text-align: center;
+        max-width: 480px;
       }
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+      .sub {
+        color: #9aa8c4;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+      .card {
+        background: rgba(18, 24, 40, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .tab {
+        flex: 1;
+        padding: 0.65rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: transparent;
+        color: #9aa8c4;
+        border-radius: 10px;
         font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .tab.active {
+        background: linear-gradient(135deg, #ff5c7a, #e84a6f);
+        border-color: transparent;
+        color: #fff;
+      }
+      .field {
+        margin-bottom: 1rem;
+      }
+      .field label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #9aa8c4;
+        margin-bottom: 0.35rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .field input {
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #0e1424;
+        color: #fff;
+        font-size: 1rem;
+        font-family: inherit;
+      }
+      .field input:focus {
+        outline: none;
+        border-color: #ff5c7a;
+      }
+      .btn {
+        width: 100%;
+        padding: 0.85rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: inherit;
+        background: linear-gradient(135deg, #ff5c7a, #e84a6f);
+        color: #fff;
+        margin-top: 0.25rem;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .msg {
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
+        min-height: 1.25rem;
+      }
+      .msg.error {
+        color: #ff8a9b;
+      }
+      .msg.ok {
+        color: #3dd68c;
+      }
+      .panel {
+        display: none;
+      }
+      .panel.active {
+        display: block;
+      }
+      .apps {
+        display: none;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .apps.visible {
+        display: flex;
+      }
+      .apps h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      .apps p {
+        font-size: 0.85rem;
+        color: #9aa8c4;
         margin-bottom: 0.5rem;
       }
-      p {
-        color: #a3a3a3;
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
+      .theme-note {
+        font-size: 0.8rem;
+        color: #7d8aa6;
+        line-height: 1.45;
+        margin-bottom: 0.75rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
-      .links {
+      .theme-grid {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
       }
-      a {
+      .theme-card {
         display: block;
-        padding: 1rem 1.25rem;
+        padding: 1rem 1.1rem;
         border-radius: 12px;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 1rem;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         transition:
-          transform 0.15s,
-          opacity 0.15s;
+          border-color 0.15s,
+          transform 0.15s;
       }
-      a:active {
-        transform: scale(0.98);
+      .theme-card:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.28);
       }
-      .recomp {
-        background: linear-gradient(135deg, #ea580c, #c2410c);
-        color: #fff;
+      .theme-card.recomp {
+        background: linear-gradient(145deg, rgba(234, 88, 12, 0.35), rgba(18, 24, 40, 0.95));
       }
-      .bloom {
-        background: linear-gradient(135deg, #db2777, #9d174d);
-        color: #fff;
+      .theme-card.bloom {
+        background: linear-gradient(145deg, rgba(219, 39, 119, 0.35), rgba(18, 24, 40, 0.95));
+      }
+      .theme-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+      .theme-card-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .theme-card-tag {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.2rem 0.45rem;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.25);
+        color: rgba(255, 255, 255, 0.85);
+        white-space: nowrap;
+      }
+      .theme-card-tagline {
+        font-size: 0.85rem;
+        font-weight: 600;
+        opacity: 0.95;
+        margin-bottom: 0.5rem;
+      }
+      .theme-card ul {
+        list-style: none;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        color: rgba(255, 255, 255, 0.82);
+      }
+      .theme-card li {
+        padding-left: 1rem;
+        position: relative;
+        margin-bottom: 0.25rem;
+      }
+      .theme-card li::before {
+        content: "·";
+        position: absolute;
+        left: 0.2rem;
+        opacity: 0.7;
+      }
+      .theme-card-cta {
+        display: inline-block;
+        margin-top: 0.65rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        opacity: 0.95;
+      }
+      .signout {
+        margin-top: 0.75rem;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #9aa8c4;
+      }
+      .hint {
+        font-size: 0.8rem;
+        color: #5e6b85;
+        margin-top: 1rem;
+        line-height: 1.45;
+      }
+      .user-line {
+        font-size: 0.9rem;
+        color: #9aa8c4;
+        margin-bottom: 1rem;
+      }
+      .user-line strong {
+        color: #f2f6ff;
       }
     </style>
   </head>
   <body>
-    <main>
+    <div class="shell">
       <h1>Fitness Apps</h1>
-      <p>Choose your tracker</p>
-      <nav class="links">
-        <a class="recomp" href="recomp-zakeer/">RECOMP — Zakeer</a>
-        <a class="bloom" href="recomp-aadila/">BLOOM — Aadila</a>
-      </nav>
-    </main>
+      <p class="sub">
+        Sign in to track meals, protein, and your goals. Create an account for yourself or anyone in
+        the family.
+      </p>
+
+      <div class="card" id="auth-card">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="signin" id="tab-signin">
+            Sign in
+          </button>
+          <button type="button" class="tab" data-tab="signup" id="tab-signup">
+            Create account
+          </button>
+        </div>
+
+        <div class="panel active" id="panel-signin">
+          <form id="form-signin">
+            <div class="field">
+              <label for="signin-email">Email</label>
+              <input type="email" id="signin-email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label for="signin-password">Password</label>
+              <input
+                type="password"
+                id="signin-password"
+                autocomplete="current-password"
+                required
+                minlength="6"
+              />
+            </div>
+            <button type="submit" class="btn" id="btn-signin">Sign in</button>
+          </form>
+        </div>
+
+        <div class="panel" id="panel-signup">
+          <form id="form-signup">
+            <div class="field">
+              <label for="signup-name">Display name</label>
+              <input
+                type="text"
+                id="signup-name"
+                autocomplete="name"
+                placeholder="Zakeer, Aadila, …"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label for="signup-password">Password (min 6 characters)</label>
+              <input
+                type="password"
+                id="signup-password"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+            </div>
+            <button type="submit" class="btn" id="btn-signup">Create account</button>
+          </form>
+        </div>
+
+        <p class="msg" id="auth-msg" role="status"></p>
+      </div>
+
+      <div class="card apps" id="apps-card">
+        <p class="user-line">Signed in as <strong id="signed-in-as"></strong></p>
+        <h2>Pick a theme</h2>
+        <p>
+          Same account everywhere: <strong>your</strong> meals, goals, and tracker. You’re only
+          choosing colors and a few layout defaults — switch anytime.
+        </p>
+        <p class="theme-note">
+          Not sure? Either works. RECOMP suits a recomp / cut-bulk rhythm; BLOOM suits strength,
+          shape, and breakfast logging. You can turn the IBS tab on or off in Profile either way.
+        </p>
+        <div class="theme-grid">
+          <a class="theme-card recomp" id="link-recomp" href="recomp-zakeer/">
+            <div class="theme-card-head">
+              <span class="theme-card-name">RECOMP</span>
+              <span class="theme-card-tag">Orange theme</span>
+            </div>
+            <p class="theme-card-tagline">Body recomposition · cut & build muscle</p>
+            <ul>
+              <li>Today board: lunch → snack → workout → dinner (no breakfast row)</li>
+              <li>IBS guide tab off by default (enable in Profile if you want it)</li>
+              <li>Optional example meals tuned for recomp-style days</li>
+            </ul>
+            <span class="theme-card-cta">Open RECOMP →</span>
+          </a>
+          <a class="theme-card bloom" id="link-bloom" href="recomp-aadila/">
+            <div class="theme-card-head">
+              <span class="theme-card-name">BLOOM</span>
+              <span class="theme-card-tag">Rose theme</span>
+            </div>
+            <p class="theme-card-tagline">Strength, tone & shape · steady protein</p>
+            <ul>
+              <li>Today board includes <strong>breakfast</strong> plus lunch through dinner</li>
+              <li>IBS guide tab on by default (hide in Profile anytime)</li>
+              <li>Optional example meals with breakfast & IBS-friendly ideas</li>
+            </ul>
+            <span class="theme-card-cta">Open BLOOM →</span>
+          </a>
+        </div>
+        <button type="button" class="btn signout" id="btn-signout">Log out</button>
+      </div>
+
+      <p class="hint" id="storage-hint">
+        Accounts are stored on this device by default. Optional cloud sync (Supabase) keeps the same
+        login working on your phone — ask the site owner if it’s enabled.
+      </p>
+    </div>
+
+    <script src="shared/auth-config.js" onerror="void 0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="shared/fitness-auth.js"></script>
     <script>
-      if (/\/dev(\/|$)/.test(location.pathname)) {
-        const b = document.createElement("div");
-        b.textContent = "DEV PREVIEW — not production";
-        Object.assign(b.style, {
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          padding: "8px",
-          background: "#2563eb",
-          color: "#fff",
-          fontSize: "12px",
-          fontWeight: "700",
-          textAlign: "center",
-          letterSpacing: "0.08em",
-          zIndex: "9999",
+      (function () {
+        const path = location.pathname;
+        const dev = /\/dev(\/|$)/.test(path);
+        const sharedPrefix = dev ? "../shared/" : "shared/";
+        const appPrefix = dev ? "../" : "";
+
+        if (!window.FitnessAuth) {
+          document.getElementById("auth-msg").textContent = "Auth script failed to load.";
+          document.getElementById("auth-msg").className = "msg error";
+          return;
+        }
+
+        const params = new URLSearchParams(location.search);
+        const nextApp = params.get("next");
+
+        const authCard = document.getElementById("auth-card");
+        const appsCard = document.getElementById("apps-card");
+        const msgEl = document.getElementById("auth-msg");
+
+        document.getElementById("link-recomp").href = appPrefix + "recomp-zakeer/";
+        document.getElementById("link-bloom").href = appPrefix + "recomp-aadila/";
+
+        function setMsg(text, type) {
+          msgEl.textContent = text || "";
+          msgEl.className = "msg" + (type ? " " + type : "");
+        }
+
+        function showApps(session) {
+          authCard.style.display = "none";
+          appsCard.classList.add("visible");
+          document.getElementById("signed-in-as").textContent =
+            session.displayName + " (" + session.email + ")";
+          if (nextApp === "fitness" || nextApp === "recomp-zakeer" || nextApp === "recomp-aadila") {
+            const path = nextApp === "fitness" ? "recomp-zakeer" : nextApp;
+            location.href = appPrefix + path + "/";
+          }
+        }
+
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.addEventListener("click", () => {
+            document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+            document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+            tab.classList.add("active");
+            document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
+            setMsg("");
+          });
         });
-        document.body.appendChild(b);
-      }
+
+        document.getElementById("form-signin").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-signin");
+          btn.disabled = true;
+          setMsg("Signing in…");
+          try {
+            const session = await FitnessAuth.signIn(
+              document.getElementById("signin-email").value,
+              document.getElementById("signin-password").value
+            );
+            setMsg("Welcome back!", "ok");
+            showApps(session);
+          } catch (err) {
+            setMsg(err.message || "Sign in failed", "error");
+          }
+          btn.disabled = false;
+        });
+
+        document.getElementById("form-signup").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-signup");
+          btn.disabled = true;
+          setMsg("Creating account…");
+          try {
+            const session = await FitnessAuth.signUp(
+              document.getElementById("signup-email").value,
+              document.getElementById("signup-password").value,
+              document.getElementById("signup-name").value
+            );
+            setMsg("Account created!", "ok");
+            showApps(session);
+          } catch (err) {
+            setMsg(err.message || "Sign up failed", "error");
+          }
+          btn.disabled = false;
+        });
+
+        document.getElementById("btn-signout").addEventListener("click", async () => {
+          await FitnessAuth.signOut();
+          appsCard.classList.remove("visible");
+          authCard.style.display = "block";
+          setMsg("");
+        });
+
+        (async function init() {
+          await FitnessAuth.initSupabase();
+          let session = FitnessAuth.getSession();
+          if (!session) session = await FitnessAuth.restoreSupabaseSession();
+          if (session) showApps(session);
+          if (FitnessAuth.isCloudEnabled()) {
+            document.getElementById("storage-hint").textContent =
+              "Signed in with cloud sync — your goals and tracker follow you on any device.";
+          }
+          if (dev) {
+            const b = document.createElement("div");
+            b.textContent = "DEV PREVIEW";
+            Object.assign(b.style, {
+              position: "fixed",
+              top: "0",
+              left: "0",
+              right: "0",
+              padding: "8px",
+              background: "#2563eb",
+              color: "#fff",
+              fontSize: "12px",
+              fontWeight: "700",
+              textAlign: "center",
+              zIndex: "9999",
+            });
+            document.body.appendChild(b);
+          }
+        })();
+      })();
     </script>
   </body>
 </html>

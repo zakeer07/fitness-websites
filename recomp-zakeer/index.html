@@ -1596,6 +1596,100 @@
         color: var(--text-secondary);
         line-height: 1.55;
       }
+
+      .meal-library-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .meal-library-toolbar .btn-secondary {
+        font-family: inherit;
+        font-size: 12px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border, #2a3348);
+        background: var(--surface-2, #1a2236);
+        color: var(--text-muted, #9ca3b5);
+        cursor: pointer;
+      }
+      .meal-library-toolbar .btn-secondary:hover {
+        border-color: var(--accent, #e94560);
+        color: var(--text, #f7f8fc);
+      }
+      .meal-add-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 12px;
+        margin-bottom: 20px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border, #2a3348);
+        background: var(--surface-2, #1a2236);
+      }
+      .meal-add-form label {
+        font-size: 11px;
+        color: var(--text-muted, #9ca3b5);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .meal-add-form input,
+      .meal-add-form select {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border, #2a3348);
+        background: var(--surface, #12182a);
+        color: inherit;
+        font-family: inherit;
+        font-size: 13px;
+      }
+      .meal-add-form .full-width {
+        grid-column: 1 / -1;
+      }
+      .meal-add-form .btn-add-meal {
+        grid-column: 1 / -1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: var(--accent, #e94560);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .meals-empty-hint {
+        padding: 20px;
+        text-align: center;
+        color: var(--text-muted, #9ca3b5);
+        font-size: 13px;
+        line-height: 1.5;
+        border: 1px dashed var(--border, #2a3348);
+        border-radius: 12px;
+        margin-bottom: 16px;
+      }
+      .meal-card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .meal-card-actions button {
+        flex: 1;
+        font-size: 11px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border, #2a3348);
+        background: transparent;
+        color: var(--text-muted, #9ca3b5);
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .meal-card-actions button:hover {
+        color: var(--text, #f7f8fc);
+        border-color: var(--accent, #e94560);
+      }
+
       .meals-target-banner strong {
         color: var(--text-primary);
       }
@@ -1870,7 +1964,9 @@
             <div class="user-menu-panel" id="user-menu-panel" hidden>
               <div class="user-menu-panel-head">
                 <div class="user-menu-panel-title">Profile & targets</div>
-                <p class="user-menu-panel-sub">Body stats and daily goals · saved on this device</p>
+                <p class="user-menu-panel-sub" id="profile-sync-hint">
+                  Body stats & daily goals · saved to your account
+                </p>
               </div>
               <div class="profile-grid">
                 <div class="profile-group">
@@ -1948,6 +2044,23 @@
               <div class="profile-actions">
                 <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
                 <span class="profile-saved-msg" id="profile-saved-msg">Saved</span>
+              </div>
+              <div
+                class="profile-actions"
+                style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border)"
+              >
+                <button
+                  type="button"
+                  class="profile-save-btn"
+                  id="profile-logout-btn"
+                  style="
+                    background: transparent;
+                    border: 1px solid var(--border-strong);
+                    color: var(--text-secondary);
+                  "
+                >
+                  Log out
+                </button>
               </div>
             </div>
           </div>
@@ -2132,11 +2245,57 @@
           <div class="section-header">
             <div>
               <div class="section-title">Meal Library</div>
-              <div class="section-subtitle">11 curated options</div>
+              <div class="section-subtitle">Build your own library</div>
             </div>
             <div class="section-meta" id="meals-meta-target">
               <strong>115g</strong> protein target
             </div>
+          </div>
+
+          <div class="meal-library-toolbar">
+            <button type="button" class="btn-secondary" id="btn-import-starter-meals">
+              Import example RECOMP meals (optional)
+            </button>
+          </div>
+          <form class="meal-add-form" id="meal-add-form">
+            <div>
+              <label for="meal-add-name">Name</label>
+              <input type="text" id="meal-add-name" required placeholder="Chicken rice bowl" />
+            </div>
+            <div>
+              <label for="meal-add-emoji">Emoji</label>
+              <input type="text" id="meal-add-emoji" maxlength="4" value="🍽️" />
+            </div>
+            <div>
+              <label for="meal-add-cal">Calories</label>
+              <input type="number" id="meal-add-cal" min="0" required />
+            </div>
+            <div>
+              <label for="meal-add-pro">Protein (g)</label>
+              <input type="number" id="meal-add-pro" min="0" required />
+            </div>
+            <div>
+              <label for="meal-add-cat">Category</label>
+              <select id="meal-add-cat">
+                <option value="lunch">Lunch</option>
+                <option value="snack">Snack</option>
+                <option value="peri">Peri-WO</option>
+                <option value="dinner">Dinner</option>
+              </select>
+            </div>
+            <div class="full-width">
+              <label for="meal-add-ingredients">Ingredients (comma-separated)</label>
+              <input
+                type="text"
+                id="meal-add-ingredients"
+                placeholder="chicken, rice, vegetables"
+              />
+            </div>
+            <button type="submit" class="btn-add-meal">+ Add to my library</button>
+          </form>
+          <div id="meals-empty-hint" class="meals-empty-hint" hidden>
+            Your library is empty. Add meals above, or import the optional example pack — new
+            accounts never get someone else’s menu by default.
           </div>
 
           <div class="meal-category-tabs">
@@ -2318,15 +2477,33 @@
       <footer class="footer">
         <strong>RECOMP</strong> · Built for <span id="footer-user-name">Zakeer</span> ·
         <span class="num" id="footer-date"></span><br />
-        <span style="opacity: 0.6">All data saved locally · No tracking · No accounts</span>
+        <span style="opacity: 0.6">Data saved to your account</span>
       </footer>
     </div>
+
+    <script>
+      window.FITNESS_SHARED_BASE = /\/dev\//.test(location.pathname)
+        ? "../../shared/"
+        : "../shared/";
+    </script>
+    <script>
+      document.write(
+        '<script src="' +
+          window.FITNESS_SHARED_BASE +
+          'auth-config.js" onerror="void 0"><\\/script>'
+      );
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'meal-library.js"><\\/script>');
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'fitness-auth.js"><\\/script>');
+    </script>
 
     <script>
       // ═══════════════════════════════════════════════════════════════════════
       // DATA: Meal library
       // ═══════════════════════════════════════════════════════════════════════
-      const MEALS = [
+      const STARTER_MEALS = [
         {
           id: "chicken-bowl",
           name: "Chicken Rice Bowl",
@@ -2505,7 +2682,7 @@
         },
       ];
 
-      const TODAY_PLAN = [
+      const STARTER_TODAY_PLAN = [
         { slot: "lunch", time: "12:00", mealId: "chicken-bowl", label: "Lunch" },
         { slot: "snack", time: "15:30", mealId: "yogurt-snack", label: "Snack" },
         { slot: "pre", time: "17:00", mealId: "pre-coffee", label: "Pre-WO" },
@@ -2514,11 +2691,13 @@
       ];
 
       // ═══════════════════════════════════════════════════════════════════════
-      // STATE (localStorage)
+      // STATE (per-user account + local cache)
       // ═══════════════════════════════════════════════════════════════════════
-      const STORAGE_KEY = "recomp-app-v1";
+      const APP_ID = "fitness";
+      const STORAGE_KEY = "fitness-app-v1";
+      const LEGACY_STORAGE_KEY = "recomp-app-v1";
       const DEFAULT_PROFILE = {
-        name: "Zakeer",
+        name: "",
         heightCm: 178,
         weightKg: 75,
         calWorkout: 2000,
@@ -2534,10 +2713,46 @@
         isWorkoutDay: true,
         mealsEaten: {},
         trackerData: {},
+        mealLibrary: [],
+        todayPlan: [],
       };
-      let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || defaultState;
+      let state = { ...defaultState };
+
+      function getLocalStorageKey() {
+        if (window.FitnessAuth && FitnessAuth.getSession()) {
+          return FitnessAuth.scopedStorageKey(STORAGE_KEY);
+        }
+        return STORAGE_KEY;
+      }
+
       function saveState() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (state._importStarterFromLegacy) delete state._importStarterFromLegacy;
+        if (window.FitnessAuth) {
+          FitnessAuth.scheduleCloudSave(APP_ID, state, STORAGE_KEY);
+        } else {
+          localStorage.setItem(getLocalStorageKey(), JSON.stringify(state));
+        }
+      }
+
+      async function loadStateForUser() {
+        if (window.FitnessAuth) {
+          const loaded = await FitnessAuth.hydrateStateFromCloud(APP_ID, STORAGE_KEY, defaultState);
+          state = { ...defaultState, ...loaded };
+        } else {
+          state = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "null") || {
+            ...defaultState,
+          };
+        }
+        migrateLegacyLocalStorage();
+        migrateStateMeals();
+      }
+
+      function applySessionToProfile() {
+        const sess = window.FitnessAuth && FitnessAuth.getSession();
+        if (!sess || !state.profile) return;
+        if (!String(state.profile.name || "").trim()) {
+          state.profile.name = sess.displayName || "You";
+        }
       }
 
       function migrateStateProfile() {
@@ -2590,9 +2805,164 @@
       // ═══════════════════════════════════════════════════════════════════════
       // HELPERS
       // ═══════════════════════════════════════════════════════════════════════
-      function getMeal(id) {
-        return MEALS.find((m) => m.id === id);
+      function getMealLibrary() {
+        return MealLibrary.getMealLibrary(state);
       }
+      function getTodayPlan() {
+        return MealLibrary.getTodayPlan(state);
+      }
+      function getMeal(id) {
+        return MealLibrary.getMeal(state, id);
+      }
+
+      function migrateLegacyLocalStorage() {
+        if (!LEGACY_STORAGE_KEY || LEGACY_STORAGE_KEY === STORAGE_KEY) return;
+        const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if (!raw) return;
+        try {
+          const old = JSON.parse(raw);
+          if (!old || typeof old !== "object") return;
+          let merged = false;
+          if (old.profile) {
+            state.profile = { ...old.profile, ...state.profile };
+            merged = true;
+          }
+          if (old.trackerData && Object.keys(old.trackerData).length) {
+            state.trackerData = { ...old.trackerData, ...state.trackerData };
+            merged = true;
+          }
+          if (old.mealsEaten && Object.keys(old.mealsEaten).length) {
+            state.mealsEaten = { ...old.mealsEaten, ...state.mealsEaten };
+            merged = true;
+          }
+          if (Array.isArray(old.mealLibrary) && old.mealLibrary.length) {
+            state.mealLibrary = old.mealLibrary;
+            merged = true;
+          }
+          if (Array.isArray(old.todayPlan) && old.todayPlan.length) {
+            state.todayPlan = old.todayPlan;
+            merged = true;
+          }
+          if (merged && !(Array.isArray(state.mealLibrary) && state.mealLibrary.length)) {
+            state._importStarterFromLegacy = true;
+          }
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        } catch (_) {}
+      }
+
+      function migrateStateMeals() {
+        if (!Array.isArray(state.mealLibrary)) state.mealLibrary = [];
+        if (!Array.isArray(state.todayPlan)) state.todayPlan = [];
+        if (state.mealLibrary.length === 0 && state._importStarterFromLegacy) {
+          state.mealLibrary = JSON.parse(JSON.stringify(STARTER_MEALS));
+          state.todayPlan = JSON.parse(JSON.stringify(STARTER_TODAY_PLAN));
+          delete state._importStarterFromLegacy;
+        }
+      }
+
+      function updateMealsSectionMeta() {
+        const n = getMealLibrary().length;
+        const sub = document.querySelector("#meals-section .section-subtitle");
+        if (sub)
+          sub.textContent = n
+            ? n + " meal" + (n === 1 ? "" : "s") + " in your library"
+            : "Build your own library";
+        const hint = document.getElementById("meals-empty-hint");
+        if (hint) hint.hidden = n > 0;
+      }
+
+      function importStarterMeals() {
+        if (
+          getMealLibrary().length &&
+          !confirm("Replace your meal library with the example pack?")
+        ) {
+          return;
+        }
+        state.mealLibrary = JSON.parse(JSON.stringify(STARTER_MEALS));
+        state.todayPlan = JSON.parse(JSON.stringify(STARTER_TODAY_PLAN));
+        saveState();
+        renderMeals(document.querySelector(".meal-cat-btn.active")?.dataset.cat || "all");
+        renderTodayMeals();
+        updateDashboardStats();
+        renderCharts();
+        updateMealsSectionMeta();
+      }
+
+      function addMealFromForm(e) {
+        e.preventDefault();
+        const name = document.getElementById("meal-add-name").value.trim();
+        if (!name) return;
+        const meal = {
+          id: MealLibrary.newMealId(),
+          name,
+          emoji: document.getElementById("meal-add-emoji").value.trim() || "🍽️",
+          cat: document.getElementById("meal-add-cat").value,
+          cal: Number(document.getElementById("meal-add-cal").value) || 0,
+          pro: Number(document.getElementById("meal-add-pro").value) || 0,
+          ingredients: MealLibrary.parseIngredients(
+            document.getElementById("meal-add-ingredients").value
+          ),
+        };
+        state.mealLibrary.push(meal);
+        saveState();
+        e.target.reset();
+        document.getElementById("meal-add-emoji").value = "🍽️";
+        renderMeals(document.querySelector(".meal-cat-btn.active")?.dataset.cat || "all");
+        updateMealsSectionMeta();
+      }
+
+      function pinMealToToday(mealId) {
+        const meal = getMeal(mealId);
+        if (!meal) return;
+        const plan = state.todayPlan;
+        if (plan.some((p) => p.mealId === mealId)) return;
+        const slots = ["breakfast", "lunch", "snack", "pre", "post", "dinner"];
+        const times = {
+          breakfast: "7:30",
+          lunch: "12:00",
+          snack: "15:30",
+          pre: "17:00",
+          post: "18:30",
+          dinner: "19:30",
+        };
+        let slot = slots.find((s) => !plan.some((p) => p.slot === s));
+        if (!slot) slot = "snack";
+        const label = meal.name.slice(0, 8);
+        const entry = {
+          slot,
+          time: times[slot] || "12:00",
+          mealId,
+          label,
+        };
+        const existingSlot = plan.findIndex((p) => p.slot === slot);
+        if (existingSlot >= 0) plan[existingSlot] = entry;
+        else plan.push(entry);
+        saveState();
+        renderTodayMeals();
+        updateDashboardStats();
+        renderCharts();
+      }
+
+      function removeMealFromLibrary(mealId) {
+        if (!confirm("Remove this meal from your library?")) return;
+        state.mealLibrary = getMealLibrary().filter((m) => m.id !== mealId);
+        state.todayPlan = getTodayPlan().filter((p) => p.mealId !== mealId);
+        saveState();
+        renderMeals(document.querySelector(".meal-cat-btn.active")?.dataset.cat || "all");
+        renderTodayMeals();
+        updateDashboardStats();
+        renderCharts();
+        updateMealsSectionMeta();
+      }
+
+      function initMealLibraryUI() {
+        const form = document.getElementById("meal-add-form");
+        if (form) form.addEventListener("submit", addMealFromForm);
+        const imp = document.getElementById("btn-import-starter-meals");
+        if (imp) imp.addEventListener("click", importStarterMeals);
+        updateMealsSectionMeta();
+      }
+
       function getCalTarget() {
         const p = getProfile();
         return state.isWorkoutDay ? p.calWorkout : p.calRest;
@@ -2636,24 +3006,32 @@
       function renderTodayMeals() {
         const container = document.getElementById("today-meals");
         container.innerHTML = "";
-        TODAY_PLAN.forEach((plan) => {
-          const meal = getMeal(plan.mealId);
-          const isEaten = state.mealsEaten[plan.slot];
+        const plan = getTodayPlan();
+        if (!plan.length) {
+          container.innerHTML =
+            '<div class="meals-empty-hint">No meals on today\'s board yet. Add meals in <strong>Meals</strong>, then tap <strong>Pin to today</strong>.</div>';
+          return;
+        }
+        plan.forEach((planItem) => {
+          const meal = getMeal(planItem.mealId);
+          if (!meal) return;
+          const isEaten = state.mealsEaten[planItem.slot];
           const el = document.createElement("div");
           el.className = "meal-item" + (isEaten ? " eaten" : "");
           el.innerHTML = `
-      <div class="meal-time">${plan.time}</div>
+      <div class="meal-time">${planItem.time}</div>
       <div class="meal-info">
-        <div class="meal-name">${meal.emoji} ${meal.name}</div>
+        <div class="meal-name">${meal.emoji} ${MealLibrary.escapeHtml(meal.name)}</div>
         <div class="meal-macros">${meal.cal} kcal · <span class="accent">${meal.pro}g protein</span></div>
       </div>
       <div class="meal-check"></div>
     `;
           el.addEventListener("click", () => {
-            state.mealsEaten[plan.slot] = !state.mealsEaten[plan.slot];
+            state.mealsEaten[planItem.slot] = !state.mealsEaten[planItem.slot];
             saveState();
             renderTodayMeals();
             updateDashboardStats();
+            renderCharts();
           });
           container.appendChild(el);
         });
@@ -2663,9 +3041,10 @@
         let cal = 0,
           pro = 0,
           mealsLogged = 0;
-        TODAY_PLAN.forEach((plan) => {
+        getTodayPlan().forEach((plan) => {
           if (state.mealsEaten[plan.slot]) {
             const meal = getMeal(plan.mealId);
+            if (!meal) return;
             cal += meal.cal;
             pro += meal.pro;
             mealsLogged++;
@@ -2711,17 +3090,21 @@
       // CHARTS (canvas-based, no libraries)
       // ═══════════════════════════════════════════════════════════════════════
       function renderCharts() {
+        const planSlots = getTodayPlan();
+        if (!planSlots.length) return;
         // Pie chart - Protein
         const pCanvas = document.getElementById("protein-chart");
         const pCtx = pCanvas.getContext("2d");
         pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
-        const data = TODAY_PLAN.map((p) => {
+        const data = getTodayPlan().map((p) => {
           const meal = getMeal(p.mealId);
+          if (!meal) return { label: p.label, value: 0, full: 0 };
           return { label: p.label, value: state.mealsEaten[p.slot] ? meal.pro : 0, full: meal.pro };
         });
 
         const total = data.reduce((s, d) => s + (d.value || d.full * 0.3), 0);
+        if (!total) return;
         const colors = ["#E94560", "#F39C12", "#4A9EFF", "#27AE60", "#9B59B6"];
         const cx = pCanvas.width / 2,
           cy = pCanvas.height / 2 - 10,
@@ -2770,8 +3153,9 @@
         const cCtx = cCanvas.getContext("2d");
         cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
 
-        const bdata = TODAY_PLAN.map((p) => {
+        const bdata = getTodayPlan().map((p) => {
           const meal = getMeal(p.mealId);
+          if (!meal) return { label: p.label, val: 0, full: 0 };
           return { label: p.label, val: state.mealsEaten[p.slot] ? meal.cal : 0, full: meal.cal };
         });
         const max = Math.max(...bdata.map((d) => d.full)) * 1.1;
@@ -2811,14 +3195,15 @@
       function renderMeals(filter = "all") {
         const container = document.getElementById("meal-cards");
         container.innerHTML = "";
-        const filtered = filter === "all" ? MEALS : MEALS.filter((m) => m.cat === filter);
+        const lib = getMealLibrary();
+        const filtered = filter === "all" ? lib : lib.filter((m) => m.cat === filter);
         filtered.forEach((meal) => {
           const card = document.createElement("div");
           card.className = "meal-card";
           card.innerHTML = `
       <div class="meal-card-top">
         <div>
-          <div class="meal-card-name">${meal.name}</div>
+          <div class="meal-card-name">${MealLibrary.escapeHtml(meal.name)}</div>
         </div>
         <div class="meal-card-emoji">${meal.emoji}</div>
       </div>
@@ -2826,11 +3211,21 @@
         <div class="stat-mini"><div class="stat-mini-val num">${meal.cal}</div><div class="stat-mini-lbl">kcal</div></div>
         <div class="stat-mini protein"><div class="stat-mini-val num">${meal.pro}g</div><div class="stat-mini-lbl">protein</div></div>
       </div>
-      <div class="ingredients">${meal.ingredients.map((i) => `<span class="ingredient-tag">${i}</span>`).join("")}</div>
-      <button class="log-btn">+ Log this meal</button>
+      <div class="ingredients">${(meal.ingredients || []).map((i) => `<span class="ingredient-tag">${MealLibrary.escapeHtml(i)}</span>`).join("")}</div>
+      <div class="meal-card-actions">
+        <button type="button" class="pin-today-btn" data-meal-id="${meal.id}">Pin to today</button>
+        <button type="button" class="remove-meal-btn" data-meal-id="${meal.id}">Remove</button>
+      </div>
     `;
+          card
+            .querySelector(".pin-today-btn")
+            .addEventListener("click", () => pinMealToToday(meal.id));
+          card
+            .querySelector(".remove-meal-btn")
+            .addEventListener("click", () => removeMealFromLibrary(meal.id));
           container.appendChild(card);
         });
+        updateMealsSectionMeta();
       }
 
       document.querySelectorAll(".meal-cat-btn").forEach((btn) => {
@@ -3363,20 +3758,44 @@
       // ═══════════════════════════════════════════════════════════════════════
       // INIT
       // ═══════════════════════════════════════════════════════════════════════
-      migrateStateProfile();
-      initUserMenu();
-      initProfile();
-      applyProfileToUI();
-      applyIbsTabVisibility();
-      renderHero();
-      renderWorkoutToggle();
-      renderTodayMeals();
-      updateDashboardStats();
-      renderMeals();
-      renderTracker();
-      renderIBS();
-      renderTips();
-      updateNavIndicator();
+      async function bootstrapApp() {
+        if (window.FitnessAuth) {
+          const ok = await FitnessAuth.requireAuth({ appId: APP_ID });
+          if (!ok) return;
+          await loadStateForUser();
+        } else {
+          state = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "null") || {
+            ...defaultState,
+          };
+          migrateLegacyLocalStorage();
+          migrateStateMeals();
+        }
+        migrateStateProfile();
+        applySessionToProfile();
+        saveState();
+        initUserMenu();
+        initProfile();
+        applyProfileToUI();
+        applyIbsTabVisibility();
+        renderHero();
+        renderWorkoutToggle();
+        renderTodayMeals();
+        updateDashboardStats();
+        renderMeals();
+        initMealLibraryUI();
+        renderTracker();
+        renderIBS();
+        renderTips();
+        updateNavIndicator();
+        const logoutBtn = document.getElementById("profile-logout-btn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            await FitnessAuth.signOut();
+            location.href = FitnessAuth.loginUrl();
+          });
+        }
+      }
+      bootstrapApp();
     </script>
   </body>
 </html>
