@@ -41,12 +41,12 @@ Install **VS Code** (free) and the **"Live Server"** extension. Then:
 
 ## 🌐 Live sites (auto-deploy)
 
-| Environment    | Branch | URL                                              |
-| -------------- | ------ | ------------------------------------------------ |
-| **Production** | `main` | https://zakeer07.github.io/fitness-websites/     |
-| **Dev**        | `dev`  | https://zakeer07.github.io/fitness-websites/dev/ |
+| Environment     | When                  | URL                                              |
+| --------------- | --------------------- | ------------------------------------------------ |
+| **Production**  | Merge to `main`       | https://zakeer07.github.io/fitness-websites/     |
+| **Dev preview** | Open a PR into `main` | https://zakeer07.github.io/fitness-websites/dev/ |
 
-Push to `dev` to preview changes. Merge `dev` → `main` when ready for production. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
+Branch off `main`, open a PR — the dev site shows your PR branch. Merge the PR for production. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 **Apps on production:**
 
