@@ -3,6 +3,7 @@
 A clean, mobile-first web app for tracking your body recomp plan. Built as a single HTML file — zero build steps, zero dependencies, works offline after first load.
 
 **Features:**
+
 - ⚡ Dashboard with daily progress ring, protein bar, and meal schedule
 - 🍽️ Browse 11 pre-loaded meal options by category
 - 📈 30-day tracker with workout toggle, per-meal protein input, and auto-calculated totals
@@ -16,6 +17,7 @@ A clean, mobile-first web app for tracking your body recomp plan. Built as a sin
 ## 🚀 Deploy to GitHub Pages (Free) — 5 Minutes
 
 ### Step 1: Create a GitHub repository
+
 1. Go to [github.com](https://github.com) and sign in (or create a free account)
 2. Click the **+** in the top-right → **New repository**
 3. Name it something like `recomp` or `meal-tracker`
@@ -24,12 +26,15 @@ A clean, mobile-first web app for tracking your body recomp plan. Built as a sin
 6. Click **Create repository**
 
 ### Step 2: Upload the files
+
 **Option A — Drag & drop (easiest):**
+
 1. On your new empty repo page, click **uploading an existing file**
 2. Drag `index.html` and `README.md` into the browser window
 3. Scroll down, click **Commit changes**
 
 **Option B — Git command line:**
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/recomp.git
 cd recomp
@@ -40,6 +45,7 @@ git push
 ```
 
 ### Step 3: Enable GitHub Pages
+
 1. In your repo, click **Settings** (top right of repo page)
 2. In the left sidebar, click **Pages**
 3. Under **Branch**, select `main` and `/ (root)`, click **Save**
@@ -47,6 +53,7 @@ git push
 5. You'll see: **"Your site is live at `https://YOUR_USERNAME.github.io/recomp/`"** 🎉
 
 ### Step 4: Open on your phone
+
 - Visit the URL above on your phone
 - In Safari: tap the **Share** icon → **Add to Home Screen**
 - In Chrome: tap the **⋮** menu → **Install app** or **Add to Home Screen**
@@ -69,6 +76,7 @@ After editing, commit the changes to GitHub and they'll auto-deploy in ~30 secon
 ---
 
 ## 📁 File Structure
+
 ```
 recomp/
 ├── index.html       # The entire app (HTML + CSS + JS)

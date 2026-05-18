@@ -3,6 +3,7 @@
 A mobile-first, IBS-friendly fitness tracker built specifically for Aadila's strength + shape goals.
 
 **Features:**
+
 - 🌸 **Dashboard** — Calorie progress ring, protein bar, gut status indicator
 - 🍽️ **Meals** — 14 IBS-friendly meal options across 5 categories (Breakfast / Lunch / Snack / Peri-WO / Dinner)
 - 🌿 **IBS Guide** — Complete safe foods + triggers reference with flare day adjustments
@@ -24,6 +25,7 @@ Suggested repo name: `bloom-tracker` or `aadila-fitness`
 ## 🎨 Customization
 
 All data lives inside `index.html`:
+
 - **MEALS** array — add/edit/remove meal options
 - **TODAY_PLAN** — adjust today's default meal slots
 - **TIPS** — update principles
