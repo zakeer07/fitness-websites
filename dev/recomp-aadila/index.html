@@ -8,56 +8,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg-primary: #0a0610;
-        --bg-secondary: #140a18;
-        --bg-card: rgba(28, 14, 36, 0.68);
-        --bg-card-solid: #1c0e24;
-        --bg-elevated: rgba(48, 22, 58, 0.9);
-        --accent: #f06292;
-        --accent-secondary: #ce93d8;
-        --accent-dim: #e91e63;
-        --accent-glow: rgba(240, 98, 146, 0.4);
-        --rose: #f48fb1;
-        --success: #3dd68c;
-        --warning: #ffc857;
+        --bg-primary: #1a0e1e;
+        --bg-secondary: #261426;
+        --bg-card: #321a33;
+        --bg-elevated: #3d2645;
+        --accent: #e91e63;
+        --accent-dim: #c2185b;
+        --rose: #f06292;
+        --success: #27ae60;
+        --warning: #f39c12;
         --gold: #ffb300;
-        --info: #b39ddb;
-        --text-primary: #fdf2f8;
-        --text-secondary: #c4a8c4;
+        --info: #6b3fa0;
+        --text-primary: #fdf0f7;
+        --text-secondary: #b8a4b8;
         --text-muted: #7a6478;
-        --border: rgba(255, 255, 255, 0.08);
-        --border-strong: rgba(255, 255, 255, 0.16);
-        --glass-highlight: rgba(255, 255, 255, 0.06);
-        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        --ease-spring: cubic-bezier(0.34, 1.35, 0.64, 1);
-        --radius-lg: 22px;
-        --radius-md: 16px;
-        --radius-sm: 12px;
-        --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-        --shadow-glow: 0 0 48px -12px var(--accent-glow);
+        --border: rgba(255, 255, 255, 0.06);
+        --border-strong: rgba(255, 255, 255, 0.12);
+        --grid: rgba(255, 255, 255, 0.025);
       }
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         -webkit-tap-highlight-color: transparent;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
-      html {
-        scroll-behavior: smooth;
       }
       html,
       body {
@@ -66,99 +44,31 @@
         font-family:
           "Inter",
           -apple-system,
-          BlinkMacSystemFont,
           sans-serif;
-        line-height: 1.55;
+        line-height: 1.5;
         min-height: 100vh;
         overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
       }
       body {
-        position: relative;
-      }
-      body::before,
-      body::after {
-        content: "";
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(90px);
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.55;
-        animation: orbDrift 22s var(--ease-out) infinite;
-      }
-      body::before {
-        width: min(55vw, 480px);
-        height: min(55vw, 480px);
-        top: -12%;
-        right: -8%;
-        background: radial-gradient(circle, rgba(240, 98, 146, 0.3) 0%, transparent 68%);
-      }
-      body::after {
-        width: min(50vw, 420px);
-        height: min(50vw, 420px);
-        bottom: 5%;
-        left: -12%;
-        background: radial-gradient(circle, rgba(186, 104, 200, 0.25) 0%, transparent 68%);
-        animation-delay: -11s;
-      }
-      @keyframes orbDrift {
-        0%,
-        100% {
-          transform: translate(0, 0) scale(1);
-        }
-        33% {
-          transform: translate(-24px, 16px) scale(1.06);
-        }
-        66% {
-          transform: translate(16px, -20px) scale(0.96);
-        }
-      }
-      @keyframes fadeSlideUp {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.96);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      @keyframes pulseDot {
-        0%,
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.7;
-          transform: scale(0.9);
-        }
-      }
-      @keyframes ringPulse {
-        0%,
-        100% {
-          filter: drop-shadow(0 0 6px rgba(240, 98, 146, 0.35));
-        }
-        50% {
-          filter: drop-shadow(0 0 14px rgba(240, 98, 146, 0.55));
-        }
+        background-image: radial-gradient(
+            ellipse at top right,
+            rgba(233, 30, 99, 0.1),
+            transparent 60%
+          ),
+          radial-gradient(ellipse at bottom left, rgba(107, 63, 160, 0.08), transparent 60%),
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size:
+          100% 100%,
+          100% 100%,
+          40px 40px,
+          40px 40px;
+        background-attachment: fixed;
       }
 
       .display {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
-        letter-spacing: -0.02em;
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.02em;
       }
       .mono {
         font-family: "JetBrains Mono", monospace;
@@ -173,8 +83,6 @@
         min-height: 100vh;
         max-width: 1400px;
         margin: 0 auto;
-        position: relative;
-        z-index: 1;
       }
       .container {
         padding: 24px;
@@ -218,16 +126,14 @@
         background: linear-gradient(135deg, var(--accent), var(--rose));
         display: grid;
         place-items: center;
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 22px;
         color: white;
         border-radius: 50%;
         box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
       }
       .logo-text {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 24px;
         letter-spacing: 0.05em;
       }
@@ -238,101 +144,149 @@
         text-transform: uppercase;
       }
 
-      .user-badge {
+      .user-menu {
+        position: relative;
+      }
+      .user-menu-trigger {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 12px;
+        padding: 6px 12px 6px 10px;
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 100px;
         font-size: 12px;
         color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
       }
-      .user-badge::before {
-        content: "";
+      .user-menu-trigger:hover,
+      .user-menu.open .user-menu-trigger {
+        border-color: var(--accent);
+        color: var(--text-primary);
+      }
+      .user-menu-dot {
         width: 6px;
         height: 6px;
-        background: var(--rose);
+        background: var(--success);
         border-radius: 50%;
-        box-shadow: 0 0 8px var(--rose);
+        box-shadow: 0 0 8px var(--success);
+        flex-shrink: 0;
+      }
+      .user-menu-chevron {
+        font-size: 10px;
+        opacity: 0.65;
+        transition: transform 0.2s;
+      }
+      .user-menu.open .user-menu-chevron {
+        transform: rotate(180deg);
+      }
+      .user-menu-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: min(420px, calc(100vw - 32px));
+        max-height: min(85vh, 720px);
+        overflow-y: auto;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px 18px 18px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition:
+          opacity 0.2s,
+          transform 0.2s,
+          visibility 0.2s;
+        z-index: 200;
+      }
+      .user-menu.open .user-menu-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .user-menu-panel-head {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .user-menu-panel-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 20px;
+        letter-spacing: 0.04em;
+      }
+      .user-menu-panel-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .user-menu-panel .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      @media (min-width: 400px) {
+        .user-menu-panel .profile-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .user-menu-panel .profile-group-wide {
+          grid-column: 1 / -1;
+        }
       }
 
       .nav-tabs {
         display: flex;
         gap: 4px;
-        padding: 5px;
+        padding: 6px;
         background: var(--bg-card);
-        backdrop-filter: blur(16px);
         border: 1px solid var(--border);
-        border-radius: var(--radius-md);
+        border-radius: 14px;
         overflow-x: auto;
         scrollbar-width: none;
         margin-bottom: 32px;
-        position: relative;
-        box-shadow: var(--shadow-card);
       }
       .nav-tabs::-webkit-scrollbar {
         display: none;
       }
-      .nav-indicator {
-        position: absolute;
-        top: 5px;
-        bottom: 5px;
-        left: 0;
-        border-radius: 11px;
-        background: linear-gradient(135deg, var(--accent), var(--rose));
-        box-shadow: var(--shadow-glow);
-        transition:
-          transform 0.5s var(--ease-out),
-          width 0.5s var(--ease-out);
-        z-index: 0;
-        pointer-events: none;
-      }
       .nav-tab {
         flex: 1;
         min-width: max-content;
-        padding: 11px 18px;
+        padding: 10px 16px;
         background: transparent;
         border: none;
         color: var(--text-secondary);
-        font-family: "Inter", sans-serif;
+        font-family: "Inter";
         font-weight: 600;
         font-size: 13px;
-        border-radius: 11px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: color 0.3s var(--ease-out);
+        transition: all 0.2s ease;
         display: flex;
         align-items: center;
         gap: 6px;
         justify-content: center;
         white-space: nowrap;
-        position: relative;
-        z-index: 1;
       }
       .nav-tab:hover {
         color: var(--text-primary);
       }
       .nav-tab.active {
+        background: linear-gradient(135deg, var(--accent), var(--rose));
         color: white;
+        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.35);
       }
 
       .card {
         background: var(--bg-card);
-        backdrop-filter: blur(20px);
         border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
+        border-radius: 18px;
         padding: 24px;
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-card);
-        transition:
-          transform 0.4s var(--ease-out),
-          border-color 0.4s var(--ease-out),
-          box-shadow 0.4s var(--ease-out);
-      }
-      .card:hover {
-        border-color: var(--border-strong);
       }
       .card-accent::before {
         content: "";
@@ -344,8 +298,7 @@
         background: linear-gradient(90deg, var(--accent), var(--rose), transparent);
       }
       .card-title {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 14px;
         letter-spacing: 0.2em;
         color: var(--text-secondary);
@@ -396,8 +349,7 @@
         margin-bottom: 4px;
       }
       .hero-date {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 32px;
         line-height: 1;
       }
@@ -421,18 +373,16 @@
         width: 160px;
         height: 160px;
         flex-shrink: 0;
-        animation: ringPulse 3s ease-in-out infinite;
       }
       .ring-svg {
         transform: rotate(-90deg);
       }
       .ring-bg {
-        stroke: rgba(255, 255, 255, 0.06);
+        stroke: var(--bg-elevated);
       }
       .ring-fill {
-        stroke: url(#ringGradient);
-        transition: stroke-dashoffset 1.2s var(--ease-out);
-        filter: drop-shadow(0 0 8px var(--accent-glow));
+        stroke: var(--accent);
+        transition: stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
       .ring-inner {
         position: absolute;
@@ -443,8 +393,7 @@
         justify-content: center;
       }
       .ring-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 42px;
         line-height: 1;
         display: flex;
@@ -565,13 +514,11 @@
       }
       .tracker-targets strong {
         color: var(--rose);
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 20px;
       }
       .left-cell {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 18px;
         color: var(--warning);
       }
@@ -609,8 +556,7 @@
         border-color: #5dade2;
       }
       .goal-met-cell {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 18px;
         text-align: center;
         color: var(--text-muted);
@@ -672,8 +618,7 @@
         text-transform: uppercase;
       }
       .stat-bar-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 22px;
       }
       .stat-bar-track {
@@ -717,8 +662,7 @@
         margin-bottom: 8px;
       }
       .kpi-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 28px;
         line-height: 1;
       }
@@ -771,8 +715,7 @@
         text-transform: uppercase;
       }
       .toggle-text-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 18px;
       }
       .toggle-switch {
@@ -885,10 +828,20 @@
 
       .section {
         display: none;
+        animation: fadeIn 0.4s ease;
       }
       .section.active {
         display: block;
-        animation: fadeSlideUp 0.55s var(--ease-out) both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .meal-category-tabs {
@@ -943,8 +896,7 @@
         margin-bottom: 14px;
       }
       .meal-card-name {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 22px;
         letter-spacing: 0.03em;
       }
@@ -962,8 +914,7 @@
         flex-direction: column;
       }
       .stat-mini-val {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 26px;
         line-height: 1;
       }
@@ -1129,8 +1080,7 @@
       }
 
       .total-cell {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 18px;
         color: var(--accent);
       }
@@ -1215,8 +1165,7 @@
         border: 1px solid rgba(233, 30, 99, 0.3);
       }
       .ibs-title {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 18px;
         letter-spacing: 0.05em;
       }
@@ -1262,8 +1211,7 @@
       }
       .footer strong {
         color: var(--text-secondary);
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         letter-spacing: 0.15em;
       }
 
@@ -1289,74 +1237,6 @@
         }
       }
 
-      /* Scroll parallax background photos */
-      .bg-decor {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        overflow: hidden;
-      }
-      .decor-item {
-        position: absolute;
-        border-radius: 28px;
-        overflow: hidden;
-        opacity: 0.15;
-        box-shadow: 0 28px 56px rgba(0, 0, 0, 0.5);
-        will-change: transform;
-        transform-origin: center center;
-      }
-      .decor-item::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(160deg, rgba(10, 6, 16, 0.1) 0%, rgba(10, 6, 16, 0.6) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-      }
-      .decor-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        filter: saturate(1.15) contrast(1.05);
-      }
-      .decor-gym {
-        top: 5%;
-        right: -4%;
-        width: min(36vw, 250px);
-        height: min(36vw, 250px);
-      }
-      .decor-fruit {
-        top: 36%;
-        left: -7%;
-        width: min(34vw, 215px);
-        height: min(34vw, 215px);
-        border-radius: 50%;
-      }
-      .decor-meal {
-        top: 60%;
-        right: 1%;
-        width: min(32vw, 195px);
-        height: min(32vw, 195px);
-      }
-      .decor-protein {
-        top: 80%;
-        left: 3%;
-        width: min(30vw, 185px);
-        height: min(30vw, 185px);
-        border-radius: 50%;
-      }
-      @media (max-width: 900px) {
-        .decor-item {
-          opacity: 0.09;
-        }
-        .decor-protein,
-        .decor-meal {
-          display: none;
-        }
-      }
-
       .section-header {
         display: flex;
         align-items: baseline;
@@ -1366,8 +1246,7 @@
         border-bottom: 1px solid var(--border);
       }
       .section-title {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
+        font-family: "Bebas Neue";
         font-size: 32px;
         letter-spacing: 0.02em;
         line-height: 1;
@@ -1401,61 +1280,116 @@
         margin-top: 16px;
         text-align: center;
       }
+
+      /* Profile */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      @media (min-width: 640px) {
+        .profile-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (min-width: 960px) {
+        .profile-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .profile-group {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+      }
+      .profile-group-title {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+      }
+      .profile-field {
+        margin-bottom: 12px;
+      }
+      .profile-field:last-child {
+        margin-bottom: 0;
+      }
+      .profile-field label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        letter-spacing: 0.04em;
+      }
+      .profile-field input {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text-primary);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+      }
+      .profile-field input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .profile-field .field-hint {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .profile-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .profile-save-btn {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, var(--accent), var(--rose));
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .profile-save-btn:hover {
+        opacity: 0.9;
+      }
+      .profile-saved-msg {
+        font-size: 13px;
+        color: var(--success);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .profile-saved-msg.show {
+        opacity: 1;
+      }
+      .meals-target-banner {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        background: rgba(233, 30, 99, 0.08);
+        border: 1px solid rgba(233, 30, 99, 0.22);
+        border-radius: 12px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.55;
+      }
+      .meals-target-banner strong {
+        color: var(--text-primary);
+      }
     </style>
   </head>
   <body>
-    <div class="bg-decor" aria-hidden="true">
-      <div class="decor-item decor-gym" data-parallax="0.12" data-rotate="0.05" data-base-rot="-10">
-        <img
-          src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=520&q=75&auto=format&fit=crop"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          width="250"
-          height="250"
-        />
-      </div>
-      <div
-        class="decor-item decor-fruit"
-        data-parallax="0.24"
-        data-rotate="0.16"
-        data-base-rot="18"
-      >
-        <img
-          src="https://images.unsplash.com/photo-1511690743698-d9d85f2f343e?w=520&q=75&auto=format&fit=crop"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          width="215"
-          height="215"
-        />
-      </div>
-      <div class="decor-item decor-meal" data-parallax="0.17" data-rotate="-0.05" data-base-rot="4">
-        <img
-          src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=520&q=75&auto=format&fit=crop"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          width="195"
-          height="195"
-        />
-      </div>
-      <div
-        class="decor-item decor-protein"
-        data-parallax="0.28"
-        data-rotate="0.11"
-        data-base-rot="-12"
-      >
-        <img
-          src="https://images.unsplash.com/photo-1498837167922-ddd275dff130?w=520&q=75&auto=format&fit=crop"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          width="185"
-          height="185"
-        />
-      </div>
-    </div>
     <div class="app">
       <header class="header">
         <div class="header-inner">
@@ -1466,7 +1400,95 @@
               <div class="logo-subtext">Strength & Shape</div>
             </div>
           </div>
-          <div class="user-badge"><span>Aadila</span></div>
+          <div class="user-menu" id="user-menu">
+            <button
+              type="button"
+              class="user-menu-trigger"
+              id="user-menu-trigger"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="user-menu-panel"
+            >
+              <span class="user-menu-dot" aria-hidden="true"></span>
+              <span id="user-name">Aadila</span>
+              <span class="user-menu-chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-menu-panel" id="user-menu-panel" hidden>
+              <div class="user-menu-panel-head">
+                <div class="user-menu-panel-title">Profile & targets</div>
+                <p class="user-menu-panel-sub">Body stats and daily goals · saved on this device</p>
+              </div>
+              <div class="profile-grid">
+                <div class="profile-group">
+                  <div class="profile-group-title">About you</div>
+                  <div class="profile-field">
+                    <label for="profile-name">Display name</label>
+                    <input type="text" id="profile-name" autocomplete="name" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-height-cm">Height (cm)</label>
+                    <input type="number" id="profile-height-cm" min="100" max="250" step="0.1" />
+                    <div class="field-hint">Dashboard shows ft/in</div>
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-weight-kg">Weight (kg)</label>
+                    <input type="number" id="profile-weight-kg" min="30" max="200" step="0.1" />
+                  </div>
+                </div>
+                <div class="profile-group">
+                  <div class="profile-group-title">Calories (kcal)</div>
+                  <div class="profile-field">
+                    <label for="profile-cal-workout">Workout day</label>
+                    <input type="number" id="profile-cal-workout" min="800" max="6000" step="10" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-cal-rest">Rest day</label>
+                    <input type="number" id="profile-cal-rest" min="800" max="6000" step="10" />
+                  </div>
+                </div>
+                <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Protein & hydration</div>
+                  <div class="profile-field">
+                    <label for="profile-protein-g">Protein goal (g/day)</label>
+                    <input type="number" id="profile-protein-g" min="40" max="300" step="1" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-protein-almost-min">Almost threshold (g)</label>
+                    <input
+                      type="number"
+                      id="profile-protein-almost-min"
+                      min="0"
+                      max="300"
+                      step="1"
+                    />
+                    <div class="field-hint">Tracker “almost” when above this but below goal</div>
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-water-bottles">Water goal (bottles)</label>
+                    <input type="number" id="profile-water-bottles" min="1" max="30" step="1" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-water-bottle-ml">Bottle size (ml)</label>
+                    <input
+                      type="number"
+                      id="profile-water-bottle-ml"
+                      min="100"
+                      max="2000"
+                      step="50"
+                    />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-creatine-g">Creatine (g)</label>
+                    <input type="number" id="profile-creatine-g" min="0" max="20" step="0.5" />
+                  </div>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
+                <span class="profile-saved-msg" id="profile-saved-msg">Saved</span>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -1515,12 +1537,6 @@
             <div class="progress-wrapper">
               <div class="ring-container">
                 <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
-                  <defs>
-                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#f06292" />
-                      <stop offset="100%" stop-color="#ce93d8" />
-                    </linearGradient>
-                  </defs>
                   <circle class="ring-bg" cx="80" cy="80" r="68" fill="none" stroke-width="10" />
                   <circle
                     class="ring-fill"
@@ -1551,7 +1567,8 @@
                   <div class="stat-bar-top">
                     <div class="stat-bar-label">💪 Protein (grams)</div>
                     <div class="stat-bar-value num">
-                      <span id="prot-current">0</span><span class="kpi-unit">g</span> / 100g daily
+                      <span id="prot-current">0</span><span class="kpi-unit">g</span> /
+                      <span id="prot-goal-label">90</span><span class="kpi-unit">g</span> daily
                     </div>
                   </div>
                   <div class="stat-bar-track">
@@ -1592,12 +1609,12 @@
             <div class="kpi">
               <div class="kpi-icon">👤</div>
               <div class="kpi-label">Height</div>
-              <div class="kpi-value num">5'3"</div>
+              <div class="kpi-value num" id="kpi-height">5'5"</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">⚖️</div>
               <div class="kpi-label">Weight</div>
-              <div class="kpi-value num">53<span class="kpi-unit">kg</span></div>
+              <div class="kpi-value num" id="kpi-weight">62<span class="kpi-unit">kg</span></div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🎯</div>
@@ -1609,7 +1626,9 @@
             <div class="kpi">
               <div class="kpi-icon">💪</div>
               <div class="kpi-label">Protein goal</div>
-              <div class="kpi-value num">90-105<span class="kpi-unit">g</span></div>
+              <div class="kpi-value num">
+                <span id="kpi-protein">90</span><span class="kpi-unit">g</span>
+              </div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🏋️</div>
@@ -1639,12 +1658,15 @@
         </section>
 
         <section class="section" id="meals-section">
+          <div id="meals-target-banner" class="meals-target-banner" role="status"></div>
           <div class="section-header">
             <div>
               <div class="section-title">Meal Library</div>
               <div class="section-subtitle">IBS-friendly options</div>
             </div>
-            <div class="section-meta"><strong>90-105g</strong> protein daily</div>
+            <div class="section-meta" id="meals-meta-target">
+              <strong>90g</strong> protein target
+            </div>
           </div>
           <div class="meal-category-tabs">
             <button class="meal-cat-btn active" data-cat="all">All</button>
@@ -1732,8 +1754,10 @@
               ><span class="cell-unit">g</span> / day</span
             >
             <span
-              >Water target: <strong>3</strong><span class="cell-unit">L</span> ·
-              <strong>6</strong> × 500ml bottles</span
+              >Water target: <strong id="tracker-water-liters">3</strong
+              ><span class="cell-unit">L</span> · <strong id="tracker-water-bottles">6</strong> ×
+              <strong id="tracker-bottle-ml">500</strong
+              ><span class="cell-unit">ml</span> bottles</span
             >
             <span style="opacity: 0.85"
               ><strong>Left</strong> columns = still to hit daily target</span
@@ -1778,11 +1802,15 @@
                     Cal target<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
                   <th colspan="5" class="th-group">Protein per meal — enter grams (g)</th>
-                  <th rowspan="2" class="th-hydro" title="5g creatine">
-                    Cre<br /><span style="font-weight: 500; opacity: 0.8">5g</span>
+                  <th rowspan="2" class="th-hydro" id="tracker-creatine-th" title="5g creatine">
+                    Cre<br /><span style="font-weight: 500; opacity: 0.8"
+                      ><span id="tracker-creatine-g">5</span>g</span
+                    >
                   </th>
                   <th rowspan="2" class="th-hydro">
-                    💧<br /><span style="font-weight: 500; opacity: 0.8">500ml</span>
+                    💧<br /><span style="font-weight: 500; opacity: 0.8"
+                      ><span id="tracker-table-bottle-ml">500</span>ml</span
+                    >
                   </th>
                   <th rowspan="2" class="th-hydro">H₂O left</th>
                   <th rowspan="2" class="th-pro">
@@ -1817,7 +1845,8 @@
       </main>
 
       <footer class="footer">
-        <strong>BLOOM</strong> · Built for Aadila · <span class="num" id="footer-date"></span><br />
+        <strong>BLOOM</strong> · Built for <span id="footer-user-name">Aadila</span> ·
+        <span class="num" id="footer-date"></span><br />
         <span style="opacity: 0.6">All data saved locally · No tracking · IBS-aware</span>
       </footer>
     </div>
@@ -2056,17 +2085,70 @@
       ];
 
       const STORAGE_KEY = "bloom-app-v1";
+      const DEFAULT_PROFILE = {
+        name: "Aadila",
+        heightCm: 165,
+        weightKg: 62,
+        calWorkout: 1900,
+        calRest: 1700,
+        proteinG: 90,
+        proteinAlmostMin: 75,
+        waterBottles: 6,
+        waterBottleMl: 500,
+        creatineG: 5,
+      };
       const defaultState = { isWorkoutDay: true, mealsEaten: {}, trackerData: {} };
       let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || defaultState;
       function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
+      function migrateStateProfile() {
+        const prev = state.profile && typeof state.profile === "object" ? state.profile : {};
+        const merged = { ...DEFAULT_PROFILE, ...prev };
+        const numericKeys = [
+          "heightCm",
+          "weightKg",
+          "calWorkout",
+          "calRest",
+          "proteinG",
+          "proteinAlmostMin",
+          "waterBottles",
+          "waterBottleMl",
+          "creatineG",
+        ];
+        for (const k of numericKeys) {
+          const n = Number(merged[k]);
+          merged[k] = Number.isFinite(n) ? n : DEFAULT_PROFILE[k];
+        }
+        merged.name = String(merged.name || DEFAULT_PROFILE.name).trim() || DEFAULT_PROFILE.name;
+        state.profile = merged;
+        saveState();
+      }
+
+      function getProfile() {
+        return state.profile;
+      }
+
+      function formatHeightImperial(cm) {
+        const n = Number(cm);
+        if (!Number.isFinite(n) || n <= 0) return "—";
+        const totalIn = Math.round(n / 2.54);
+        const ft = Math.floor(totalIn / 12);
+        const inch = totalIn % 12;
+        return `${ft}'${inch}"`;
+      }
+
+      function waterGoalLiters(p) {
+        return (p.waterBottles * p.waterBottleMl) / 1000;
+      }
+
       function getMeal(id) {
         return MEALS.find((m) => m.id === id);
       }
       function getCalTarget() {
-        return state.isWorkoutDay ? 1900 : 1700;
+        const p = getProfile();
+        return state.isWorkoutDay ? p.calWorkout : p.calRest;
       }
       const monthNames = [
         "Jan",
@@ -2103,7 +2185,8 @@
           `${fmtDate(now)}, ${now.getFullYear()}`;
         const hour = now.getHours();
         const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-        document.getElementById("greeting").textContent = greeting + ", Aadila 🌸";
+        const who = getProfile().name;
+        document.getElementById("greeting").textContent = `${greeting}, ${who} 🌸`;
       }
 
       function renderTodayMeals() {
@@ -2153,7 +2236,10 @@
         const circumference = 2 * Math.PI * 68;
         const ringFill = Math.min(cal / target, 1);
         document.getElementById("cal-ring").style.strokeDashoffset = circumference * (1 - ringFill);
-        document.getElementById("prot-fill").style.width = Math.min((pro / 100) * 100, 100) + "%";
+        const p = getProfile();
+        document.getElementById("prot-goal-label").textContent = p.proteinG;
+        document.getElementById("prot-fill").style.width =
+          Math.min((pro / p.proteinG) * 100, 100) + "%";
         document.getElementById("meals-fill").style.width = (mealsLogged / 5) * 100 + "%";
         renderCharts();
       }
@@ -2202,7 +2288,7 @@
         pCtx.fillStyle = "#321A33";
         pCtx.fill();
         pCtx.fillStyle = "#FDF0F7";
-        pCtx.font = "bold 22px Syne, sans-serif";
+        pCtx.font = "bold 24px Bebas Neue";
         pCtx.textAlign = "center";
         pCtx.fillText(data.reduce((s, d) => s + d.value, 0) + "g", cx, cy + 3);
         pCtx.font = "10px Inter";
@@ -2248,7 +2334,7 @@
             cCtx.fillRect(x, baseY - h, bw, h);
           }
           cCtx.fillStyle = d.val > 0 ? "#FDF0F7" : "#7A6478";
-          cCtx.font = "bold 12px Syne, sans-serif";
+          cCtx.font = "bold 13px Bebas Neue";
           cCtx.textAlign = "center";
           cCtx.fillText(d.val || d.full, x + bw / 2, baseY - fullH - 6);
           cCtx.fillStyle = "#B8A4B8";
@@ -2289,6 +2375,101 @@
         });
       });
 
+      function initProfile() {
+        const p = getProfile();
+        document.getElementById("profile-name").value = p.name;
+        document.getElementById("profile-height-cm").value = p.heightCm;
+        document.getElementById("profile-weight-kg").value = p.weightKg;
+        document.getElementById("profile-cal-workout").value = p.calWorkout;
+        document.getElementById("profile-cal-rest").value = p.calRest;
+        document.getElementById("profile-protein-g").value = p.proteinG;
+        document.getElementById("profile-protein-almost-min").value = p.proteinAlmostMin;
+        document.getElementById("profile-water-bottles").value = p.waterBottles;
+        document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
+        document.getElementById("profile-creatine-g").value = p.creatineG;
+      }
+
+      function applyProfileToUI() {
+        const p = getProfile();
+        const setText = (id, text) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = text;
+        };
+        setText("user-name", p.name);
+        setText("footer-user-name", p.name);
+        setText("kpi-height", formatHeightImperial(p.heightCm));
+        const kw = document.getElementById("kpi-weight");
+        if (kw) kw.innerHTML = `${p.weightKg}<span class="kpi-unit">kg</span>`;
+        setText("kpi-protein", String(p.proteinG));
+        const kcal = document.getElementById("kpi-cal");
+        if (kcal) kcal.textContent = String(getCalTarget());
+        setText("prot-goal-label", String(p.proteinG));
+        setText("tracker-pro-goal", String(p.proteinG));
+        const liters = waterGoalLiters(p);
+        const litersDisp =
+          Math.abs(liters - Math.round(liters)) < 1e-6
+            ? String(Math.round(liters))
+            : liters.toFixed(1);
+        setText("tracker-water-liters", litersDisp);
+        setText("tracker-water-bottles", String(p.waterBottles));
+        setText("tracker-bottle-ml", String(p.waterBottleMl));
+        setText("tracker-table-bottle-ml", String(p.waterBottleMl));
+        setText("tracker-creatine-g", String(p.creatineG));
+        const cTh = document.getElementById("tracker-creatine-th");
+        if (cTh) cTh.title = `${p.creatineG}g creatine`;
+        const mealsMeta = document.getElementById("meals-meta-target");
+        if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
+        updateMealsBanner();
+      }
+
+      function updateMealsBanner() {
+        const el = document.getElementById("meals-target-banner");
+        if (!el) return;
+        const p = getProfile();
+        el.innerHTML = `Use this library to build meals that match your profile: about <strong>${p.calWorkout} kcal</strong> on workout days, <strong>${p.calRest} kcal</strong> on rest days, and roughly <strong>${p.proteinG}g</strong> protein.`;
+      }
+
+      function saveProfileFromForm() {
+        const readNum = (id, fallback) => {
+          const v = parseFloat(document.getElementById(id).value);
+          return Number.isFinite(v) ? v : fallback;
+        };
+        const readInt = (id, fallback) => {
+          const v = parseInt(document.getElementById(id).value, 10);
+          return Number.isFinite(v) ? v : fallback;
+        };
+        const nameRaw = document.getElementById("profile-name").value.trim();
+        state.profile = {
+          ...getProfile(),
+          name: nameRaw || DEFAULT_PROFILE.name,
+          heightCm: readNum("profile-height-cm", DEFAULT_PROFILE.heightCm),
+          weightKg: readNum("profile-weight-kg", DEFAULT_PROFILE.weightKg),
+          calWorkout: readInt("profile-cal-workout", DEFAULT_PROFILE.calWorkout),
+          calRest: readInt("profile-cal-rest", DEFAULT_PROFILE.calRest),
+          proteinG: readInt("profile-protein-g", DEFAULT_PROFILE.proteinG),
+          proteinAlmostMin: readInt("profile-protein-almost-min", DEFAULT_PROFILE.proteinAlmostMin),
+          waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
+          waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
+          creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
+        };
+        saveState();
+        initProfile();
+        applyProfileToUI();
+        renderHero();
+        updateDashboardStats();
+        renderTracker();
+        const msg = document.getElementById("profile-saved-msg");
+        if (msg) {
+          msg.classList.add("show");
+          setTimeout(() => msg.classList.remove("show"), 1800);
+        }
+        closeUserMenu();
+      }
+
+      document.getElementById("profile-save-btn").addEventListener("click", () => {
+        saveProfileFromForm();
+      });
+
       function renderIBS() {
         const safe = document.getElementById("safe-foods");
         safe.innerHTML = SAFE_FOODS.map(
@@ -2310,12 +2491,6 @@
         ).join("");
       }
 
-      const CREATINE_G = 5;
-      const WATER_BOTTLE_ML = 500;
-      const WATER_GOAL_BOTTLES = 6; // 3L
-
-      const PRO_GOAL = 90;
-      const PRO_ALMOST_MIN = 75; // above this (and below 90g goal) = almost
       const TRACKER_START = new Date(2026, 4, 7);
       const TRACKER_PRO_FIELDS = ["breakfast", "lunch", "snack", "shake", "dinner"];
 
@@ -2379,13 +2554,15 @@
       }
 
       function computeTrackerDay(dayData) {
-        const target = dayData.isWorkout ? 1900 : 1700;
+        const p = getProfile();
+        const target = dayData.isWorkout ? p.calWorkout : p.calRest;
         const total = getTrackerDayTotal(dayData);
-        const left = Math.max(0, PRO_GOAL - total);
+        const left = Math.max(0, p.proteinG - total);
         const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
-        const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
-        const proGoalTier = getProteinGoalTier(total, PRO_GOAL, PRO_ALMOST_MIN);
-        const waterGoalTier = getWaterGoalTier(bottles, WATER_GOAL_BOTTLES);
+        const waterGoalBottles = p.waterBottles;
+        const waterLeft = Math.max(0, waterGoalBottles - bottles);
+        const proGoalTier = getProteinGoalTier(total, p.proteinG, p.proteinAlmostMin);
+        const waterGoalTier = getWaterGoalTier(bottles, waterGoalBottles);
         const proGoalMet = proGoalTier === "met";
         const waterGoalMet = waterGoalTier === "met";
 
@@ -2441,6 +2618,7 @@
       }
 
       function updateTrackerSummary() {
+        const p = getProfile();
         let totalWO = 0,
           sumP = 0,
           daysWithP = 0,
@@ -2467,12 +2645,12 @@
           const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
           if (dayData.isWorkout) totalWO++;
           if (dayData.creatine) creatineDays++;
-          if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
+          if (bottles >= p.waterBottles) waterMet++;
           if (total > 0) {
             sumP += total;
             daysWithP++;
           }
-          if (total >= PRO_GOAL) proMet++;
+          if (total >= p.proteinG) proMet++;
         }
         document.getElementById("sum-workouts").textContent = totalWO;
         document.getElementById("sum-protein").textContent =
@@ -2487,6 +2665,8 @@
         const rows = document.getElementById("tracker-rows");
         rows.innerHTML = "";
         const today = new Date();
+        const p = getProfile();
+
         for (let i = 0; i < 30; i++) {
           const d = new Date(start);
           d.setDate(d.getDate() + i);
@@ -2535,8 +2715,8 @@
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
-      <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="5g creatine"></div></td>
-      <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
+      <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="${p.creatineG}g creatine"></div></td>
+      <td><input class="water-input num" type="number" min="0" max="24" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="${p.waterBottleMl}ml bottles"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
       <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
@@ -2586,20 +2766,37 @@
         });
       }
 
-      function updateNavIndicator() {
-        const nav = document.querySelector(".nav-tabs");
-        const active = document.querySelector(".nav-tab.active");
-        if (!nav || !active) return;
-        let indicator = nav.querySelector(".nav-indicator");
-        if (!indicator) {
-          indicator = document.createElement("span");
-          indicator.className = "nav-indicator";
-          nav.prepend(indicator);
-        }
-        const navRect = nav.getBoundingClientRect();
-        const rect = active.getBoundingClientRect();
-        indicator.style.width = rect.width + "px";
-        indicator.style.transform = "translateX(" + (rect.left - navRect.left) + "px)";
+      function setUserMenuOpen(open) {
+        const menu = document.getElementById("user-menu");
+        const trigger = document.getElementById("user-menu-trigger");
+        const panel = document.getElementById("user-menu-panel");
+        if (!menu || !trigger || !panel) return;
+        menu.classList.toggle("open", open);
+        trigger.setAttribute("aria-expanded", open ? "true" : "false");
+        panel.hidden = !open;
+      }
+
+      function closeUserMenu() {
+        setUserMenuOpen(false);
+      }
+
+      function initUserMenu() {
+        const menu = document.getElementById("user-menu");
+        const trigger = document.getElementById("user-menu-trigger");
+        const panel = document.getElementById("user-menu-panel");
+        if (!menu || !trigger || !panel) return;
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setUserMenuOpen(!menu.classList.contains("open"));
+        });
+
+        panel.addEventListener("click", (e) => e.stopPropagation());
+
+        document.addEventListener("click", () => closeUserMenu());
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeUserMenu();
+        });
       }
 
       document.querySelectorAll(".nav-tab").forEach((tab) => {
@@ -2608,36 +2805,14 @@
           document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
           tab.classList.add("active");
           document.getElementById(tab.dataset.tab + "-section").classList.add("active");
-          updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
-      window.addEventListener("resize", updateNavIndicator);
 
-      let decorScrollPending = false;
-      function updateScrollDecor() {
-        const y = window.scrollY;
-        document.querySelectorAll(".decor-item").forEach((el) => {
-          const parallax = parseFloat(el.dataset.parallax) || 0.15;
-          const rotSpeed = parseFloat(el.dataset.rotate) || 0.08;
-          const baseRot = parseFloat(el.dataset.baseRot) || 0;
-          el.style.transform =
-            "translate3d(0, " + y * parallax + "px, 0) rotate(" + (baseRot + y * rotSpeed) + "deg)";
-        });
-        decorScrollPending = false;
-      }
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!decorScrollPending) {
-            decorScrollPending = true;
-            requestAnimationFrame(updateScrollDecor);
-          }
-        },
-        { passive: true }
-      );
-      updateScrollDecor();
-
+      migrateStateProfile();
+      initUserMenu();
+      initProfile();
+      applyProfileToUI();
       renderHero();
       renderWorkoutToggle();
       renderTodayMeals();
@@ -2646,7 +2821,6 @@
       renderIBS();
       renderTracker();
       renderTips();
-      updateNavIndicator();
     </script>
   </body>
 </html>
