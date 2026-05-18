@@ -1870,7 +1870,9 @@
             <div class="user-menu-panel" id="user-menu-panel" hidden>
               <div class="user-menu-panel-head">
                 <div class="user-menu-panel-title">Profile & targets</div>
-                <p class="user-menu-panel-sub">Body stats and daily goals · saved on this device</p>
+                <p class="user-menu-panel-sub" id="profile-sync-hint">
+                  Body stats & daily goals · saved to your account
+                </p>
               </div>
               <div class="profile-grid">
                 <div class="profile-group">
@@ -1948,6 +1950,23 @@
               <div class="profile-actions">
                 <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
                 <span class="profile-saved-msg" id="profile-saved-msg">Saved</span>
+              </div>
+              <div
+                class="profile-actions"
+                style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border)"
+              >
+                <button
+                  type="button"
+                  class="profile-save-btn"
+                  id="profile-logout-btn"
+                  style="
+                    background: transparent;
+                    border: 1px solid var(--border-strong);
+                    color: var(--text-secondary);
+                  "
+                >
+                  Log out
+                </button>
               </div>
             </div>
           </div>
@@ -2318,9 +2337,26 @@
       <footer class="footer">
         <strong>RECOMP</strong> · Built for <span id="footer-user-name">Zakeer</span> ·
         <span class="num" id="footer-date"></span><br />
-        <span style="opacity: 0.6">All data saved locally · No tracking · No accounts</span>
+        <span style="opacity: 0.6">Data saved to your account</span>
       </footer>
     </div>
+
+    <script>
+      window.FITNESS_SHARED_BASE = /\/dev\//.test(location.pathname)
+        ? "../../shared/"
+        : "../shared/";
+    </script>
+    <script>
+      document.write(
+        '<script src="' +
+          window.FITNESS_SHARED_BASE +
+          'auth-config.js" onerror="void 0"><\\/script>'
+      );
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'fitness-auth.js"><\\/script>');
+    </script>
 
     <script>
       // ═══════════════════════════════════════════════════════════════════════
@@ -2514,8 +2550,9 @@
       ];
 
       // ═══════════════════════════════════════════════════════════════════════
-      // STATE (localStorage)
+      // STATE (per-user account + local cache)
       // ═══════════════════════════════════════════════════════════════════════
+      const APP_ID = "recomp-zakeer";
       const STORAGE_KEY = "recomp-app-v1";
       const DEFAULT_PROFILE = {
         name: "Zakeer",
@@ -2535,9 +2572,31 @@
         mealsEaten: {},
         trackerData: {},
       };
-      let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || defaultState;
+      let state = { ...defaultState };
+
       function saveState() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (window.FitnessAuth) {
+          FitnessAuth.scheduleCloudSave(APP_ID, state, STORAGE_KEY);
+        } else {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+      }
+
+      async function loadStateForUser() {
+        if (window.FitnessAuth) {
+          const loaded = await FitnessAuth.hydrateStateFromCloud(APP_ID, STORAGE_KEY, defaultState);
+          state = { ...defaultState, ...loaded };
+        } else {
+          state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || { ...defaultState };
+        }
+      }
+
+      function applySessionToProfile() {
+        const sess = window.FitnessAuth && FitnessAuth.getSession();
+        if (!sess || !state.profile) return;
+        if (!state.profile.name || state.profile.name === DEFAULT_PROFILE.name) {
+          state.profile.name = sess.displayName || DEFAULT_PROFILE.name;
+        }
       }
 
       function migrateStateProfile() {
@@ -3363,20 +3422,39 @@
       // ═══════════════════════════════════════════════════════════════════════
       // INIT
       // ═══════════════════════════════════════════════════════════════════════
-      migrateStateProfile();
-      initUserMenu();
-      initProfile();
-      applyProfileToUI();
-      applyIbsTabVisibility();
-      renderHero();
-      renderWorkoutToggle();
-      renderTodayMeals();
-      updateDashboardStats();
-      renderMeals();
-      renderTracker();
-      renderIBS();
-      renderTips();
-      updateNavIndicator();
+      async function bootstrapApp() {
+        if (window.FitnessAuth) {
+          const ok = await FitnessAuth.requireAuth({ appId: APP_ID });
+          if (!ok) return;
+          await loadStateForUser();
+        } else {
+          state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || { ...defaultState };
+        }
+        migrateStateProfile();
+        applySessionToProfile();
+        saveState();
+        initUserMenu();
+        initProfile();
+        applyProfileToUI();
+        applyIbsTabVisibility();
+        renderHero();
+        renderWorkoutToggle();
+        renderTodayMeals();
+        updateDashboardStats();
+        renderMeals();
+        renderTracker();
+        renderIBS();
+        renderTips();
+        updateNavIndicator();
+        const logoutBtn = document.getElementById("profile-logout-btn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            await FitnessAuth.signOut();
+            location.href = FitnessAuth.loginUrl();
+          });
+        }
+      }
+      bootstrapApp();
     </script>
   </body>
 </html>
