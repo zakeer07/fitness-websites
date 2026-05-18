@@ -15,7 +15,7 @@ fitness-apps/
     └── .nojekyll
 ```
 
-Each app is **completely self-contained** — one HTML file with everything: design, code, data, and storage. No installation, no build tools, no servers. Just open and use.
+Each app is one HTML file with design, code, and storage. **Sign in** at the site home page first ([accounts guide](docs/AUTH.md)) — then open RECOMP or BLOOM to track meals and set your goals.
 
 ---
 
@@ -23,9 +23,8 @@ Each app is **completely self-contained** — one HTML file with everything: des
 
 1. **Unzip this folder** to anywhere on your computer (Documents is great)
 2. Open the `fitness-apps` folder
-3. Go into either `recomp-zakeer` or `recomp-aadila`
-4. **Double-click `index.html`** — it opens in your browser
-5. Use the app — everything works including localStorage saving
+3. **Double-click the root `index.html`** — sign in or create an account
+4. Choose **RECOMP** or **BLOOM** — your tracker and profile goals load for that account
 
 **Pro tip:** For best results, drag `index.html` into Chrome or Firefox (instead of opening in Safari).
 

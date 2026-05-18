@@ -24,3 +24,6 @@ node_modules/
 
 # Cursor (local only)
 .cursor/
+
+# Supabase keys (copy from shared/auth-config.example.js)
+shared/auth-config.js
