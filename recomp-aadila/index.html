@@ -490,6 +490,18 @@
       .goal-met-cell.yes {
         color: var(--success);
       }
+      .goal-met-cell.almost {
+        color: #f1c40f;
+        font-size: 14px;
+        letter-spacing: 0.02em;
+        text-transform: lowercase;
+      }
+      .goal-met-cell.no {
+        color: var(--accent-dim);
+        font-size: 14px;
+        letter-spacing: 0.02em;
+        text-transform: lowercase;
+      }
       .target-cell {
         color: var(--gold);
         font-weight: 600;
@@ -2050,6 +2062,7 @@
       const WATER_GOAL_BOTTLES = 6; // 3L
 
       const PRO_GOAL = 90;
+      const PRO_ALMOST_MIN = 75; // above this (and below 90g goal) = almost
       const TRACKER_START = new Date(2026, 4, 7);
       const TRACKER_PRO_FIELDS = ["breakfast", "lunch", "snack", "shake", "dinner"];
 
@@ -2070,27 +2083,63 @@
         );
       }
 
+      /** Water: no below goal−2 · almost at goal−1 · met at/above goal */
+      function getWaterGoalTier(value, goal) {
+        if (!value || value <= 0) return "none";
+        if (value >= goal) return "met";
+        if (value === goal - 1) return "almost";
+        return "no";
+      }
+
+      /** Protein: no at/below almostMin · almost above almostMin · met at/above goal */
+      function getProteinGoalTier(value, goal, almostMin) {
+        if (!value || value <= 0) return "none";
+        if (value >= goal) return "met";
+        if (value > almostMin) return "almost";
+        return "no";
+      }
+
+      function formatLeftDisplay(left, unit, hasValue, isMet) {
+        if (!hasValue) return "—";
+        if (isMet) return '0<span class="cell-unit">' + unit + "</span>";
+        return left + '<span class="cell-unit">' + unit + "</span>";
+      }
+
+      function goalMetLabel(tier) {
+        if (tier === "met") return "✓";
+        if (tier === "almost") return "almost";
+        if (tier === "no") return "no";
+        return "—";
+      }
+
+      function goalMetClass(tier) {
+        if (tier === "met") return "yes";
+        if (tier === "almost" || tier === "no") return tier;
+        return "";
+      }
+
+      function applyGoalMetCell(el, tier) {
+        if (!el) return;
+        el.classList.remove("yes", "almost", "no");
+        const cls = goalMetClass(tier);
+        if (cls) el.classList.add(cls);
+      }
+
       function computeTrackerDay(dayData) {
         const target = dayData.isWorkout ? 1900 : 1700;
         const total = getTrackerDayTotal(dayData);
         const left = Math.max(0, PRO_GOAL - total);
         const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
         const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
-        const proGoalMet = total >= PRO_GOAL;
-        const waterGoalMet = bottles >= WATER_GOAL_BOTTLES;
+        const proGoalTier = getProteinGoalTier(total, PRO_GOAL, PRO_ALMOST_MIN);
+        const waterGoalTier = getWaterGoalTier(bottles, WATER_GOAL_BOTTLES);
+        const proGoalMet = proGoalTier === "met";
+        const waterGoalMet = waterGoalTier === "met";
 
-        let leftDisplay;
-        if (total === 0) leftDisplay = "—";
-        else if (left === 0) leftDisplay = "✓";
-        else leftDisplay = left + '<span class="cell-unit">g</span>';
-
-        let waterLeftDisplay;
-        if (bottles === 0) waterLeftDisplay = "—";
-        else if (waterLeft === 0) waterLeftDisplay = "✓";
-        else waterLeftDisplay = waterLeft + '<span class="cell-unit">btl</span>';
-
-        const proMetDisplay = total === 0 ? "—" : proGoalMet ? "✓" : "—";
-        const waterMetDisplay = bottles === 0 ? "—" : waterGoalMet ? "✓" : "—";
+        const leftDisplay = formatLeftDisplay(left, "g", total > 0, proGoalMet);
+        const waterLeftDisplay = formatLeftDisplay(waterLeft, "btl", bottles > 0, waterGoalMet);
+        const proMetDisplay = goalMetLabel(proGoalTier);
+        const waterMetDisplay = goalMetLabel(waterGoalTier);
 
         return {
           target,
@@ -2098,6 +2147,8 @@
           left,
           bottles,
           waterLeft,
+          proGoalTier,
+          waterGoalTier,
           proGoalMet,
           waterGoalMet,
           leftDisplay,
@@ -2127,12 +2178,12 @@
         const pMet = tr.querySelector(".tracker-pro-met");
         if (pMet) {
           pMet.textContent = m.proMetDisplay;
-          pMet.classList.toggle("yes", m.proGoalMet);
+          applyGoalMetCell(pMet, m.proGoalTier);
         }
         const wMet = tr.querySelector(".tracker-water-met");
         if (wMet) {
           wMet.textContent = m.waterMetDisplay;
-          wMet.classList.toggle("yes", m.waterGoalMet);
+          applyGoalMetCell(wMet, m.waterGoalTier);
         }
       }
 
@@ -2209,6 +2260,8 @@
             left,
             bottles,
             waterLeft,
+            proGoalTier,
+            waterGoalTier,
             proGoalMet,
             waterGoalMet,
             leftDisplay,
@@ -2233,8 +2286,8 @@
       <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
-      <td><span class="goal-met-cell tracker-pro-met ${proGoalMet ? "yes" : ""}">${proMetDisplay}</span></td>
-      <td><span class="goal-met-cell tracker-water-met ${waterGoalMet ? "yes" : ""}">${waterMetDisplay}</span></td>
+      <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
+      <td><span class="goal-met-cell tracker-water-met ${goalMetClass(waterGoalTier)}">${waterMetDisplay}</span></td>
     `;
           rows.appendChild(tr);
         }
