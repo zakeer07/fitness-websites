@@ -3,7 +3,7 @@
 
 create table if not exists public.app_state (
   user_id uuid not null references auth.users (id) on delete cascade,
-  app_id text not null check (app_id in ('recomp-zakeer', 'recomp-aadila')),
+  app_id text not null check (app_id in ('fitness', 'recomp-zakeer', 'recomp-aadila')),
   state jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now(),
   primary key (user_id, app_id)

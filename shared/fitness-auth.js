@@ -121,6 +121,25 @@
     return crypto.randomUUID();
   }
 
+  const LEGACY_CLOUD_APP_IDS = ["recomp-zakeer", "recomp-aadila"];
+
+  function scopedStorageKey(baseKey) {
+    const session = getSession();
+    if (session?.userId) return baseKey + "-" + session.userId;
+    return baseKey;
+  }
+
+  function absorbGlobalStorageCache(baseKey) {
+    const session = getSession();
+    if (!session?.userId) return;
+    const scopedKey = scopedStorageKey(baseKey);
+    const global = localStorage.getItem(baseKey);
+    if (global && !localStorage.getItem(scopedKey)) {
+      localStorage.setItem(scopedKey, global);
+    }
+    localStorage.removeItem(baseKey);
+  }
+
   async function localSignUp(email, password, displayName) {
     const db = await openDb();
     const normalized = email.trim().toLowerCase();
@@ -249,6 +268,7 @@
   async function signOut() {
     const sb = await initSupabase();
     if (sb) await sb.auth.signOut();
+    localStorage.removeItem("fitness-app-v1");
     setSession(null);
   }
 
@@ -268,7 +288,7 @@
     return session;
   }
 
-  async function loadAppState(appId) {
+  async function loadAppStateOnce(appId) {
     const session = getSession();
     if (!session) return null;
 
@@ -282,6 +302,24 @@
       return data?.state ?? null;
     }
     return localLoadAppState(session.userId, appId);
+  }
+
+  async function loadAppState(appId) {
+    let state = await loadAppStateOnce(appId);
+    if (state || appId !== "fitness") return state;
+
+    for (const legacyId of LEGACY_CLOUD_APP_IDS) {
+      const legacy = await loadAppStateOnce(legacyId);
+      if (legacy && typeof legacy === "object") {
+        try {
+          await saveAppState("fitness", legacy);
+        } catch (e) {
+          console.warn("Cloud migrate to fitness app_id failed:", e);
+        }
+        return legacy;
+      }
+    }
+    return null;
   }
 
   async function saveAppState(appId, state) {
@@ -318,21 +356,27 @@
   }
 
   async function hydrateStateFromCloud(appId, localStorageKey, defaultState) {
+    absorbGlobalStorageCache(localStorageKey);
+    const key = scopedStorageKey(localStorageKey);
+
     try {
       const cloud = await loadAppState(appId);
       if (cloud && typeof cloud === "object") {
-        localStorage.setItem(localStorageKey, JSON.stringify(cloud));
+        localStorage.setItem(key, JSON.stringify(cloud));
         return cloud;
       }
     } catch (e) {
       console.warn("Cloud sync load failed:", e);
     }
-    const local = localStorage.getItem(localStorageKey);
-    return local ? JSON.parse(local) : defaultState;
+
+    const local = localStorage.getItem(key);
+    return local ? JSON.parse(local) : { ...defaultState };
   }
 
   function scheduleCloudSave(appId, state, localStorageKey) {
-    localStorage.setItem(localStorageKey, JSON.stringify(state));
+    absorbGlobalStorageCache(localStorageKey);
+    const key = scopedStorageKey(localStorageKey);
+    localStorage.setItem(key, JSON.stringify(state));
     if (!getSession()) return;
     clearTimeout(scheduleCloudSave._timer);
     scheduleCloudSave._timer = setTimeout(async () => {
@@ -349,6 +393,7 @@
     isCloudEnabled,
     getSession,
     setSession,
+    scopedStorageKey,
     loginUrl,
     resolveLoginUrl,
     appHref,
