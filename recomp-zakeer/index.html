@@ -145,24 +145,98 @@
         text-transform: uppercase;
       }
 
-      .user-badge {
+      .user-menu {
+        position: relative;
+      }
+      .user-menu-trigger {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 12px;
+        padding: 6px 12px 6px 10px;
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 100px;
         font-size: 12px;
         color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
       }
-      .user-badge::before {
-        content: "";
+      .user-menu-trigger:hover,
+      .user-menu.open .user-menu-trigger {
+        border-color: var(--accent);
+        color: var(--text-primary);
+      }
+      .user-menu-dot {
         width: 6px;
         height: 6px;
         background: var(--success);
         border-radius: 50%;
         box-shadow: 0 0 8px var(--success);
+        flex-shrink: 0;
+      }
+      .user-menu-chevron {
+        font-size: 10px;
+        opacity: 0.65;
+        transition: transform 0.2s;
+      }
+      .user-menu.open .user-menu-chevron {
+        transform: rotate(180deg);
+      }
+      .user-menu-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: min(420px, calc(100vw - 32px));
+        max-height: min(85vh, 720px);
+        overflow-y: auto;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px 18px 18px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition:
+          opacity 0.2s,
+          transform 0.2s,
+          visibility 0.2s;
+        z-index: 200;
+      }
+      .user-menu.open .user-menu-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .user-menu-panel-head {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .user-menu-panel-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 20px;
+        letter-spacing: 0.04em;
+      }
+      .user-menu-panel-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .user-menu-panel .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      @media (min-width: 400px) {
+        .user-menu-panel .profile-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .user-menu-panel .profile-group-wide {
+          grid-column: 1 / -1;
+        }
       }
 
       /* Navigation Tabs */
@@ -1105,6 +1179,113 @@
         }
       }
 
+      /* Profile */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      @media (min-width: 640px) {
+        .profile-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (min-width: 960px) {
+        .profile-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .profile-group {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+      }
+      .profile-group-title {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+      }
+      .profile-field {
+        margin-bottom: 12px;
+      }
+      .profile-field:last-child {
+        margin-bottom: 0;
+      }
+      .profile-field label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        letter-spacing: 0.04em;
+      }
+      .profile-field input {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--bg-card-solid, var(--bg-card));
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text-primary);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+      }
+      .profile-field input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .profile-field .field-hint {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .profile-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .profile-save-btn {
+        padding: 12px 24px;
+        background: var(--accent);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .profile-save-btn:hover {
+        opacity: 0.9;
+      }
+      .profile-saved-msg {
+        font-size: 13px;
+        color: var(--success);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .profile-saved-msg.show {
+        opacity: 1;
+      }
+      .meals-target-banner {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        background: rgba(233, 69, 96, 0.08);
+        border: 1px solid rgba(233, 69, 96, 0.22);
+        border-radius: 12px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.55;
+      }
+      .meals-target-banner strong {
+        color: var(--text-primary);
+      }
+
       /* Section header */
       .section-header {
         display: flex;
@@ -1164,8 +1345,94 @@
               <div class="logo-subtext">Body Composition System</div>
             </div>
           </div>
-          <div class="user-badge">
-            <span id="user-name">Zakeer</span>
+          <div class="user-menu" id="user-menu">
+            <button
+              type="button"
+              class="user-menu-trigger"
+              id="user-menu-trigger"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="user-menu-panel"
+            >
+              <span class="user-menu-dot" aria-hidden="true"></span>
+              <span id="user-name">Zakeer</span>
+              <span class="user-menu-chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-menu-panel" id="user-menu-panel" hidden>
+              <div class="user-menu-panel-head">
+                <div class="user-menu-panel-title">Profile & targets</div>
+                <p class="user-menu-panel-sub">Body stats and daily goals · saved on this device</p>
+              </div>
+              <div class="profile-grid">
+                <div class="profile-group">
+                  <div class="profile-group-title">About you</div>
+                  <div class="profile-field">
+                    <label for="profile-name">Display name</label>
+                    <input type="text" id="profile-name" autocomplete="name" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-height-cm">Height (cm)</label>
+                    <input type="number" id="profile-height-cm" min="100" max="250" step="0.1" />
+                    <div class="field-hint">Dashboard shows ft/in</div>
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-weight-kg">Weight (kg)</label>
+                    <input type="number" id="profile-weight-kg" min="30" max="200" step="0.1" />
+                  </div>
+                </div>
+                <div class="profile-group">
+                  <div class="profile-group-title">Calories (kcal)</div>
+                  <div class="profile-field">
+                    <label for="profile-cal-workout">Workout day</label>
+                    <input type="number" id="profile-cal-workout" min="800" max="6000" step="10" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-cal-rest">Rest day</label>
+                    <input type="number" id="profile-cal-rest" min="800" max="6000" step="10" />
+                  </div>
+                </div>
+                <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Protein & hydration</div>
+                  <div class="profile-field">
+                    <label for="profile-protein-g">Protein goal (g/day)</label>
+                    <input type="number" id="profile-protein-g" min="40" max="300" step="1" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-protein-almost-min">Almost threshold (g)</label>
+                    <input
+                      type="number"
+                      id="profile-protein-almost-min"
+                      min="0"
+                      max="300"
+                      step="1"
+                    />
+                    <div class="field-hint">Tracker “almost” when above this but below goal</div>
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-water-bottles">Water goal (bottles)</label>
+                    <input type="number" id="profile-water-bottles" min="1" max="30" step="1" />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-water-bottle-ml">Bottle size (ml)</label>
+                    <input
+                      type="number"
+                      id="profile-water-bottle-ml"
+                      min="100"
+                      max="2000"
+                      step="50"
+                    />
+                  </div>
+                  <div class="profile-field">
+                    <label for="profile-creatine-g">Creatine (g)</label>
+                    <input type="number" id="profile-creatine-g" min="0" max="20" step="0.5" />
+                  </div>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
+                <span class="profile-saved-msg" id="profile-saved-msg">Saved</span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -1245,7 +1512,8 @@
                   <div class="stat-bar-top">
                     <div class="stat-bar-label">💪 Protein (grams)</div>
                     <div class="stat-bar-value num">
-                      <span id="prot-current">0</span><span class="kpi-unit">g</span> / 115g daily
+                      <span id="prot-current">0</span><span class="kpi-unit">g</span> /
+                      <span id="prot-goal-label">115</span><span class="kpi-unit">g</span> daily
                     </div>
                   </div>
                   <div class="stat-bar-track">
@@ -1286,12 +1554,12 @@
             <div class="kpi">
               <div class="kpi-icon">👤</div>
               <div class="kpi-label">Height</div>
-              <div class="kpi-value num">5'10"</div>
+              <div class="kpi-value num" id="kpi-height">5'10"</div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">⚖️</div>
               <div class="kpi-label">Weight</div>
-              <div class="kpi-value num">75<span class="kpi-unit">kg</span></div>
+              <div class="kpi-value num" id="kpi-weight">75<span class="kpi-unit">kg</span></div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🎯</div>
@@ -1303,7 +1571,9 @@
             <div class="kpi">
               <div class="kpi-icon">💪</div>
               <div class="kpi-label">Protein goal</div>
-              <div class="kpi-value num">115<span class="kpi-unit">g</span></div>
+              <div class="kpi-value num">
+                <span id="kpi-protein">115</span><span class="kpi-unit">g</span>
+              </div>
             </div>
             <div class="kpi">
               <div class="kpi-icon">🏃</div>
@@ -1334,12 +1604,15 @@
 
         <!-- MEALS SECTION -->
         <section class="section" id="meals-section">
+          <div id="meals-target-banner" class="meals-target-banner" role="status"></div>
           <div class="section-header">
             <div>
               <div class="section-title">Meal Library</div>
               <div class="section-subtitle">11 curated options</div>
             </div>
-            <div class="section-meta"><strong>110-125g</strong> protein target</div>
+            <div class="section-meta" id="meals-meta-target">
+              <strong>115g</strong> protein target
+            </div>
           </div>
 
           <div class="meal-category-tabs">
@@ -1377,8 +1650,10 @@
               ><span class="cell-unit">g</span> / day</span
             >
             <span
-              >Water target: <strong>3</strong><span class="cell-unit">L</span> ·
-              <strong>6</strong> × 500ml bottles</span
+              >Water target: <strong id="tracker-water-liters">3</strong
+              ><span class="cell-unit">L</span> · <strong id="tracker-water-bottles">6</strong> ×
+              <strong id="tracker-bottle-ml">500</strong
+              ><span class="cell-unit">ml</span> bottles</span
             >
             <span style="opacity: 0.85"
               ><strong>Left</strong> columns = still to hit daily target</span
@@ -1423,11 +1698,15 @@
                     Cal target<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
                   <th colspan="4" class="th-group">Protein per meal — enter grams (g)</th>
-                  <th rowspan="2" class="th-hydro" title="5g creatine">
-                    Cre<br /><span style="font-weight: 500; opacity: 0.8">5g</span>
+                  <th rowspan="2" class="th-hydro" id="tracker-creatine-th" title="5g creatine">
+                    Cre<br /><span style="font-weight: 500; opacity: 0.8"
+                      ><span id="tracker-creatine-g">5</span>g</span
+                    >
                   </th>
                   <th rowspan="2" class="th-hydro">
-                    💧<br /><span style="font-weight: 500; opacity: 0.8">500ml</span>
+                    💧<br /><span style="font-weight: 500; opacity: 0.8"
+                      ><span id="tracker-table-bottle-ml">500</span>ml</span
+                    >
                   </th>
                   <th rowspan="2" class="th-hydro">H₂O left</th>
                   <th rowspan="2" class="th-pro">
@@ -1463,8 +1742,8 @@
       </main>
 
       <footer class="footer">
-        <strong>RECOMP</strong> · Built for Zakeer · <span class="num" id="footer-date"></span
-        ><br />
+        <strong>RECOMP</strong> · Built for <span id="footer-user-name">Zakeer</span> ·
+        <span class="num" id="footer-date"></span><br />
         <span style="opacity: 0.6">All data saved locally · No tracking · No accounts</span>
       </footer>
     </div>
@@ -1640,6 +1919,18 @@
       // STATE (localStorage)
       // ═══════════════════════════════════════════════════════════════════════
       const STORAGE_KEY = "recomp-app-v1";
+      const DEFAULT_PROFILE = {
+        name: "Zakeer",
+        heightCm: 178,
+        weightKg: 75,
+        calWorkout: 2000,
+        calRest: 1730,
+        proteinG: 115,
+        proteinAlmostMin: 90,
+        waterBottles: 6,
+        waterBottleMl: 500,
+        creatineG: 5,
+      };
       const defaultState = {
         isWorkoutDay: true,
         mealsEaten: {},
@@ -1650,6 +1941,46 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
+      function migrateStateProfile() {
+        const prev = state.profile && typeof state.profile === "object" ? state.profile : {};
+        const merged = { ...DEFAULT_PROFILE, ...prev };
+        const numericKeys = [
+          "heightCm",
+          "weightKg",
+          "calWorkout",
+          "calRest",
+          "proteinG",
+          "proteinAlmostMin",
+          "waterBottles",
+          "waterBottleMl",
+          "creatineG",
+        ];
+        for (const k of numericKeys) {
+          const n = Number(merged[k]);
+          merged[k] = Number.isFinite(n) ? n : DEFAULT_PROFILE[k];
+        }
+        merged.name = String(merged.name || DEFAULT_PROFILE.name).trim() || DEFAULT_PROFILE.name;
+        state.profile = merged;
+        saveState();
+      }
+
+      function getProfile() {
+        return state.profile;
+      }
+
+      function formatHeightImperial(cm) {
+        const n = Number(cm);
+        if (!Number.isFinite(n) || n <= 0) return "—";
+        const totalIn = Math.round(n / 2.54);
+        const ft = Math.floor(totalIn / 12);
+        const inch = totalIn % 12;
+        return `${ft}'${inch}"`;
+      }
+
+      function waterGoalLiters(p) {
+        return (p.waterBottles * p.waterBottleMl) / 1000;
+      }
+
       // ═══════════════════════════════════════════════════════════════════════
       // HELPERS
       // ═══════════════════════════════════════════════════════════════════════
@@ -1657,7 +1988,8 @@
         return MEALS.find((m) => m.id === id);
       }
       function getCalTarget() {
-        return state.isWorkoutDay ? 2000 : 1730;
+        const p = getProfile();
+        return state.isWorkoutDay ? p.calWorkout : p.calRest;
       }
       const monthNames = [
         "Jan",
@@ -1691,7 +2023,8 @@
 
         const hour = now.getHours();
         const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-        document.getElementById("greeting").textContent = greeting + ", Zakeer 💪";
+        const who = getProfile().name;
+        document.getElementById("greeting").textContent = `${greeting}, ${who} 💪`;
       }
 
       function renderTodayMeals() {
@@ -1744,7 +2077,10 @@
         const ringFill = Math.min(cal / target, 1);
         document.getElementById("cal-ring").style.strokeDashoffset = circumference * (1 - ringFill);
 
-        document.getElementById("prot-fill").style.width = Math.min((pro / 115) * 100, 100) + "%";
+        const p = getProfile();
+        document.getElementById("prot-goal-label").textContent = p.proteinG;
+        document.getElementById("prot-fill").style.width =
+          Math.min((pro / p.proteinG) * 100, 100) + "%";
         document.getElementById("meals-fill").style.width = (mealsLogged / 5) * 100 + "%";
 
         renderCharts();
@@ -1899,15 +2235,104 @@
         });
       });
 
+      function initProfile() {
+        const p = getProfile();
+        document.getElementById("profile-name").value = p.name;
+        document.getElementById("profile-height-cm").value = p.heightCm;
+        document.getElementById("profile-weight-kg").value = p.weightKg;
+        document.getElementById("profile-cal-workout").value = p.calWorkout;
+        document.getElementById("profile-cal-rest").value = p.calRest;
+        document.getElementById("profile-protein-g").value = p.proteinG;
+        document.getElementById("profile-protein-almost-min").value = p.proteinAlmostMin;
+        document.getElementById("profile-water-bottles").value = p.waterBottles;
+        document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
+        document.getElementById("profile-creatine-g").value = p.creatineG;
+      }
+
+      function applyProfileToUI() {
+        const p = getProfile();
+        const setText = (id, text) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = text;
+        };
+        setText("user-name", p.name);
+        setText("footer-user-name", p.name);
+        setText("kpi-height", formatHeightImperial(p.heightCm));
+        const kw = document.getElementById("kpi-weight");
+        if (kw) kw.innerHTML = `${p.weightKg}<span class="kpi-unit">kg</span>`;
+        setText("kpi-protein", String(p.proteinG));
+        const kcal = document.getElementById("kpi-cal");
+        if (kcal) kcal.textContent = String(getCalTarget());
+        setText("prot-goal-label", String(p.proteinG));
+        setText("tracker-pro-goal", String(p.proteinG));
+        const liters = waterGoalLiters(p);
+        const litersDisp =
+          Math.abs(liters - Math.round(liters)) < 1e-6
+            ? String(Math.round(liters))
+            : liters.toFixed(1);
+        setText("tracker-water-liters", litersDisp);
+        setText("tracker-water-bottles", String(p.waterBottles));
+        setText("tracker-bottle-ml", String(p.waterBottleMl));
+        setText("tracker-table-bottle-ml", String(p.waterBottleMl));
+        setText("tracker-creatine-g", String(p.creatineG));
+        const cTh = document.getElementById("tracker-creatine-th");
+        if (cTh) cTh.title = `${p.creatineG}g creatine`;
+        const mealsMeta = document.getElementById("meals-meta-target");
+        if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
+        updateMealsBanner();
+      }
+
+      function updateMealsBanner() {
+        const el = document.getElementById("meals-target-banner");
+        if (!el) return;
+        const p = getProfile();
+        el.innerHTML = `Use this library to build meals that match your profile: about <strong>${p.calWorkout} kcal</strong> on workout days, <strong>${p.calRest} kcal</strong> on rest days, and roughly <strong>${p.proteinG}g</strong> protein.`;
+      }
+
+      function saveProfileFromForm() {
+        const readNum = (id, fallback) => {
+          const v = parseFloat(document.getElementById(id).value);
+          return Number.isFinite(v) ? v : fallback;
+        };
+        const readInt = (id, fallback) => {
+          const v = parseInt(document.getElementById(id).value, 10);
+          return Number.isFinite(v) ? v : fallback;
+        };
+        const nameRaw = document.getElementById("profile-name").value.trim();
+        state.profile = {
+          ...getProfile(),
+          name: nameRaw || DEFAULT_PROFILE.name,
+          heightCm: readNum("profile-height-cm", DEFAULT_PROFILE.heightCm),
+          weightKg: readNum("profile-weight-kg", DEFAULT_PROFILE.weightKg),
+          calWorkout: readInt("profile-cal-workout", DEFAULT_PROFILE.calWorkout),
+          calRest: readInt("profile-cal-rest", DEFAULT_PROFILE.calRest),
+          proteinG: readInt("profile-protein-g", DEFAULT_PROFILE.proteinG),
+          proteinAlmostMin: readInt("profile-protein-almost-min", DEFAULT_PROFILE.proteinAlmostMin),
+          waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
+          waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
+          creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
+        };
+        saveState();
+        initProfile();
+        applyProfileToUI();
+        renderHero();
+        updateDashboardStats();
+        renderTracker();
+        const msg = document.getElementById("profile-saved-msg");
+        if (msg) {
+          msg.classList.add("show");
+          setTimeout(() => msg.classList.remove("show"), 1800);
+        }
+        closeUserMenu();
+      }
+
+      document.getElementById("profile-save-btn").addEventListener("click", () => {
+        saveProfileFromForm();
+      });
+
       // ═══════════════════════════════════════════════════════════════════════
       // TRACKER TAB
       // ═══════════════════════════════════════════════════════════════════════
-      const CREATINE_G = 5;
-      const WATER_BOTTLE_ML = 500;
-      const WATER_GOAL_BOTTLES = 6; // 3L
-
-      const PRO_GOAL = 115;
-      const PRO_ALMOST_MIN = 90; // above this (and below goal) = almost
       const TRACKER_START = new Date(2026, 4, 7); // May 7, 2026
       const TRACKER_PRO_FIELDS = ["lunch", "snack", "shake", "dinner"];
 
@@ -1971,13 +2396,15 @@
       }
 
       function computeTrackerDay(dayData) {
-        const target = dayData.isWorkout ? 2000 : 1730;
+        const p = getProfile();
+        const target = dayData.isWorkout ? p.calWorkout : p.calRest;
         const total = getTrackerDayTotal(dayData);
-        const left = Math.max(0, PRO_GOAL - total);
+        const left = Math.max(0, p.proteinG - total);
         const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
-        const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
-        const proGoalTier = getProteinGoalTier(total, PRO_GOAL, PRO_ALMOST_MIN);
-        const waterGoalTier = getWaterGoalTier(bottles, WATER_GOAL_BOTTLES);
+        const waterGoalBottles = p.waterBottles;
+        const waterLeft = Math.max(0, waterGoalBottles - bottles);
+        const proGoalTier = getProteinGoalTier(total, p.proteinG, p.proteinAlmostMin);
+        const waterGoalTier = getWaterGoalTier(bottles, waterGoalBottles);
         const proGoalMet = proGoalTier === "met";
         const waterGoalMet = waterGoalTier === "met";
 
@@ -2033,6 +2460,7 @@
       }
 
       function updateTrackerSummary() {
+        const p = getProfile();
         let totalWO = 0,
           sumP = 0,
           daysWithP = 0,
@@ -2058,12 +2486,12 @@
           const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
           if (dayData.isWorkout) totalWO++;
           if (dayData.creatine) creatineDays++;
-          if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
+          if (bottles >= p.waterBottles) waterMet++;
           if (total > 0) {
             sumP += total;
             daysWithP++;
           }
-          if (total >= PRO_GOAL) proMet++;
+          if (total >= p.proteinG) proMet++;
         }
         document.getElementById("sum-workouts").textContent = totalWO;
         document.getElementById("sum-protein").textContent =
@@ -2078,6 +2506,7 @@
         const rows = document.getElementById("tracker-rows");
         rows.innerHTML = "";
         const today = new Date();
+        const p = getProfile();
 
         for (let i = 0; i < 30; i++) {
           const d = new Date(start);
@@ -2127,8 +2556,8 @@
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
-      <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="5g creatine"></div></td>
-      <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
+      <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="${p.creatineG}g creatine"></div></td>
+      <td><input class="water-input num" type="number" min="0" max="24" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="${p.waterBottleMl}ml bottles"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
       <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
@@ -2182,6 +2611,39 @@
         });
       }
 
+      function setUserMenuOpen(open) {
+        const menu = document.getElementById("user-menu");
+        const trigger = document.getElementById("user-menu-trigger");
+        const panel = document.getElementById("user-menu-panel");
+        if (!menu || !trigger || !panel) return;
+        menu.classList.toggle("open", open);
+        trigger.setAttribute("aria-expanded", open ? "true" : "false");
+        panel.hidden = !open;
+      }
+
+      function closeUserMenu() {
+        setUserMenuOpen(false);
+      }
+
+      function initUserMenu() {
+        const menu = document.getElementById("user-menu");
+        const trigger = document.getElementById("user-menu-trigger");
+        const panel = document.getElementById("user-menu-panel");
+        if (!menu || !trigger || !panel) return;
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setUserMenuOpen(!menu.classList.contains("open"));
+        });
+
+        panel.addEventListener("click", (e) => e.stopPropagation());
+
+        document.addEventListener("click", () => closeUserMenu());
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeUserMenu();
+        });
+      }
+
       // ═══════════════════════════════════════════════════════════════════════
       // TAB SWITCHING
       // ═══════════════════════════════════════════════════════════════════════
@@ -2198,6 +2660,10 @@
       // ═══════════════════════════════════════════════════════════════════════
       // INIT
       // ═══════════════════════════════════════════════════════════════════════
+      migrateStateProfile();
+      initUserMenu();
+      initProfile();
+      applyProfileToUI();
       renderHero();
       renderWorkoutToggle();
       renderTodayMeals();
