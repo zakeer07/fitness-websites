@@ -359,7 +359,7 @@
     border-radius: 16px; overflow: hidden;
     overflow-x: auto;
   }
-  table { width: 100%; border-collapse: collapse; min-width: 800px; }
+  table { width: 100%; border-collapse: collapse; min-width: 980px; }
   th {
     background: var(--bg-secondary); padding: 12px 10px;
     text-align: left; font-size: 10px; color: var(--text-muted);
@@ -416,17 +416,33 @@
   .protein-input::placeholder { color: var(--text-muted); font-size: 10px; }
   .protein-input:focus { outline: none; border-color: var(--accent); }
 
-  .total-cell { font-family: 'Bebas Neue'; font-size: 18px; color: var(--accent); }
-  .total-cell .cell-unit { font-family: 'Inter'; }
-  .target-cell { color: var(--info); font-weight: 600; }
-
-  .status-badge {
-    font-size: 11px; padding: 4px 8px; border-radius: 100px;
-    font-weight: 600; white-space: nowrap;
+  .tracker-targets {
+    display: flex; flex-wrap: wrap; gap: 16px 24px;
+    padding: 12px 18px; margin-bottom: 12px;
+    background: rgba(233,69,96,0.08); border: 1px solid rgba(233,69,96,0.25);
+    border-radius: 12px; font-size: 13px; color: var(--text-secondary);
   }
-  .status-yes { background: rgba(39,174,96,0.15); color: var(--success); }
-  .status-close { background: rgba(243,156,18,0.15); color: var(--warning); }
-  .status-no { background: rgba(233,69,96,0.15); color: var(--accent); }
+  .tracker-targets strong { color: var(--accent); font-family: 'Bebas Neue'; font-size: 20px; }
+  .left-cell { font-family: 'Bebas Neue'; font-size: 18px; color: var(--warning); }
+  .left-cell.done { color: var(--success); }
+  .left-cell .cell-unit { font-family: 'Inter'; font-size: 11px; }
+
+  th.th-hydro { color: #5dade2; }
+  .water-input {
+    width: 48px; padding: 6px 8px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text-primary);
+    font-family: 'JetBrains Mono'; font-size: 12px; text-align: center;
+  }
+  .water-input:focus { outline: none; border-color: #5dade2; }
+  .left-cell.water { color: #5dade2; }
+  .check-cell.creatine.checked { background: #5dade2; border-color: #5dade2; }
+  .goal-met-cell {
+    font-family: 'Bebas Neue'; font-size: 18px; text-align: center;
+    color: var(--text-muted);
+  }
+  .goal-met-cell.yes { color: var(--success); }
+  .target-cell { color: var(--info); font-weight: 600; }
 
   /* Tips */
   .tip-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
@@ -670,6 +686,12 @@
       <div class="tracker-guide">
         <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for <strong>calories (kcal)</strong> + <strong>protein (g)</strong>. <strong>Tracker</strong> rows are <strong>protein grams only</strong> — blue <strong>Cal target</strong> = daily kcal goal (not protein).
       </div>
+      <div class="tracker-targets">
+        <span>Protein target: <strong id="tracker-pro-goal">115</strong><span class="cell-unit">g</span> / day</span>
+        <span>Water target: <strong>3</strong><span class="cell-unit">L</span> · <strong>6</strong> × 500ml bottles</span>
+        <span style="opacity:0.85"><strong>Left</strong> columns = still to hit daily target</span>
+      </div>
+
 
       <div class="tracker-summary">
         <div class="kpi"><div class="kpi-label">Workout Days</div><div class="kpi-value num" id="sum-workouts">12</div><div class="kpi-sub">this period</div></div>
@@ -685,8 +707,12 @@
               <th rowspan="2">WO</th>
               <th rowspan="2" class="th-cal">Cal target<br><span style="font-weight:500;opacity:0.8">kcal</span></th>
               <th colspan="4" class="th-group">Protein per meal — enter grams (g)</th>
-              <th rowspan="2" class="th-pro">Total<br><span style="font-weight:500;opacity:0.8">g</span></th>
-              <th rowspan="2" class="th-pro">Protein<br><span style="font-weight:500;opacity:0.8">goal</span></th>
+              <th rowspan="2" class="th-hydro" title="5g creatine">Cre<br><span style="font-weight:500;opacity:0.8">5g</span></th>
+              <th rowspan="2" class="th-hydro">💧<br><span style="font-weight:500;opacity:0.8">500ml</span></th>
+              <th rowspan="2" class="th-hydro">H₂O left</th>
+              <th rowspan="2" class="th-pro">Pro left<br><span style="font-weight:500;opacity:0.8">g</span></th>
+              <th rowspan="2" class="th-pro">Pro met</th>
+              <th rowspan="2" class="th-hydro">H₂O met</th>
             </tr>
             <tr>
               <th class="th-pro">Lunch</th>
@@ -1008,13 +1034,19 @@ document.querySelectorAll('.meal-cat-btn').forEach(btn => {
 // ═══════════════════════════════════════════════════════════════════════
 // TRACKER TAB
 // ═══════════════════════════════════════════════════════════════════════
+const CREATINE_G = 5;
+const WATER_BOTTLE_ML = 500;
+const WATER_GOAL_BOTTLES = 6; // 3L
+
+const PRO_GOAL = 115;
+
 function renderTracker() {
   const start = new Date(2026, 4, 7); // May 7, 2026
   const rows = document.getElementById('tracker-rows');
   rows.innerHTML = '';
   const today = new Date();
 
-  let totalWO = 0, sumP = 0, daysWithP = 0, proMet = 0;
+  let totalWO = 0, sumP = 0, daysWithP = 0, proMet = 0, waterMet = 0, creatineDays = 0;
 
   for (let i = 0; i < 30; i++) {
     const d = new Date(start);
@@ -1027,7 +1059,9 @@ function renderTracker() {
     // Get or default
     const dayData = state.trackerData[dateKey] || {
       isWorkout: defaultWorkout,
-      lunch: '', snack: '', shake: '', dinner: ''
+      lunch: '', snack: '', shake: '', dinner: '',
+      creatine: false,
+      water: ''
     };
     state.trackerData[dateKey] = dayData;
 
@@ -1036,14 +1070,29 @@ function renderTracker() {
                   (parseInt(dayData.shake)||0) + (parseInt(dayData.dinner)||0);
 
     if (dayData.isWorkout) totalWO++;
-    if (total > 0) { sumP += total; daysWithP++; }
-    if (total >= 110) proMet++;
+    const left = Math.max(0, PRO_GOAL - total);
+    let leftDisplay;
+    if (total === 0) leftDisplay = '—';
+    else if (left === 0) leftDisplay = '✓';
+    else leftDisplay = left + '<span class="cell-unit">g</span>';
 
-    let status, statusClass;
-    if (total === 0) { status = '—'; statusClass = ''; }
-    else if (total >= 110) { status = '✅ Protein OK'; statusClass = 'status-yes'; }
-    else if (total >= 95) { status = '🟡 Almost'; statusClass = 'status-close'; }
-    else { status = '❌ Low protein'; statusClass = 'status-no'; }
+    const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
+    const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
+    let waterLeftDisplay;
+    if (bottles === 0) waterLeftDisplay = '—';
+    else if (waterLeft === 0) waterLeftDisplay = '✓';
+    else waterLeftDisplay = waterLeft + '<span class="cell-unit">btl</span>';
+
+    if (dayData.creatine) creatineDays++;
+    if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
+
+    if (total > 0) { sumP += total; daysWithP++; }
+    if (total >= PRO_GOAL) proMet++;
+
+    const proGoalMet = total >= PRO_GOAL;
+    const waterGoalMet = bottles >= WATER_GOAL_BOTTLES;
+    const proMetDisplay = total === 0 ? '—' : (proGoalMet ? '✓' : '—');
+    const waterMetDisplay = bottles === 0 ? '—' : (waterGoalMet ? '✓' : '—');
 
     const tr = document.createElement('tr');
     if (isToday) tr.className = 'today';
@@ -1055,8 +1104,12 @@ function renderTracker() {
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
-      <td><span class="total-cell num">${total > 0 ? total + '<span class="cell-unit">g</span>' : '—'}</span></td>
-      <td><span class="status-badge ${statusClass}">${status}</span></td>
+      <td><div class="check-cell creatine ${dayData.creatine ? 'checked' : ''}" data-date="${dateKey}" data-field="creatine" title="5g creatine"></div></td>
+      <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ''}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
+      <td><span class="left-cell water num ${waterLeft === 0 && bottles > 0 ? 'done' : ''}">${waterLeftDisplay}</span></td>
+      <td><span class="left-cell num ${left === 0 && total > 0 ? 'done' : ''}">${leftDisplay}</span></td>
+      <td><span class="goal-met-cell ${proGoalMet ? 'yes' : ''}">${proMetDisplay}</span></td>
+      <td><span class="goal-met-cell ${waterGoalMet ? 'yes' : ''}">${waterMetDisplay}</span></td>
     `;
     rows.appendChild(tr);
   }
@@ -1064,9 +1117,11 @@ function renderTracker() {
   document.getElementById('sum-workouts').textContent = totalWO;
   document.getElementById('sum-protein').textContent = daysWithP > 0 ? Math.round(sumP/daysWithP) : 0;
   document.getElementById('sum-pro').textContent = proMet;
+  document.getElementById('sum-water').textContent = waterMet;
+  document.getElementById('sum-creatine').textContent = creatineDays;
 
   // Wire up inputs
-  document.querySelectorAll('.protein-input').forEach(input => {
+  document.querySelectorAll('.protein-input, .water-input').forEach(input => {
     input.addEventListener('input', (e) => {
       const dateKey = e.target.dataset.date;
       const field = e.target.dataset.field;
@@ -1078,7 +1133,8 @@ function renderTracker() {
   document.querySelectorAll('.check-cell[data-date]').forEach(cell => {
     cell.addEventListener('click', () => {
       const dateKey = cell.dataset.date;
-      state.trackerData[dateKey].isWorkout = !state.trackerData[dateKey].isWorkout;
+      const field = cell.dataset.field;
+      state.trackerData[dateKey][field] = !state.trackerData[dateKey][field];
       saveState();
       renderTracker();
     });
