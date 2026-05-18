@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python (pre-commit)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.python-version
+
+# Node (dev tooling — Prettier)
+node_modules/
+
+# Logs
+*.log
+
+# Cursor (local only)
+.cursor/

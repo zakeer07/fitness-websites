@@ -1,0 +1,2 @@
+# Dev tools for local setup: pip install -r requirements-dev.txt
+pre-commit>=3.7.0,<4

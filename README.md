@@ -32,6 +32,7 @@ Each app is **completely self-contained** — one HTML file with everything: des
 ### Want it to behave exactly like the deployed version?
 
 Install **VS Code** (free) and the **"Live Server"** extension. Then:
+
 1. Open the folder in VS Code
 2. Right-click `index.html` → "Open with Live Server"
 3. App opens at `http://localhost:5500` with auto-refresh on edits
@@ -43,6 +44,7 @@ Install **VS Code** (free) and the **"Live Server"** extension. Then:
 Each app deploys separately to its own URL. Here's how:
 
 ### For RECOMP (Zakeer's app):
+
 1. Sign in to [github.com](https://github.com)
 2. Create a new public repo called `recomp` (or `zakeer-fitness`)
 3. Click **"uploading an existing file"**
@@ -52,6 +54,7 @@ Each app deploys separately to its own URL. Here's how:
 7. Your app goes live at `https://YOUR_USERNAME.github.io/recomp/`
 
 ### For BLOOM (Aadila's app):
+
 Same steps, but create a separate repo called `bloom` (or `aadila-fitness`). It gets its own URL.
 
 ---
@@ -59,6 +62,7 @@ Same steps, but create a separate repo called `bloom` (or `aadila-fitness`). It 
 ## 📱 How to Use as an App on Your Phone
 
 After deploying, open the live URL on your phone:
+
 - **iPhone (Safari):** Tap Share → "Add to Home Screen"
 - **Android (Chrome):** Tap ⋮ menu → "Install app" or "Add to Home Screen"
 
@@ -82,6 +86,7 @@ They're completely separate, so both can run on the same browser without conflic
 ## 🎨 Customizing
 
 Open `index.html` in any text editor (or VS Code). Find these arrays near the bottom of the file to customize:
+
 - **MEALS** — add/remove meal options
 - **TODAY_PLAN** — change which meals appear on the dashboard
 - **TIPS** — update principles
@@ -101,6 +106,19 @@ You probably cleared browser data, or switched browsers/devices. localStorage is
 
 **"Charts aren't showing"**
 Make sure JavaScript is enabled in your browser.
+
+---
+
+## Development (pre-commit)
+
+This repo uses [pre-commit](https://pre-commit.com/) so formatting and basic checks run before each commit.
+
+```bash
+make setup    # once: install hooks
+make lint       # run all checks manually
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details. Pull requests run the same checks in GitHub Actions.
 
 ---
 

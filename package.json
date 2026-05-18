@@ -1,0 +1,12 @@
+{
+  "name": "fitness-websites",
+  "private": true,
+  "description": "Static fitness tracker apps — dev tooling only",
+  "scripts": {
+    "format": "prettier --write \"**/*.{html,md,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{html,md,json,yml,yaml}\""
+  },
+  "devDependencies": {
+    "prettier": "3.4.2"
+  }
+}

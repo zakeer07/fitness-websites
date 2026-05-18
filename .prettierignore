@@ -1,0 +1,2 @@
+# No build output in this repo; keep ignores minimal
+.DS_Store
