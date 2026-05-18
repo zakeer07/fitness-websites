@@ -359,7 +359,7 @@
     border-radius: 16px; overflow: hidden;
     overflow-x: auto;
   }
-  table { width: 100%; border-collapse: collapse; min-width: 800px; }
+  table { width: 100%; border-collapse: collapse; min-width: 980px; }
   th {
     background: var(--bg-secondary); padding: 12px 10px;
     text-align: left; font-size: 10px; color: var(--text-muted);
@@ -426,6 +426,17 @@
   .left-cell { font-family: 'Bebas Neue'; font-size: 18px; color: var(--warning); }
   .left-cell.done { color: var(--success); }
   .left-cell .cell-unit { font-family: 'Inter'; font-size: 11px; }
+
+  th.th-hydro { color: #5dade2; }
+  .water-input {
+    width: 48px; padding: 6px 8px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text-primary);
+    font-family: 'JetBrains Mono'; font-size: 12px; text-align: center;
+  }
+  .water-input:focus { outline: none; border-color: #5dade2; }
+  .left-cell.water { color: #5dade2; }
+  .check-cell.creatine.checked { background: #5dade2; border-color: #5dade2; }
   .target-cell { color: var(--info); font-weight: 600; }
 
   .status-badge {
@@ -680,7 +691,8 @@
       </div>
       <div class="tracker-targets">
         <span>Protein target: <strong id="tracker-pro-goal">115</strong><span class="cell-unit">g</span> / day</span>
-        <span style="opacity:0.85">Log each meal below · <strong>Left</strong> = grams still to hit target</span>
+        <span>Water target: <strong>3</strong><span class="cell-unit">L</span> · <strong>6</strong> × 500ml bottles</span>
+        <span style="opacity:0.85"><strong>Left</strong> columns = still to hit daily target</span>
       </div>
 
 
@@ -698,7 +710,10 @@
               <th rowspan="2">WO</th>
               <th rowspan="2" class="th-cal">Cal target<br><span style="font-weight:500;opacity:0.8">kcal</span></th>
               <th colspan="4" class="th-group">Protein per meal — enter grams (g)</th>
-              <th rowspan="2" class="th-pro">Left<br><span style="font-weight:500;opacity:0.8">g</span></th>
+              <th rowspan="2" class="th-hydro" title="5g creatine">Cre<br><span style="font-weight:500;opacity:0.8">5g</span></th>
+              <th rowspan="2" class="th-hydro">💧<br><span style="font-weight:500;opacity:0.8">500ml</span></th>
+              <th rowspan="2" class="th-hydro">H₂O left</th>
+              <th rowspan="2" class="th-pro">Pro left<br><span style="font-weight:500;opacity:0.8">g</span></th>
               <th rowspan="2">Status</th>
             </tr>
             <tr>
@@ -1021,6 +1036,10 @@ document.querySelectorAll('.meal-cat-btn').forEach(btn => {
 // ═══════════════════════════════════════════════════════════════════════
 // TRACKER TAB
 // ═══════════════════════════════════════════════════════════════════════
+const CREATINE_G = 5;
+const WATER_BOTTLE_ML = 500;
+const WATER_GOAL_BOTTLES = 6; // 3L
+
 const PRO_GOAL = 115;
 const PRO_CLOSE = 95;
 
@@ -1030,7 +1049,7 @@ function renderTracker() {
   rows.innerHTML = '';
   const today = new Date();
 
-  let totalWO = 0, sumP = 0, daysWithP = 0, proMet = 0;
+  let totalWO = 0, sumP = 0, daysWithP = 0, proMet = 0, waterMet = 0, creatineDays = 0;
 
   for (let i = 0; i < 30; i++) {
     const d = new Date(start);
@@ -1043,7 +1062,9 @@ function renderTracker() {
     // Get or default
     const dayData = state.trackerData[dateKey] || {
       isWorkout: defaultWorkout,
-      lunch: '', snack: '', shake: '', dinner: ''
+      lunch: '', snack: '', shake: '', dinner: '',
+      creatine: false,
+      water: ''
     };
     state.trackerData[dateKey] = dayData;
 
@@ -1058,6 +1079,15 @@ function renderTracker() {
     else if (left === 0) leftDisplay = '✓';
     else leftDisplay = left + '<span class="cell-unit">g</span>';
 
+    const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
+    const waterLeft = Math.max(0, WATER_GOAL_BOTTLES - bottles);
+    let waterLeftDisplay;
+    if (bottles === 0) waterLeftDisplay = '—';
+    else if (waterLeft === 0) waterLeftDisplay = '✓';
+    else waterLeftDisplay = waterLeft + '<span class="cell-unit">btl</span>';
+
+    if (dayData.creatine) creatineDays++;
+    if (bottles >= WATER_GOAL_BOTTLES) waterMet++;
 
     if (total > 0) { sumP += total; daysWithP++; }
     if (total >= PRO_GOAL) proMet++;
@@ -1078,6 +1108,9 @@ function renderTracker() {
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
+      <td><div class="check-cell creatine ${dayData.creatine ? 'checked' : ''}" data-date="${dateKey}" data-field="creatine" title="5g creatine"></div></td>
+      <td><input class="water-input num" type="number" min="0" max="12" placeholder="0" value="${dayData.water || ''}" data-date="${dateKey}" data-field="water" title="500ml bottles"></td>
+      <td><span class="left-cell water num ${waterLeft === 0 && bottles > 0 ? 'done' : ''}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num ${left === 0 && total > 0 ? 'done' : ''}">${leftDisplay}</span></td>
       <td><span class="status-badge ${statusClass}">${status}</span></td>
     `;
@@ -1087,9 +1120,11 @@ function renderTracker() {
   document.getElementById('sum-workouts').textContent = totalWO;
   document.getElementById('sum-protein').textContent = daysWithP > 0 ? Math.round(sumP/daysWithP) : 0;
   document.getElementById('sum-pro').textContent = proMet;
+  document.getElementById('sum-water').textContent = waterMet;
+  document.getElementById('sum-creatine').textContent = creatineDays;
 
   // Wire up inputs
-  document.querySelectorAll('.protein-input').forEach(input => {
+  document.querySelectorAll('.protein-input, .water-input').forEach(input => {
     input.addEventListener('input', (e) => {
       const dateKey = e.target.dataset.date;
       const field = e.target.dataset.field;
@@ -1101,7 +1136,8 @@ function renderTracker() {
   document.querySelectorAll('.check-cell[data-date]').forEach(cell => {
     cell.addEventListener('click', () => {
       const dateKey = cell.dataset.date;
-      state.trackerData[dateKey].isWorkout = !state.trackerData[dateKey].isWorkout;
+      const field = cell.dataset.field;
+      state.trackerData[dateKey][field] = !state.trackerData[dateKey][field];
       saveState();
       renderTracker();
     });
