@@ -1579,6 +1579,86 @@
         color: var(--text-primary);
       }
 
+      /* Scroll parallax background photos */
+      .bg-decor {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .decor-item {
+        position: absolute;
+        border-radius: 28px;
+        overflow: hidden;
+        opacity: 0.16;
+        box-shadow: 0 28px 56px rgba(0, 0, 0, 0.5);
+        will-change: transform;
+        transform-origin: center center;
+      }
+      .decor-item::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(160deg, rgba(6, 8, 15, 0.15) 0%, rgba(6, 8, 15, 0.55) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .decor-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(1.1) contrast(1.05);
+      }
+      .decor-gym {
+        top: 6%;
+        right: -3%;
+        width: min(38vw, 260px);
+        height: min(38vw, 260px);
+      }
+      .decor-fruit {
+        top: 38%;
+        left: -6%;
+        width: min(34vw, 220px);
+        height: min(34vw, 220px);
+        border-radius: 50%;
+      }
+      .decor-meal {
+        top: 62%;
+        right: 2%;
+        width: min(32vw, 200px);
+        height: min(32vw, 200px);
+      }
+      .decor-protein {
+        top: 82%;
+        left: 4%;
+        width: min(30vw, 190px);
+        height: min(30vw, 190px);
+        border-radius: 50%;
+      }
+      @media (max-width: 900px) {
+        .decor-item {
+          opacity: 0.1;
+        }
+        .decor-protein,
+        .decor-meal {
+          display: none;
+        }
+      }
+      @media (max-width: 520px) {
+        .decor-gym {
+          width: 160px;
+          height: 160px;
+          right: -12%;
+        }
+        .decor-fruit {
+          width: 140px;
+          height: 140px;
+          left: -14%;
+        }
+      }
+
       /* Section header */
       .section-header {
         display: flex;
@@ -1633,6 +1713,58 @@
     </style>
   </head>
   <body>
+    <div class="bg-decor" aria-hidden="true">
+      <div class="decor-item decor-gym" data-parallax="0.14" data-rotate="0.04" data-base-rot="-8">
+        <img
+          src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=520&q=75&auto=format&fit=crop"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width="260"
+          height="260"
+        />
+      </div>
+      <div
+        class="decor-item decor-fruit"
+        data-parallax="0.22"
+        data-rotate="0.14"
+        data-base-rot="12"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1619566698318-687fda3f6338?w=520&q=75&auto=format&fit=crop"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width="220"
+          height="220"
+        />
+      </div>
+      <div class="decor-item decor-meal" data-parallax="0.18" data-rotate="-0.06" data-base-rot="6">
+        <img
+          src="https://images.unsplash.com/photo-1546069900-ba59b2544c6e?w=520&q=75&auto=format&fit=crop"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width="200"
+          height="200"
+        />
+      </div>
+      <div
+        class="decor-item decor-protein"
+        data-parallax="0.26"
+        data-rotate="0.1"
+        data-base-rot="-15"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=520&q=75&auto=format&fit=crop"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width="190"
+          height="190"
+        />
+      </div>
+    </div>
     <div class="app">
       <header class="header">
         <div class="header-inner">
@@ -2979,6 +3111,34 @@
         });
       });
       window.addEventListener("resize", updateNavIndicator);
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SCROLL PARALLAX DECOR
+      // ═══════════════════════════════════════════════════════════════════════
+      let decorScrollPending = false;
+      function updateScrollDecor() {
+        const y = window.scrollY;
+        document.querySelectorAll(".decor-item").forEach((el) => {
+          const parallax = parseFloat(el.dataset.parallax) || 0.15;
+          const rotSpeed = parseFloat(el.dataset.rotate) || 0.08;
+          const baseRot = parseFloat(el.dataset.baseRot) || 0;
+          const offsetY = y * parallax;
+          const rot = baseRot + y * rotSpeed;
+          el.style.transform = `translate3d(0, ${offsetY}px, 0) rotate(${rot}deg)`;
+        });
+        decorScrollPending = false;
+      }
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!decorScrollPending) {
+            decorScrollPending = true;
+            requestAnimationFrame(updateScrollDecor);
+          }
+        },
+        { passive: true }
+      );
+      updateScrollDecor();
 
       // ═══════════════════════════════════════════════════════════════════════
       // INIT
