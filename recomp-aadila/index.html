@@ -8,34 +8,56 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg-primary: #1a0e1e;
-        --bg-secondary: #261426;
-        --bg-card: #321a33;
-        --bg-elevated: #3d2645;
-        --accent: #e91e63;
-        --accent-dim: #c2185b;
-        --rose: #f06292;
-        --success: #27ae60;
-        --warning: #f39c12;
+        --bg-primary: #0a0610;
+        --bg-secondary: #140a18;
+        --bg-card: rgba(28, 14, 36, 0.68);
+        --bg-card-solid: #1c0e24;
+        --bg-elevated: rgba(48, 22, 58, 0.9);
+        --accent: #f06292;
+        --accent-secondary: #ce93d8;
+        --accent-dim: #e91e63;
+        --accent-glow: rgba(240, 98, 146, 0.4);
+        --rose: #f48fb1;
+        --success: #3dd68c;
+        --warning: #ffc857;
         --gold: #ffb300;
-        --info: #6b3fa0;
-        --text-primary: #fdf0f7;
-        --text-secondary: #b8a4b8;
+        --info: #b39ddb;
+        --text-primary: #fdf2f8;
+        --text-secondary: #c4a8c4;
         --text-muted: #7a6478;
-        --border: rgba(255, 255, 255, 0.06);
-        --border-strong: rgba(255, 255, 255, 0.12);
-        --grid: rgba(255, 255, 255, 0.025);
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.16);
+        --glass-highlight: rgba(255, 255, 255, 0.06);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-spring: cubic-bezier(0.34, 1.35, 0.64, 1);
+        --radius-lg: 22px;
+        --radius-md: 16px;
+        --radius-sm: 12px;
+        --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+        --shadow-glow: 0 0 48px -12px var(--accent-glow);
       }
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         -webkit-tap-highlight-color: transparent;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      html {
+        scroll-behavior: smooth;
       }
       html,
       body {
@@ -44,31 +66,99 @@
         font-family:
           "Inter",
           -apple-system,
+          BlinkMacSystemFont,
           sans-serif;
-        line-height: 1.5;
+        line-height: 1.55;
         min-height: 100vh;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
       }
       body {
-        background-image: radial-gradient(
-            ellipse at top right,
-            rgba(233, 30, 99, 0.1),
-            transparent 60%
-          ),
-          radial-gradient(ellipse at bottom left, rgba(107, 63, 160, 0.08), transparent 60%),
-          linear-gradient(var(--grid) 1px, transparent 1px),
-          linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-        background-size:
-          100% 100%,
-          100% 100%,
-          40px 40px,
-          40px 40px;
-        background-attachment: fixed;
+        position: relative;
+      }
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(90px);
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.55;
+        animation: orbDrift 22s var(--ease-out) infinite;
+      }
+      body::before {
+        width: min(55vw, 480px);
+        height: min(55vw, 480px);
+        top: -12%;
+        right: -8%;
+        background: radial-gradient(circle, rgba(240, 98, 146, 0.3) 0%, transparent 68%);
+      }
+      body::after {
+        width: min(50vw, 420px);
+        height: min(50vw, 420px);
+        bottom: 5%;
+        left: -12%;
+        background: radial-gradient(circle, rgba(186, 104, 200, 0.25) 0%, transparent 68%);
+        animation-delay: -11s;
+      }
+      @keyframes orbDrift {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(-24px, 16px) scale(1.06);
+        }
+        66% {
+          transform: translate(16px, -20px) scale(0.96);
+        }
+      }
+      @keyframes fadeSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes pulseDot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(0.9);
+        }
+      }
+      @keyframes ringPulse {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 6px rgba(240, 98, 146, 0.35));
+        }
+        50% {
+          filter: drop-shadow(0 0 14px rgba(240, 98, 146, 0.55));
+        }
       }
 
       .display {
-        font-family: "Bebas Neue", sans-serif;
-        letter-spacing: 0.02em;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
       }
       .mono {
         font-family: "JetBrains Mono", monospace;
@@ -83,6 +173,8 @@
         min-height: 100vh;
         max-width: 1400px;
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
       }
       .container {
         padding: 24px;
@@ -126,14 +218,16 @@
         background: linear-gradient(135deg, var(--accent), var(--rose));
         display: grid;
         place-items: center;
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 22px;
         color: white;
         border-radius: 50%;
         box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
       }
       .logo-text {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 24px;
         letter-spacing: 0.05em;
       }
@@ -241,52 +335,78 @@
       .nav-tabs {
         display: flex;
         gap: 4px;
-        padding: 6px;
+        padding: 5px;
         background: var(--bg-card);
+        backdrop-filter: blur(16px);
         border: 1px solid var(--border);
-        border-radius: 14px;
+        border-radius: var(--radius-md);
         overflow-x: auto;
         scrollbar-width: none;
         margin-bottom: 32px;
+        position: relative;
+        box-shadow: var(--shadow-card);
       }
       .nav-tabs::-webkit-scrollbar {
         display: none;
       }
+      .nav-indicator {
+        position: absolute;
+        top: 5px;
+        bottom: 5px;
+        left: 0;
+        border-radius: 11px;
+        background: linear-gradient(135deg, var(--accent), var(--rose));
+        box-shadow: var(--shadow-glow);
+        transition:
+          transform 0.5s var(--ease-out),
+          width 0.5s var(--ease-out);
+        z-index: 0;
+        pointer-events: none;
+      }
       .nav-tab {
         flex: 1;
         min-width: max-content;
-        padding: 10px 16px;
+        padding: 11px 18px;
         background: transparent;
         border: none;
         color: var(--text-secondary);
-        font-family: "Inter";
+        font-family: "Inter", sans-serif;
         font-weight: 600;
         font-size: 13px;
-        border-radius: 10px;
+        border-radius: 11px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: color 0.3s var(--ease-out);
         display: flex;
         align-items: center;
         gap: 6px;
         justify-content: center;
         white-space: nowrap;
+        position: relative;
+        z-index: 1;
       }
       .nav-tab:hover {
         color: var(--text-primary);
       }
       .nav-tab.active {
-        background: linear-gradient(135deg, var(--accent), var(--rose));
         color: white;
-        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.35);
       }
 
       .card {
         background: var(--bg-card);
+        backdrop-filter: blur(20px);
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: var(--radius-lg);
         padding: 24px;
         position: relative;
         overflow: hidden;
+        box-shadow: var(--shadow-card);
+        transition:
+          transform 0.4s var(--ease-out),
+          border-color 0.4s var(--ease-out),
+          box-shadow 0.4s var(--ease-out);
+      }
+      .card:hover {
+        border-color: var(--border-strong);
       }
       .card-accent::before {
         content: "";
@@ -298,7 +418,8 @@
         background: linear-gradient(90deg, var(--accent), var(--rose), transparent);
       }
       .card-title {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 14px;
         letter-spacing: 0.2em;
         color: var(--text-secondary);
@@ -349,7 +470,8 @@
         margin-bottom: 4px;
       }
       .hero-date {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 32px;
         line-height: 1;
       }
@@ -373,16 +495,18 @@
         width: 160px;
         height: 160px;
         flex-shrink: 0;
+        animation: ringPulse 3s ease-in-out infinite;
       }
       .ring-svg {
         transform: rotate(-90deg);
       }
       .ring-bg {
-        stroke: var(--bg-elevated);
+        stroke: rgba(255, 255, 255, 0.06);
       }
       .ring-fill {
-        stroke: var(--accent);
-        transition: stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        stroke: url(#ringGradient);
+        transition: stroke-dashoffset 1.2s var(--ease-out);
+        filter: drop-shadow(0 0 8px var(--accent-glow));
       }
       .ring-inner {
         position: absolute;
@@ -393,7 +517,8 @@
         justify-content: center;
       }
       .ring-value {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 42px;
         line-height: 1;
         display: flex;
@@ -514,11 +639,13 @@
       }
       .tracker-targets strong {
         color: var(--rose);
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 20px;
       }
       .left-cell {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 18px;
         color: var(--warning);
       }
@@ -556,7 +683,8 @@
         border-color: #5dade2;
       }
       .goal-met-cell {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 18px;
         text-align: center;
         color: var(--text-muted);
@@ -618,7 +746,8 @@
         text-transform: uppercase;
       }
       .stat-bar-value {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 22px;
       }
       .stat-bar-track {
@@ -662,7 +791,8 @@
         margin-bottom: 8px;
       }
       .kpi-value {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 28px;
         line-height: 1;
       }
@@ -715,7 +845,8 @@
         text-transform: uppercase;
       }
       .toggle-text-value {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 18px;
       }
       .toggle-switch {
@@ -828,20 +959,10 @@
 
       .section {
         display: none;
-        animation: fadeIn 0.4s ease;
       }
       .section.active {
         display: block;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        animation: fadeSlideUp 0.55s var(--ease-out) both;
       }
 
       .meal-category-tabs {
@@ -896,7 +1017,8 @@
         margin-bottom: 14px;
       }
       .meal-card-name {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 22px;
         letter-spacing: 0.03em;
       }
@@ -914,7 +1036,8 @@
         flex-direction: column;
       }
       .stat-mini-val {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 26px;
         line-height: 1;
       }
@@ -1080,7 +1203,8 @@
       }
 
       .total-cell {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 18px;
         color: var(--accent);
       }
@@ -1165,7 +1289,8 @@
         border: 1px solid rgba(233, 30, 99, 0.3);
       }
       .ibs-title {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 18px;
         letter-spacing: 0.05em;
       }
@@ -1211,7 +1336,8 @@
       }
       .footer strong {
         color: var(--text-secondary);
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         letter-spacing: 0.15em;
       }
 
@@ -1246,7 +1372,8 @@
         border-bottom: 1px solid var(--border);
       }
       .section-title {
-        font-family: "Bebas Neue";
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
         font-size: 32px;
         letter-spacing: 0.02em;
         line-height: 1;
@@ -1537,6 +1664,12 @@
             <div class="progress-wrapper">
               <div class="ring-container">
                 <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+                  <defs>
+                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#f06292" />
+                      <stop offset="100%" stop-color="#ce93d8" />
+                    </linearGradient>
+                  </defs>
                   <circle class="ring-bg" cx="80" cy="80" r="68" fill="none" stroke-width="10" />
                   <circle
                     class="ring-fill"
@@ -2288,7 +2421,7 @@
         pCtx.fillStyle = "#321A33";
         pCtx.fill();
         pCtx.fillStyle = "#FDF0F7";
-        pCtx.font = "bold 24px Bebas Neue";
+        pCtx.font = "bold 22px Syne, sans-serif";
         pCtx.textAlign = "center";
         pCtx.fillText(data.reduce((s, d) => s + d.value, 0) + "g", cx, cy + 3);
         pCtx.font = "10px Inter";
@@ -2334,7 +2467,7 @@
             cCtx.fillRect(x, baseY - h, bw, h);
           }
           cCtx.fillStyle = d.val > 0 ? "#FDF0F7" : "#7A6478";
-          cCtx.font = "bold 13px Bebas Neue";
+          cCtx.font = "bold 12px Syne, sans-serif";
           cCtx.textAlign = "center";
           cCtx.fillText(d.val || d.full, x + bw / 2, baseY - fullH - 6);
           cCtx.fillStyle = "#B8A4B8";
@@ -2799,15 +2932,33 @@
         });
       }
 
+      function updateNavIndicator() {
+        const nav = document.querySelector(".nav-tabs");
+        const active = document.querySelector(".nav-tab.active");
+        if (!nav || !active) return;
+        let indicator = nav.querySelector(".nav-indicator");
+        if (!indicator) {
+          indicator = document.createElement("span");
+          indicator.className = "nav-indicator";
+          nav.prepend(indicator);
+        }
+        const navRect = nav.getBoundingClientRect();
+        const rect = active.getBoundingClientRect();
+        indicator.style.width = rect.width + "px";
+        indicator.style.transform = "translateX(" + (rect.left - navRect.left) + "px)";
+      }
+
       document.querySelectorAll(".nav-tab").forEach((tab) => {
         tab.addEventListener("click", () => {
           document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
           document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
           tab.classList.add("active");
           document.getElementById(tab.dataset.tab + "-section").classList.add("active");
+          updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
+      window.addEventListener("resize", updateNavIndicator);
 
       migrateStateProfile();
       initUserMenu();
@@ -2821,6 +2972,7 @@
       renderIBS();
       renderTracker();
       renderTips();
+      updateNavIndicator();
     </script>
   </body>
 </html>
