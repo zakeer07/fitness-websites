@@ -194,6 +194,16 @@
   .tracker-guide strong { color: var(--text-primary); }
   .chart-unit-hint { font-size: 11px; color: var(--text-muted); margin: -8px 0 12px; }
   .protein-input::placeholder { color: var(--text-muted); font-size: 10px; }
+  .tracker-targets {
+    display: flex; flex-wrap: wrap; gap: 16px 24px;
+    padding: 12px 18px; margin-bottom: 12px;
+    background: rgba(233,30,99,0.08); border: 1px solid rgba(233,30,99,0.25);
+    border-radius: 12px; font-size: 13px; color: var(--text-secondary);
+  }
+  .tracker-targets strong { color: var(--rose); font-family: 'Bebas Neue'; font-size: 20px; }
+  .left-cell { font-family: 'Bebas Neue'; font-size: 18px; color: var(--warning); }
+  .left-cell.done { color: var(--success); }
+  .left-cell .cell-unit { font-family: 'Inter'; font-size: 11px; }
   .target-cell { color: var(--gold); font-weight: 600; }
   .ring-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px; }
   .ring-target { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
@@ -701,6 +711,12 @@
         <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for <strong>calories (kcal)</strong> + <strong>protein (g)</strong>. <strong>Tracker</strong> rows are <strong>protein grams only</strong> — green <strong>Cal target</strong> = daily kcal goal (not protein).
       </div>
 
+      <div class="tracker-targets">
+        <span>Protein target: <strong id="tracker-pro-goal">90</strong><span class="cell-unit">g</span> / day</span>
+        <span style="opacity:0.85">Log each meal below · <strong>Left</strong> = grams still to hit target</span>
+      </div>
+
+
       <div class="tracker-summary">
         <div class="kpi"><div class="kpi-label">Workout Days</div><div class="kpi-value num" id="sum-workouts">12</div><div class="kpi-sub">this period</div></div>
         <div class="kpi"><div class="kpi-label">Avg Protein</div><div class="kpi-value num" id="sum-protein">95<span class="kpi-unit">g</span></div><div class="kpi-sub">per day</div></div>
@@ -715,8 +731,8 @@
               <th rowspan="2">WO</th>
               <th rowspan="2" class="th-cal">Cal target<br><span style="font-weight:500;opacity:0.8">kcal</span></th>
               <th colspan="5" class="th-group">Protein per meal — enter grams (g)</th>
-              <th rowspan="2" class="th-pro">Total<br><span style="font-weight:500;opacity:0.8">g</span></th>
-              <th rowspan="2" class="th-pro">Protein<br><span style="font-weight:500;opacity:0.8">goal</span></th>
+              <th rowspan="2" class="th-pro">Left<br><span style="font-weight:500;opacity:0.8">g</span></th>
+              <th rowspan="2">Status</th>
             </tr>
             <tr>
               <th class="th-pro">B'fast</th>
@@ -1046,6 +1062,9 @@ function renderIBS() {
   `).join('');
 }
 
+const PRO_GOAL = 90;
+const PRO_CLOSE = 75;
+
 function renderTracker() {
   const start = new Date(2026, 4, 7);
   const rows = document.getElementById('tracker-rows');
@@ -1072,13 +1091,20 @@ function renderTracker() {
                   (parseInt(dayData.dinner)||0);
 
     if (dayData.isWorkout) totalWO++;
+    const left = Math.max(0, PRO_GOAL - total);
+    let leftDisplay;
+    if (total === 0) leftDisplay = '—';
+    else if (left === 0) leftDisplay = '✓';
+    else leftDisplay = left + '<span class="cell-unit">g</span>';
+
+
     if (total > 0) { sumP += total; daysWithP++; }
-    if (total >= 90) proMet++;
+    if (total >= PRO_GOAL) proMet++;
 
     let status, statusClass;
     if (total === 0) { status = '—'; statusClass = ''; }
-    else if (total >= 90) { status = '✅ Protein OK'; statusClass = 'status-yes'; }
-    else if (total >= 75) { status = '🟡 Almost'; statusClass = 'status-close'; }
+    else if (total >= PRO_GOAL) { status = '✅ Protein OK'; statusClass = 'status-yes'; }
+    else if (total >= PRO_CLOSE) { status = '🟡 Almost'; statusClass = 'status-close'; }
     else { status = '❌ Low protein'; statusClass = 'status-no'; }
 
     const tr = document.createElement('tr');
@@ -1092,7 +1118,7 @@ function renderTracker() {
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
-      <td><span class="total-cell num">${total > 0 ? total + '<span class="cell-unit">g</span>' : '—'}</span></td>
+      <td><span class="left-cell num ${left === 0 && total > 0 ? 'done' : ''}">${leftDisplay}</span></td>
       <td><span class="status-badge ${statusClass}">${status}</span></td>
     `;
     rows.appendChild(tr);
