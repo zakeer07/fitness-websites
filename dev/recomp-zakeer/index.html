@@ -2382,6 +2382,130 @@
           display: none;
         }
       }
+
+      /* ══════════════════════════════════════════════════
+         EXAMPLE MEAL PLAN
+      ══════════════════════════════════════════════════ */
+      .example-plan {
+        margin-top: 32px;
+      }
+      .example-banner {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 14px 18px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, rgba(255, 92, 122, 0.12), rgba(78, 205, 196, 0.08));
+        border: 1px solid rgba(255, 92, 122, 0.25);
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+      }
+      .example-banner strong {
+        color: var(--accent);
+        font-size: 16px;
+      }
+      .example-block {
+        margin-bottom: 28px;
+      }
+      .example-time-header {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--text-primary);
+        letter-spacing: 0.02em;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .example-dish-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent);
+        margin: 14px 0 8px;
+        letter-spacing: 0.01em;
+      }
+      .example-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+      }
+      .example-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        min-width: 320px;
+      }
+      .example-table th {
+        background: var(--bg-secondary);
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border);
+      }
+      .example-table th:not(:first-child),
+      .example-table td:not(:first-child) {
+        text-align: right;
+      }
+      .example-table td {
+        padding: 9px 12px;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border);
+        font-variant-numeric: tabular-nums;
+      }
+      .example-table tr:last-child td {
+        border-bottom: none;
+      }
+      .example-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .example-table .row-total td {
+        background: rgba(255, 92, 122, 0.07);
+        font-weight: 600;
+        color: var(--accent);
+        border-top: 1px solid rgba(255, 92, 122, 0.2);
+        border-bottom: none;
+      }
+      .example-table .row-total td:first-child {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .example-day-total {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid rgba(255, 92, 122, 0.22);
+        margin-top: 4px;
+      }
+      .example-day-total .example-table th {
+        background: rgba(255, 92, 122, 0.1);
+        color: var(--accent);
+      }
+      .example-day-total .row-grand td {
+        background: rgba(255, 92, 122, 0.12);
+        font-weight: 700;
+        color: var(--text-primary);
+        border-top: 1px solid rgba(255, 92, 122, 0.25);
+      }
+      .example-day-total .row-grand td:first-child {
+        color: var(--accent);
+      }
+      .example-note {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+      }
     </style>
   </head>
   <body>
@@ -2974,6 +3098,319 @@
           </div>
 
           <div class="tip-grid" id="tip-grid"></div>
+
+          <!-- EXAMPLE MEAL PLAN -->
+          <div class="example-plan" id="example-plan">
+            <div class="example-banner">
+              📋 Example day designed to reach your targets:
+              <strong id="example-pro">115</strong>g protein ·
+              <strong id="example-cal">2000</strong> kcal
+            </div>
+
+            <!-- Daily Targets -->
+            <div class="example-block">
+              <div class="example-time-header">🎯 Daily Targets</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                      <th>Goal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="example-cal-range">1900–2100</td>
+                      <td id="example-pro-range">110–125g</td>
+                      <td>Body recomposition</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Lunch -->
+            <div class="example-block">
+              <div class="example-time-header">🕛 Lunch (12–1 PM)</div>
+
+              <div class="example-dish-name">🍗 Chicken Rice Bowl</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Chicken breast</td>
+                      <td>180g</td>
+                      <td>300</td>
+                      <td>40g</td>
+                    </tr>
+                    <tr>
+                      <td>Rice</td>
+                      <td>1 cup</td>
+                      <td>200</td>
+                      <td>4g</td>
+                    </tr>
+                    <tr>
+                      <td>Vegetables</td>
+                      <td>2 cups</td>
+                      <td>80</td>
+                      <td>3g</td>
+                    </tr>
+                    <tr>
+                      <td>Oil / ghee</td>
+                      <td>1 tsp</td>
+                      <td>40</td>
+                      <td>0g</td>
+                    </tr>
+                    <tr class="row-total">
+                      <td>Lunch Total</td>
+                      <td></td>
+                      <td>620</td>
+                      <td>47g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="example-dish-name">🐟 Salmon Quinoa Bowl</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Salmon</td>
+                      <td>180g</td>
+                      <td>360</td>
+                      <td>35g</td>
+                    </tr>
+                    <tr>
+                      <td>Quinoa</td>
+                      <td>1 cup</td>
+                      <td>220</td>
+                      <td>6g</td>
+                    </tr>
+                    <tr>
+                      <td>Vegetables</td>
+                      <td>2 cups</td>
+                      <td>80</td>
+                      <td>3g</td>
+                    </tr>
+                    <tr class="row-total">
+                      <td>Lunch Total</td>
+                      <td></td>
+                      <td>660</td>
+                      <td>44g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Snack -->
+            <div class="example-block">
+              <div class="example-time-header">🕒 Snack (3–4 PM)</div>
+              <div class="example-dish-name">🥣 Greek Yogurt Snack</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Greek yogurt</td>
+                      <td>200g</td>
+                      <td>150</td>
+                      <td>18g</td>
+                    </tr>
+                    <tr>
+                      <td>Fruit</td>
+                      <td>1 serving</td>
+                      <td>80</td>
+                      <td>0g</td>
+                    </tr>
+                    <tr>
+                      <td>Peanut butter</td>
+                      <td>1 tbsp</td>
+                      <td>95</td>
+                      <td>4g</td>
+                    </tr>
+                    <tr class="row-total">
+                      <td>Snack Total</td>
+                      <td></td>
+                      <td>325</td>
+                      <td>22g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Pre-Workout -->
+            <div class="example-block">
+              <div class="example-time-header">⚡ Pre-Workout (5 PM)</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Black coffee</td>
+                      <td>1 cup</td>
+                      <td>5</td>
+                    </tr>
+                    <tr>
+                      <td>Banana (optional)</td>
+                      <td>½ banana</td>
+                      <td>50</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Post-Workout -->
+            <div class="example-block">
+              <div class="example-time-header">🏋️ Post-Workout (6:30–7 PM)</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Transparent Labs Whey</td>
+                      <td>1 scoop</td>
+                      <td>130</td>
+                      <td>28g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Dinner -->
+            <div class="example-block">
+              <div class="example-time-header">🍽️ Dinner (7:30–8:30 PM)</div>
+              <div class="example-dish-name">🍗 Chicken Dinner</div>
+              <div class="example-table-wrap">
+                <table class="example-table">
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Qty</th>
+                      <th>Calories</th>
+                      <th>Protein</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Chicken breast</td>
+                      <td>150g</td>
+                      <td>250</td>
+                      <td>35g</td>
+                    </tr>
+                    <tr>
+                      <td>Vegetables</td>
+                      <td>2 cups</td>
+                      <td>80</td>
+                      <td>3g</td>
+                    </tr>
+                    <tr>
+                      <td>Rice</td>
+                      <td>½ cup</td>
+                      <td>100</td>
+                      <td>2g</td>
+                    </tr>
+                    <tr class="row-total">
+                      <td>Dinner Total</td>
+                      <td></td>
+                      <td>430</td>
+                      <td>40g</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Full Day Summary -->
+            <div class="example-block">
+              <div class="example-time-header">📊 Example Full Day</div>
+              <div class="example-day-total">
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Meal</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Lunch</td>
+                        <td>620</td>
+                        <td>47g</td>
+                      </tr>
+                      <tr>
+                        <td>Snack</td>
+                        <td>325</td>
+                        <td>22g</td>
+                      </tr>
+                      <tr>
+                        <td>Protein Shake</td>
+                        <td>130</td>
+                        <td>28g</td>
+                      </tr>
+                      <tr>
+                        <td>Dinner</td>
+                        <td>430</td>
+                        <td>40g</td>
+                      </tr>
+                      <tr class="row-grand">
+                        <td>Daily Total</td>
+                        <td>1505</td>
+                        <td>137g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="example-note">
+                👉 Add carbs or extra snacks as needed to reach your
+                <strong id="example-note-cal">2000</strong> kcal target.
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
@@ -3805,6 +4242,7 @@
         if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
         updateMealsBanner();
         applyIbsTabVisibility();
+        renderExamplePlan();
       }
 
       function applyIbsTabVisibility() {
@@ -4183,6 +4621,21 @@
         });
       }
 
+      function renderExamplePlan() {
+        const p = state.profile;
+        const proto = p.proteinG || 115;
+        const cal = p.calWorkout || 2000;
+        const setText = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val;
+        };
+        setText("example-pro", proto);
+        setText("example-cal", cal);
+        setText("example-note-cal", cal);
+        setText("example-cal-range", `${cal - 100}–${cal + 100}`);
+        setText("example-pro-range", `${Math.round(proto * 0.96)}–${Math.round(proto * 1.09)}g`);
+      }
+
       function setUserMenuOpen(open) {
         const menu = document.getElementById("user-menu");
         const trigger = document.getElementById("user-menu-trigger");
@@ -4326,6 +4779,7 @@
           renderTracker();
           renderIBS();
           renderTips();
+          renderExamplePlan();
           updateNavIndicator();
         } catch (err) {
           console.error("bootstrapApp failed:", err);
