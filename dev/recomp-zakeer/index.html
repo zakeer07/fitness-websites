@@ -140,16 +140,6 @@
           background-position: 200% center;
         }
       }
-      @keyframes ringPulse {
-        0%,
-        100% {
-          filter: drop-shadow(0 0 6px rgba(255, 92, 122, 0.35));
-        }
-        50% {
-          filter: drop-shadow(0 0 14px rgba(255, 92, 122, 0.55));
-        }
-      }
-
       /* Typography */
       .display {
         font-family: "Syne", sans-serif;
@@ -161,7 +151,6 @@
       }
       .num,
       .kpi-value,
-      .ring-value,
       .stat-bar-value,
       .stat-mini-val,
       .tracker-targets strong,
@@ -558,70 +547,6 @@
         margin-top: 6px;
       }
 
-      .progress-wrapper {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-        flex-wrap: wrap;
-        position: relative;
-      }
-      .ring-container {
-        position: relative;
-        width: 160px;
-        height: 160px;
-        flex-shrink: 0;
-        animation: ringPulse 3s ease-in-out infinite;
-      }
-      .ring-svg {
-        transform: rotate(-90deg);
-      }
-      .ring-bg {
-        stroke: rgba(255, 255, 255, 0.06);
-      }
-      .ring-fill {
-        stroke: url(#ringGradient);
-        transition: stroke-dashoffset 1.2s var(--ease-out);
-        filter: drop-shadow(0 0 8px var(--accent-glow));
-      }
-      .ring-inner {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .ring-value {
-        font-weight: 700;
-        font-size: 36px;
-        line-height: 1.15;
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-      }
-      .ring-unit {
-        font-family: "Inter";
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-      }
-      .ring-label {
-        font-size: 10px;
-        color: var(--text-muted);
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        margin-top: 4px;
-      }
-      .ring-target {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-top: 6px;
-      }
-      .ring-target .unit-hint {
-        font-size: 10px;
-        color: var(--text-muted);
-      }
-
       .tracking-legend {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -674,11 +599,10 @@
       }
 
       .stats-stack {
-        flex: 1;
-        min-width: 220px;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        width: 100%;
       }
       .stat-bar {
         background: rgba(255, 255, 255, 0.03);
@@ -1483,13 +1407,6 @@
         .hero {
           padding: 24px 20px;
         }
-        .ring-container {
-          width: 140px;
-          height: 140px;
-        }
-        .ring-value {
-          font-size: 36px;
-        }
         .hero-date {
           font-size: 28px;
         }
@@ -2059,13 +1976,6 @@
         transition: transform 0.5s ease;
       }
 
-      /* ── Progress ring enhanced ── */
-      .ring-svg circle.ring-track {
-        stroke: rgba(255, 92, 122, 0.1);
-      }
-      .ring-value {
-        animation: ringCounterIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
-      }
       @keyframes ringCounterIn {
         from {
           opacity: 0;
@@ -2279,12 +2189,10 @@
       }
 
       /* ── Number counter animation ── */
-      .kpi-value,
-      .ring-value {
+      .kpi-value {
         transition: transform 0.3s var(--ease-spring);
       }
-      .kpi-value.updating,
-      .ring-value.updating {
+      .kpi-value.updating {
         animation: numPop 0.4s var(--ease-spring);
       }
       @keyframes numPop {
@@ -3380,78 +3288,59 @@
               </div>
             </div>
 
-            <div class="progress-wrapper">
-              <div class="ring-container">
-                <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
-                  <defs>
-                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ff5c7a" />
-                      <stop offset="100%" stop-color="#4ecdc4" />
-                    </linearGradient>
-                  </defs>
-                  <circle class="ring-bg" cx="80" cy="80" r="68" fill="none" stroke-width="10" />
-                  <circle
-                    class="ring-fill"
-                    id="cal-ring"
-                    cx="80"
-                    cy="80"
-                    r="68"
-                    fill="none"
-                    stroke-width="10"
-                    stroke-dasharray="427"
-                    stroke-dashoffset="427"
-                    stroke-linecap="round"
-                  />
-                </svg>
-                <div class="ring-inner">
-                  <div class="ring-value num">
-                    <span id="cal-current">0</span><span class="ring-unit">kcal</span>
+            <div class="stats-stack">
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🔥 Calories eaten</div>
+                  <div class="stat-bar-value num">
+                    <span id="cal-current">0</span><span class="kpi-unit"> / </span
+                    ><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
                   </div>
-                  <div class="ring-label">Calories eaten</div>
-                  <div class="ring-target num">
-                    of <span id="cal-target">2000</span> <span class="unit-hint">kcal goal</span>
-                  </div>
+                </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="cal-fill"
+                    style="width: 0%; background: var(--info)"
+                  ></div>
                 </div>
               </div>
-
-              <div class="stats-stack">
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">💪 Protein (grams)</div>
-                    <div class="stat-bar-value num">
-                      <span id="prot-current">0</span><span class="kpi-unit">g</span> /
-                      <span id="prot-goal-label">115</span><span class="kpi-unit">g</span> daily
-                    </div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div
-                      class="stat-bar-fill"
-                      id="prot-fill"
-                      style="width: 0%; background: var(--accent)"
-                    ></div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">💪 Protein (grams)</div>
+                  <div class="stat-bar-value num">
+                    <span id="prot-current">0</span><span class="kpi-unit">g</span> /
+                    <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
                   </div>
                 </div>
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">🍽️ Meals Logged</div>
-                    <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div
-                      class="stat-bar-fill"
-                      id="meals-fill"
-                      style="width: 0%; background: var(--success)"
-                    ></div>
-                  </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="prot-fill"
+                    style="width: 0%; background: var(--accent)"
+                  ></div>
                 </div>
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">🔥 Streak</div>
-                    <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
-                  </div>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🍽️ Meals Logged</div>
+                  <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
+                </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="meals-fill"
+                    style="width: 0%; background: var(--success)"
+                  ></div>
+                </div>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🔥 Streak</div>
+                  <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
+                </div>
+                <div class="stat-bar-track">
+                  <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
                 </div>
               </div>
             </div>
@@ -4395,6 +4284,27 @@
               Show full year ↓
             </button>
           </div>
+
+          <div class="charts-grid">
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
+              <div class="chart-unit-hint">Daily total (g) — dashed = goal</div>
+              <canvas
+                id="tracker-protein-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
+              <div class="chart-unit-hint">Daily kcal burned — from Burnt column</div>
+              <canvas
+                id="tracker-burnt-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
+            </div>
+          </div>
         </section>
 
         <!-- WORKOUTS SECTION -->
@@ -5131,9 +5041,7 @@
         document.getElementById("meals-logged").textContent = mealsLogged;
         document.getElementById("kpi-cal").textContent = target;
 
-        const circumference = 2 * Math.PI * 68;
-        const ringFill = Math.min(cal / target, 1);
-        document.getElementById("cal-ring").style.strokeDashoffset = circumference * (1 - ringFill);
+        document.getElementById("cal-fill").style.width = Math.min((cal / target) * 100, 100) + "%";
 
         const p = getProfile();
         document.getElementById("prot-goal-label").textContent = p.proteinG;
@@ -5717,6 +5625,7 @@
         }
 
         updateTrackerSummary();
+        renderTrackerCharts();
 
         // Wire up inputs
         document.querySelectorAll(".protein-input, .water-input, .burnt-input").forEach((input) => {
@@ -5728,6 +5637,8 @@
             refreshTrackerRow(dateKey);
             updateTrackerSummary();
             updateDashboardStats();
+            clearTimeout(renderTrackerCharts._t);
+            renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
           });
         });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
@@ -5739,6 +5650,244 @@
             renderTracker();
           });
         });
+      }
+
+      function renderTrackerCharts() {
+        const pCanvas = document.getElementById("tracker-protein-chart");
+        const bCanvas = document.getElementById("tracker-burnt-chart");
+        if (!pCanvas || !bCanvas) return;
+
+        const today = new Date();
+        const renderStart = trackerExpanded
+          ? TRACKER_START
+          : new Date(today.getFullYear(), today.getMonth(), 1);
+        const endDate = trackerExpanded
+          ? new Date(today.getFullYear(), 11, 31)
+          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        const p = getProfile();
+        const proteinGoal = p.proteinG;
+
+        const dates = [];
+        const proValues = [];
+        const burntValues = [];
+        let d = new Date(renderStart);
+        while (d <= endDate) {
+          const key = toDateKey(d);
+          const day = state.trackerData[key] || {};
+          const pro =
+            (parseFloat(day.lunch) || 0) +
+            (parseFloat(day.snack) || 0) +
+            (parseFloat(day.shake) || 0) +
+            (parseFloat(day.dinner) || 0);
+          dates.push(new Date(d));
+          proValues.push(pro);
+          burntValues.push(parseFloat(day.burnt) || 0);
+          d = new Date(d);
+          d.setDate(d.getDate() + 1);
+        }
+
+        const n = dates.length;
+        const todayKey = toDateKey(today);
+        const MON = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+
+        function labelStep(count) {
+          if (count <= 15) return 1;
+          if (count <= 35) return 3;
+          if (count <= 92) return 7;
+          return 14;
+        }
+
+        function setupCanvas(canvas) {
+          const w = canvas.parentElement?.clientWidth || canvas.offsetWidth || 400;
+          canvas.width = Math.max(w, 200);
+          return canvas.getContext("2d");
+        }
+
+        function drawLine(canvas, values, goalLine, color) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width,
+            H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR,
+            cH = H - mT - mB;
+          const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
+          const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
+          const yOf = (v) => mT + cH * (1 - v / maxV);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 4; g++) {
+            const y = mT + (g / 4) * cH;
+            ctx.beginPath();
+            ctx.moveTo(mL, y);
+            ctx.lineTo(W - mR, y);
+            ctx.stroke();
+            ctx.fillStyle = "#6B7280";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
+          }
+
+          if (goalLine) {
+            const gy = yOf(goalLine);
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.28)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(mL, gy);
+            ctx.lineTo(W - mR, gy);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          const hasData = values.some((v) => v > 0);
+          if (!hasData) {
+            ctx.fillStyle = "#4B5563";
+            ctx.font = "11px Inter,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("No protein logged yet", W / 2, H / 2 - 4);
+          } else {
+            const grad = ctx.createLinearGradient(0, mT, 0, mT + cH);
+            grad.addColorStop(0, color + "50");
+            grad.addColorStop(1, color + "00");
+            ctx.beginPath();
+            let first = true;
+            values.forEach((v, i) => {
+              const x = xOf(i),
+                y = yOf(v);
+              if (first) {
+                ctx.moveTo(x, y);
+                first = false;
+              } else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(xOf(n - 1), mT + cH);
+            ctx.lineTo(xOf(0), mT + cH);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            first = true;
+            values.forEach((v, i) => {
+              const x = xOf(i),
+                y = yOf(v);
+              if (first) {
+                ctx.moveTo(x, y);
+                first = false;
+              } else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            dates.forEach((lbl, i) => {
+              if (toDateKey(lbl) === todayKey && values[i] > 0) {
+                ctx.beginPath();
+                ctx.arc(xOf(i), yOf(values[i]), 4, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = "#1A2236";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+              }
+            });
+          }
+
+          const s = labelStep(n);
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "center";
+          dates.forEach((lbl, i) => {
+            if (i % s !== 0 && i !== n - 1) return;
+            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i), H - 4);
+          });
+        }
+
+        function drawBars(canvas, values, color) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width,
+            H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR,
+            cH = H - mT - mB;
+          const maxV = Math.max(...values, 1) * 1.18;
+          const barW = Math.max(1, cW / n - 1);
+          const xOf = (i) => mL + (i / n) * cW;
+          const yOf = (v) => mT + cH * (1 - v / maxV);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 4; g++) {
+            const y = mT + (g / 4) * cH;
+            ctx.beginPath();
+            ctx.moveTo(mL, y);
+            ctx.lineTo(W - mR, y);
+            ctx.stroke();
+            ctx.fillStyle = "#6B7280";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
+          }
+
+          const hasData = values.some((v) => v > 0);
+          if (!hasData) {
+            ctx.fillStyle = "#4B5563";
+            ctx.font = "11px Inter,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("No burnt calories logged yet", W / 2, H / 2 - 4);
+          } else {
+            values.forEach((v, i) => {
+              if (!v) return;
+              const x = xOf(i),
+                y = yOf(v),
+                h = mT + cH - y;
+              ctx.fillStyle = toDateKey(dates[i]) === todayKey ? color : color + "BB";
+              if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(x, y, barW, h, [2, 2, 0, 0]);
+                ctx.fill();
+              } else {
+                ctx.fillRect(x, y, barW, h);
+              }
+            });
+          }
+
+          const s = labelStep(n);
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "center";
+          dates.forEach((lbl, i) => {
+            if (i % s !== 0 && i !== n - 1) return;
+            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i) + barW / 2, H - 4);
+          });
+        }
+
+        drawLine(pCanvas, proValues, proteinGoal, "#E94560");
+        drawBars(bCanvas, burntValues, "#F39C12");
       }
 
       document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
@@ -6336,6 +6485,7 @@
           section.classList.add("active");
           updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
+          if (tab.dataset.tab === "tracker") requestAnimationFrame(renderTrackerCharts);
         });
       });
       window.addEventListener("resize", updateNavIndicator);
