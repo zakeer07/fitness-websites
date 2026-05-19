@@ -39,6 +39,26 @@
         --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35);
         --shadow-glow: 0 0 48px -12px var(--accent-glow);
       }
+      [data-theme="bloom"] {
+        --bg-primary: #0a0610;
+        --bg-secondary: #140a18;
+        --bg-card: rgba(28, 14, 36, 0.68);
+        --bg-card-solid: #1c0e24;
+        --bg-elevated: rgba(48, 22, 58, 0.9);
+        --accent: #f06292;
+        --accent-secondary: #ce93d8;
+        --accent-dim: #e91e63;
+        --accent-glow: rgba(240, 98, 146, 0.4);
+        --text-primary: #fdf2f8;
+        --text-secondary: #c4a8c4;
+        --text-muted: #7a6478;
+      }
+      [data-theme="bloom"] body::before {
+        background: radial-gradient(circle, rgba(240, 98, 146, 0.28) 0%, transparent 68%);
+      }
+      [data-theme="bloom"] body::after {
+        background: radial-gradient(circle, rgba(206, 147, 216, 0.22) 0%, transparent 68%);
+      }
       * {
         margin: 0;
         padding: 0;
@@ -3481,6 +3501,27 @@
                   </div>
                 </div>
                 <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Theme</div>
+                  <label class="profile-toggle" for="profile-theme-recomp">
+                    <input
+                      type="radio"
+                      name="profile-theme"
+                      id="profile-theme-recomp"
+                      value="recomp"
+                    />
+                    <span>RECOMP — red / teal</span>
+                  </label>
+                  <label class="profile-toggle" for="profile-theme-bloom">
+                    <input
+                      type="radio"
+                      name="profile-theme"
+                      id="profile-theme-bloom"
+                      value="bloom"
+                    />
+                    <span>BLOOM — pink / purple</span>
+                  </label>
+                </div>
+                <div class="profile-group profile-group-wide">
                   <div class="profile-group-title">Features</div>
                   <label class="profile-toggle" for="profile-ibs-enabled">
                     <input type="checkbox" id="profile-ibs-enabled" />
@@ -4830,8 +4871,8 @@
       </main>
 
       <footer class="footer">
-        <strong>RECOMP</strong> · Built for <span id="footer-user-name">Zakeer</span> ·
-        <span class="num" id="footer-date"></span><br />
+        <strong id="footer-app-name">RECOMP</strong> · Built for
+        <span id="footer-user-name">You</span> · <span class="num" id="footer-date"></span><br />
         <span style="opacity: 0.6">Data saved to your account</span>
       </footer>
     </div>
@@ -5081,6 +5122,7 @@
         waterBottleMl: 500,
         creatineG: 5,
         ibsTabEnabled: false,
+        theme: "recomp",
       };
       const defaultState = {
         isWorkoutDay: true,
@@ -5158,6 +5200,9 @@
           merged.ibsTabEnabled = false;
         } else if (typeof merged.ibsTabEnabled !== "boolean") {
           merged.ibsTabEnabled = DEFAULT_PROFILE.ibsTabEnabled;
+        }
+        if (merged.theme !== "recomp" && merged.theme !== "bloom") {
+          merged.theme = DEFAULT_PROFILE.theme;
         }
         state.profile = merged;
         saveState();
@@ -5416,11 +5461,14 @@
       }
 
       // Item 9: If the toggle was set on a different calendar day, re-seed from schedule.
-      const RECOMP_WORKOUT_SCHEDULE = [1, 3, 5, 0]; // Mon Wed Fri Sun
+      const WORKOUT_SCHEDULES = { recomp: [1, 3, 5, 0], bloom: [1, 2, 4, 5] };
+      function getWorkoutSchedule() {
+        return WORKOUT_SCHEDULES[state.profile?.theme] || WORKOUT_SCHEDULES.recomp;
+      }
       function syncWorkoutToggleToCalendar() {
         const todayKey = toDateKey(new Date());
         if (state.workoutToggleDate !== todayKey) {
-          state.isWorkoutDay = RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay());
+          state.isWorkoutDay = getWorkoutSchedule().includes(new Date().getDay());
           state.workoutToggleDate = todayKey;
         }
       }
@@ -5472,7 +5520,7 @@
           // Dynamic workouts KPI (this week)
           const { done, total } = FitnessUI.weekWorkoutsCount(
             state.trackerData,
-            RECOMP_WORKOUT_SCHEDULE
+            getWorkoutSchedule()
           );
           const woEl = document.getElementById("kpi-workouts");
           if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${total}</span>`;
@@ -5645,6 +5693,19 @@
         });
       });
 
+      function applyTheme(theme) {
+        const t = theme === "bloom" ? "bloom" : "recomp";
+        document.documentElement.dataset.theme = t;
+        const isBloom = t === "bloom";
+        const logoMark = document.querySelector(".logo-mark");
+        if (logoMark) logoMark.textContent = isBloom ? "B" : "R";
+        const logoText = document.querySelector(".logo-text");
+        if (logoText) logoText.textContent = isBloom ? "BLOOM" : "RECOMP";
+        document.title = isBloom ? "BLOOM · Toned & Strong" : "RECOMP · Body Recomposition Tracker";
+        const footerApp = document.getElementById("footer-app-name");
+        if (footerApp) footerApp.textContent = isBloom ? "BLOOM" : "RECOMP";
+      }
+
       function initProfile() {
         const p = getProfile();
         document.getElementById("profile-name").value = p.name;
@@ -5659,6 +5720,10 @@
         document.getElementById("profile-creatine-g").value = p.creatineG;
         const ibsEl = document.getElementById("profile-ibs-enabled");
         if (ibsEl) ibsEl.checked = p.ibsTabEnabled === true;
+        const themeEl = document.querySelector(
+          `input[name="profile-theme"][value="${p.theme || "recomp"}"]`
+        );
+        if (themeEl) themeEl.checked = true;
       }
 
       function applyProfileToUI() {
@@ -5693,6 +5758,7 @@
         if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
         updateMealsBanner();
         applyIbsTabVisibility();
+        applyTheme(p.theme);
         renderExamplePlan();
       }
 
@@ -5754,6 +5820,10 @@
           ibsTabEnabled: (() => {
             const el = document.getElementById("profile-ibs-enabled");
             return el ? el.checked : DEFAULT_PROFILE.ibsTabEnabled;
+          })(),
+          theme: (() => {
+            const el = document.querySelector('input[name="profile-theme"]:checked');
+            return el ? el.value : DEFAULT_PROFILE.theme;
           })(),
         };
         saveState();
@@ -7063,7 +7133,7 @@
           const todayKey = toDateKey(new Date());
           if (!state.trackerData[todayKey]) {
             state.trackerData[todayKey] = {
-              isWorkout: RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay()),
+              isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
               lunch: "",
               snack: "",
               shake: "",
@@ -7381,7 +7451,7 @@
                 const todayKey = toDateKey(new Date());
                 if (!state.trackerData[todayKey]) {
                   state.trackerData[todayKey] = {
-                    isWorkout: RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay()),
+                    isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
                     lunch: "",
                     snack: "",
                     shake: "",
