@@ -2064,6 +2064,110 @@
           transform: scale(1);
         }
       }
+
+      /* ══════════════════════════════════════════════════
+         MOBILE RESPONSIVENESS
+      ══════════════════════════════════════════════════ */
+
+      @supports (padding-top: env(safe-area-inset-top)) {
+        .header {
+          padding-top: env(safe-area-inset-top);
+        }
+        .app {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+      }
+
+      .tracker-table-wrap {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      .tracker-table-wrap::after {
+        content: "";
+        position: sticky;
+        right: 0;
+        top: 0;
+        width: 32px;
+        height: 100%;
+        background: linear-gradient(to right, transparent, rgba(10, 6, 16, 0.7));
+        pointer-events: none;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 16px;
+        }
+
+        .header-inner {
+          padding: 12px 16px;
+        }
+
+        .nav-tab {
+          padding: 10px 12px;
+          font-size: 12px;
+          gap: 4px;
+        }
+
+        .hero-card {
+          padding: 20px 18px;
+        }
+
+        .kpi-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .meal-add-form {
+          grid-template-columns: 1fr;
+        }
+
+        .meal-add-form input,
+        .meal-add-form select {
+          font-size: 16px;
+        }
+
+        .user-menu-panel {
+          width: calc(100vw - 20px);
+          right: -4px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .protein-input,
+        .water-input {
+          font-size: 16px;
+        }
+      }
+
+      @media (hover: none) and (pointer: coarse) {
+        .check-cell {
+          min-width: 44px;
+          min-height: 44px;
+        }
+
+        .nav-tab {
+          min-height: 44px;
+        }
+
+        button,
+        .btn,
+        .meal-item {
+          min-height: 44px;
+        }
+
+        .card,
+        .kpi-card {
+          transform: none !important;
+          transition:
+            border-color 0.4s,
+            box-shadow 0.4s !important;
+        }
+
+        .scanline-overlay {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -4063,11 +4167,12 @@
               c,
             };
           }
+          const ptCount = () => (window.innerWidth < 768 ? 30 : 85);
           resize();
-          pts = Array.from({ length: 85 }, mkPt);
+          pts = Array.from({ length: ptCount() }, mkPt);
           window.addEventListener("resize", () => {
             resize();
-            pts = Array.from({ length: 85 }, mkPt);
+            pts = Array.from({ length: ptCount() }, mkPt);
           });
           (function loop() {
             ctx.clearRect(0, 0, W, H);
@@ -4089,24 +4194,26 @@
           })();
         }
 
-        /* ── 3D card tilt ── */
-        document.querySelectorAll(".card, .kpi-card").forEach((card) => {
-          card.addEventListener("mousemove", (e) => {
-            const r = card.getBoundingClientRect();
-            const cx = r.left + r.width / 2,
-              cy = r.top + r.height / 2;
-            const dx = (e.clientX - cx) / (r.width / 2),
-              dy = (e.clientY - cy) / (r.height / 2);
-            card.style.transform = `perspective(900px) rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg) translateY(-4px)`;
+        /* ── 3D card tilt (desktop with hover only) ── */
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          document.querySelectorAll(".card, .kpi-card").forEach((card) => {
+            card.addEventListener("mousemove", (e) => {
+              const r = card.getBoundingClientRect();
+              const cx = r.left + r.width / 2,
+                cy = r.top + r.height / 2;
+              const dx = (e.clientX - cx) / (r.width / 2),
+                dy = (e.clientY - cy) / (r.height / 2);
+              card.style.transform = `perspective(900px) rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg) translateY(-4px)`;
+            });
+            card.addEventListener("mouseleave", () => {
+              card.style.transform = "";
+              card.style.transition = "transform 0.55s cubic-bezier(0.16,1,0.3,1)";
+            });
+            card.addEventListener("mouseenter", () => {
+              card.style.transition = "transform 0.1s linear";
+            });
           });
-          card.addEventListener("mouseleave", () => {
-            card.style.transform = "";
-            card.style.transition = "transform 0.55s cubic-bezier(0.16,1,0.3,1)";
-          });
-          card.addEventListener("mouseenter", () => {
-            card.style.transition = "transform 0.1s linear";
-          });
-        });
+        }
 
         /* ── Ripple ── */
         document.addEventListener("click", (e) => {
