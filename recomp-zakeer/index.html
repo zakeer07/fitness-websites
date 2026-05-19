@@ -4284,6 +4284,19 @@
               Show full year ↓
             </button>
           </div>
+
+          <div class="charts-grid">
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
+              <div class="chart-unit-hint">Daily total (g) — dashed = goal</div>
+              <canvas id="tracker-protein-chart" height="180" style="width:100%;display:block"></canvas>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
+              <div class="chart-unit-hint">Daily kcal burned — from Burnt column</div>
+              <canvas id="tracker-burnt-chart" height="180" style="width:100%;display:block"></canvas>
+            </div>
+          </div>
         </section>
 
         <!-- WORKOUTS SECTION -->
@@ -5604,6 +5617,7 @@
         }
 
         updateTrackerSummary();
+        renderTrackerCharts();
 
         // Wire up inputs
         document.querySelectorAll(".protein-input, .water-input, .burnt-input").forEach((input) => {
@@ -5615,6 +5629,8 @@
             refreshTrackerRow(dateKey);
             updateTrackerSummary();
             updateDashboardStats();
+            clearTimeout(renderTrackerCharts._t);
+            renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
           });
         });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
@@ -5626,6 +5642,217 @@
             renderTracker();
           });
         });
+      }
+
+      function renderTrackerCharts() {
+        const pCanvas = document.getElementById("tracker-protein-chart");
+        const bCanvas = document.getElementById("tracker-burnt-chart");
+        if (!pCanvas || !bCanvas) return;
+
+        const today = new Date();
+        const renderStart = trackerExpanded
+          ? TRACKER_START
+          : new Date(today.getFullYear(), today.getMonth(), 1);
+        const endDate = trackerExpanded
+          ? new Date(today.getFullYear(), 11, 31)
+          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        const p = getProfile();
+        const proteinGoal = p.proteinG;
+
+        const dates = [];
+        const proValues = [];
+        const burntValues = [];
+        let d = new Date(renderStart);
+        while (d <= endDate) {
+          const key = toDateKey(d);
+          const day = state.trackerData[key] || {};
+          const pro =
+            (parseFloat(day.lunch) || 0) +
+            (parseFloat(day.snack) || 0) +
+            (parseFloat(day.shake) || 0) +
+            (parseFloat(day.dinner) || 0);
+          dates.push(new Date(d));
+          proValues.push(pro);
+          burntValues.push(parseFloat(day.burnt) || 0);
+          d = new Date(d);
+          d.setDate(d.getDate() + 1);
+        }
+
+        const n = dates.length;
+        const todayKey = toDateKey(today);
+        const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        function labelStep(count) {
+          if (count <= 15) return 1;
+          if (count <= 35) return 3;
+          if (count <= 92) return 7;
+          return 14;
+        }
+
+        function setupCanvas(canvas) {
+          const w = canvas.parentElement?.clientWidth || canvas.offsetWidth || 400;
+          canvas.width = Math.max(w, 200);
+          return canvas.getContext("2d");
+        }
+
+        function drawLine(canvas, values, goalLine, color) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width, H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+          const mL = 42, mR = 10, mT = 12, mB = 32;
+          const cW = W - mL - mR, cH = H - mT - mB;
+          const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
+          const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
+          const yOf = (v) => mT + cH * (1 - v / maxV);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 4; g++) {
+            const y = mT + (g / 4) * cH;
+            ctx.beginPath();
+            ctx.moveTo(mL, y);
+            ctx.lineTo(W - mR, y);
+            ctx.stroke();
+            ctx.fillStyle = "#6B7280";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
+          }
+
+          if (goalLine) {
+            const gy = yOf(goalLine);
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.28)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(mL, gy);
+            ctx.lineTo(W - mR, gy);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          const hasData = values.some((v) => v > 0);
+          if (!hasData) {
+            ctx.fillStyle = "#4B5563";
+            ctx.font = "11px Inter,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("No protein logged yet", W / 2, H / 2 - 4);
+          } else {
+            const grad = ctx.createLinearGradient(0, mT, 0, mT + cH);
+            grad.addColorStop(0, color + "50");
+            grad.addColorStop(1, color + "00");
+            ctx.beginPath();
+            let first = true;
+            values.forEach((v, i) => {
+              const x = xOf(i), y = yOf(v);
+              if (first) {
+                ctx.moveTo(x, y);
+                first = false;
+              } else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(xOf(n - 1), mT + cH);
+            ctx.lineTo(xOf(0), mT + cH);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            first = true;
+            values.forEach((v, i) => {
+              const x = xOf(i), y = yOf(v);
+              if (first) {
+                ctx.moveTo(x, y);
+                first = false;
+              } else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            dates.forEach((lbl, i) => {
+              if (toDateKey(lbl) === todayKey && values[i] > 0) {
+                ctx.beginPath();
+                ctx.arc(xOf(i), yOf(values[i]), 4, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = "#1A2236";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+              }
+            });
+          }
+
+          const s = labelStep(n);
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "center";
+          dates.forEach((lbl, i) => {
+            if (i % s !== 0 && i !== n - 1) return;
+            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i), H - 4);
+          });
+        }
+
+        function drawBars(canvas, values, color) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width, H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+          const mL = 42, mR = 10, mT = 12, mB = 32;
+          const cW = W - mL - mR, cH = H - mT - mB;
+          const maxV = Math.max(...values, 1) * 1.18;
+          const barW = Math.max(1, cW / n - 1);
+          const xOf = (i) => mL + (i / n) * cW;
+          const yOf = (v) => mT + cH * (1 - v / maxV);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 4; g++) {
+            const y = mT + (g / 4) * cH;
+            ctx.beginPath();
+            ctx.moveTo(mL, y);
+            ctx.lineTo(W - mR, y);
+            ctx.stroke();
+            ctx.fillStyle = "#6B7280";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
+          }
+
+          const hasData = values.some((v) => v > 0);
+          if (!hasData) {
+            ctx.fillStyle = "#4B5563";
+            ctx.font = "11px Inter,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("No burnt calories logged yet", W / 2, H / 2 - 4);
+          } else {
+            values.forEach((v, i) => {
+              if (!v) return;
+              const x = xOf(i), y = yOf(v), h = mT + cH - y;
+              ctx.fillStyle = toDateKey(dates[i]) === todayKey ? color : color + "BB";
+              if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(x, y, barW, h, [2, 2, 0, 0]);
+                ctx.fill();
+              } else {
+                ctx.fillRect(x, y, barW, h);
+              }
+            });
+          }
+
+          const s = labelStep(n);
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "center";
+          dates.forEach((lbl, i) => {
+            if (i % s !== 0 && i !== n - 1) return;
+            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i) + barW / 2, H - 4);
+          });
+        }
+
+        drawLine(pCanvas, proValues, proteinGoal, "#E94560");
+        drawBars(bCanvas, burntValues, "#F39C12");
       }
 
       document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
@@ -6223,6 +6450,7 @@
           section.classList.add("active");
           updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
+          if (tab.dataset.tab === "tracker") requestAnimationFrame(renderTrackerCharts);
         });
       });
       window.addEventListener("resize", updateNavIndicator);
