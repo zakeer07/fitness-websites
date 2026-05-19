@@ -348,6 +348,23 @@
         cursor: wait;
         transform: none;
       }
+      .btn-forgot {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 13px;
+        cursor: pointer;
+        text-align: center;
+        opacity: 0.8;
+        padding: 4px 0;
+      }
+      .btn-forgot:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
       .btn .ripple {
         position: absolute;
         border-radius: 50%;
@@ -611,6 +628,21 @@
               />
             </div>
             <button type="submit" class="btn" id="btn-signin">Sign in</button>
+            <button type="button" class="btn-forgot" id="btn-forgot">Forgot password?</button>
+          </form>
+        </div>
+
+        <div class="panel" id="panel-reset">
+          <form id="form-reset">
+            <p style="margin-bottom: 12px; font-size: 14px; opacity: 0.8">
+              Enter your email and we'll send a reset link.
+            </p>
+            <div class="field">
+              <label for="reset-email">Email</label>
+              <input type="email" id="reset-email" autocomplete="email" required />
+            </div>
+            <button type="submit" class="btn" id="btn-reset">Send reset link</button>
+            <button type="button" class="btn-forgot" id="btn-back-signin">Back to sign in</button>
           </form>
         </div>
 
@@ -851,6 +883,32 @@
             showApps(session);
           } catch (err) {
             setMsg(err.message || "Sign up failed", "error");
+          }
+          btn.disabled = false;
+        });
+
+        document.getElementById("btn-forgot").addEventListener("click", () => {
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-reset").classList.add("active");
+          setMsg("");
+        });
+
+        document.getElementById("btn-back-signin").addEventListener("click", () => {
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-signin").classList.add("active");
+          setMsg("");
+        });
+
+        document.getElementById("form-reset").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-reset");
+          btn.disabled = true;
+          setMsg("Sending reset link…");
+          try {
+            await FitnessAuth.resetPassword(document.getElementById("reset-email").value);
+            setMsg("Reset link sent — check your email.", "ok");
+          } catch (err) {
+            setMsg(err.message || "Could not send reset link", "error");
           }
           btn.disabled = false;
         });
