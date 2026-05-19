@@ -3106,6 +3106,50 @@
       }
 
       /* ── Item 4: Weekly summary card ── */
+      .setup-banner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: linear-gradient(135deg, rgba(255, 200, 87, 0.1), rgba(255, 92, 122, 0.07));
+        border: 1px solid rgba(255, 200, 87, 0.3);
+        border-radius: var(--radius-lg);
+        padding: 14px 16px;
+        margin-bottom: 20px;
+      }
+      .setup-banner-icon {
+        font-size: 28px;
+        flex-shrink: 0;
+      }
+      .setup-banner-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .setup-banner-title {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--warning);
+        margin-bottom: 3px;
+      }
+      .setup-banner-sub {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.45;
+      }
+      .setup-banner-btn {
+        flex-shrink: 0;
+        background: var(--warning);
+        color: #000;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .setup-banner-btn:hover {
+        opacity: 0.88;
+      }
       .weekly-summary-card {
         background: linear-gradient(135deg, rgba(255, 92, 122, 0.07), rgba(78, 205, 196, 0.05));
         border: 1px solid rgba(255, 92, 122, 0.22);
@@ -3441,7 +3485,8 @@
               <div class="user-menu-panel-head">
                 <div class="user-menu-panel-title">Profile & targets</div>
                 <p class="user-menu-panel-sub" id="profile-sync-hint">
-                  Body stats & daily goals · saved to your account
+                  Set your body stats and daily targets below — these drive everything on your
+                  dashboard.
                 </p>
               </div>
               <div class="profile-grid">
@@ -3462,18 +3507,24 @@
                   </div>
                 </div>
                 <div class="profile-group">
-                  <div class="profile-group-title">Calories (kcal)</div>
+                  <div class="profile-group-title">Calorie targets</div>
+                  <div class="field-hint" style="margin-bottom: 10px">
+                    Your daily kcal goals — sets the bar on the dashboard
+                  </div>
                   <div class="profile-field">
-                    <label for="profile-cal-workout">Workout day</label>
+                    <label for="profile-cal-workout">Workout day target</label>
                     <input type="number" id="profile-cal-workout" min="800" max="6000" step="10" />
                   </div>
                   <div class="profile-field">
-                    <label for="profile-cal-rest">Rest day</label>
+                    <label for="profile-cal-rest">Rest day target</label>
                     <input type="number" id="profile-cal-rest" min="800" max="6000" step="10" />
                   </div>
                 </div>
                 <div class="profile-group profile-group-wide">
-                  <div class="profile-group-title">Protein & hydration</div>
+                  <div class="profile-group-title">Protein & water targets</div>
+                  <div class="field-hint" style="margin-bottom: 10px">
+                    Daily protein and hydration goals — tracked in the Tracker tab
+                  </div>
                   <div class="profile-field">
                     <label for="profile-protein-g">Protein goal (g/day)</label>
                     <input type="number" id="profile-protein-g" min="40" max="300" step="1" />
@@ -3582,6 +3633,21 @@
 
         <!-- DASHBOARD SECTION -->
         <section class="section active" id="dashboard-section">
+          <div class="setup-banner" id="setup-banner" hidden>
+            <div class="setup-banner-icon">🎯</div>
+            <div class="setup-banner-body">
+              <div class="setup-banner-title">Set your personal targets</div>
+              <div class="setup-banner-sub">
+                The default goals shown below are placeholders. Open
+                <strong>Profile</strong> (top right) to set your actual calorie, protein, and water
+                targets.
+              </div>
+            </div>
+            <button class="setup-banner-btn" id="setup-banner-open" type="button">
+              Open Profile
+            </button>
+          </div>
+
           <div class="tracking-legend">
             <div class="legend-item cal">
               <span class="metric-tag">Calories · kcal</span>
@@ -5140,6 +5206,7 @@
         creatineG: 5,
         ibsTabEnabled: false,
         theme: "recomp",
+        profileConfigured: false,
       };
       const defaultState = {
         isWorkoutDay: true,
@@ -5488,6 +5555,11 @@
           state.isWorkoutDay = getWorkoutSchedule().includes(new Date().getDay());
           state.workoutToggleDate = todayKey;
         }
+      }
+
+      function updateSetupBanner() {
+        const banner = document.getElementById("setup-banner");
+        if (banner) banner.hidden = getProfile().profileConfigured === true;
       }
 
       function updateDashboardStats() {
@@ -5844,12 +5916,14 @@
             const el = document.querySelector('input[name="profile-theme"]:checked');
             return el ? el.value : DEFAULT_PROFILE.theme;
           })(),
+          profileConfigured: true,
         };
         saveState();
         initProfile();
         applyProfileToUI();
         renderHero();
         updateDashboardStats();
+        updateSetupBanner();
         renderTracker();
         const msg = document.getElementById("profile-saved-msg");
         if (msg) {
@@ -7247,6 +7321,10 @@
         setUserMenuOpen(false);
       }
 
+      function openUserMenu() {
+        setUserMenuOpen(true);
+      }
+
       function initUserMenu() {
         const menu = document.getElementById("user-menu");
         const trigger = document.getElementById("user-menu-trigger");
@@ -7569,6 +7647,8 @@
           renderWeeklySummary();
           // Item 5: quick-log
           initQuickLog();
+          updateSetupBanner();
+          document.getElementById("setup-banner-open")?.addEventListener("click", openUserMenu);
         } catch (err) {
           console.error("bootstrapApp failed:", err);
           const banner = document.getElementById("meals-target-banner");
