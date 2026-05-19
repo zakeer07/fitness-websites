@@ -831,30 +831,15 @@
           return;
         }
 
-        const params = new URLSearchParams(location.search);
-        const nextApp = params.get("next");
-
-        const authCard = document.getElementById("auth-card");
-        const appsCard = document.getElementById("apps-card");
         const msgEl = document.getElementById("auth-msg");
-
-        document.getElementById("link-recomp").href = appPrefix + "recomp-zakeer/";
-        document.getElementById("link-bloom").href = appPrefix + "recomp-aadila/";
 
         function setMsg(text, type) {
           msgEl.textContent = text || "";
           msgEl.className = "msg" + (type ? " " + type : "");
         }
 
-        function showApps(session) {
-          authCard.style.display = "none";
-          appsCard.classList.add("visible");
-          document.getElementById("signed-in-as").textContent =
-            session.displayName + " (" + session.email + ")";
-          if (nextApp === "fitness" || nextApp === "recomp-zakeer" || nextApp === "recomp-aadila") {
-            const path = nextApp === "fitness" ? "recomp-zakeer" : nextApp;
-            location.href = appPrefix + path + "/";
-          }
+        function showApps() {
+          location.href = appPrefix + "recomp-zakeer/";
         }
 
         document.querySelectorAll(".tab").forEach((tab) => {
@@ -878,7 +863,7 @@
               document.getElementById("signin-password").value
             );
             setMsg("Welcome back!", "ok");
-            showApps(session);
+            showApps();
           } catch (err) {
             setMsg(err.message || "Sign in failed", "error");
           }
@@ -897,7 +882,7 @@
               document.getElementById("signup-name").value
             );
             setMsg("Account created!", "ok");
-            showApps(session);
+            showApps();
           } catch (err) {
             setMsg(err.message || "Sign up failed", "error");
           }
@@ -932,9 +917,7 @@
 
         document.getElementById("btn-signout").addEventListener("click", async () => {
           await FitnessAuth.signOut();
-          appsCard.classList.remove("visible");
-          authCard.style.display = "block";
-          setMsg("");
+          location.reload();
         });
 
         document.getElementById("form-newpass").addEventListener("submit", async (e) => {
@@ -947,7 +930,7 @@
             setMsg("Password updated! Signing you in…", "ok");
             const session = await FitnessAuth.restoreSupabaseSession();
             if (session) {
-              setTimeout(() => showApps(session), 1000);
+              setTimeout(() => showApps(), 1000);
             }
           } catch (err) {
             setMsg(err.message || "Could not update password", "error");
@@ -967,7 +950,6 @@
               });
             }
             history.replaceState(null, "", window.location.pathname + window.location.search);
-            authCard.style.display = "block";
             document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
             document.getElementById("panel-newpass").classList.add("active");
             setMsg("Enter your new password below.");
@@ -976,7 +958,7 @@
 
           let session = FitnessAuth.getSession();
           if (!session) session = await FitnessAuth.restoreSupabaseSession();
-          if (session) showApps(session);
+          if (session) showApps();
           if (FitnessAuth.isCloudEnabled()) {
             document.getElementById("storage-hint").textContent =
               "Signed in with cloud sync — your goals and tracker follow you on any device.";
