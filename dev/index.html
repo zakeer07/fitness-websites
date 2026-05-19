@@ -549,6 +549,24 @@
       .user-line strong {
         color: #f2f6ff;
       }
+
+      /* ── Mobile ── */
+      @media (max-width: 480px) {
+        .tab,
+        .btn {
+          min-height: 44px;
+        }
+
+        .theme-card {
+          padding: 0.9rem 1rem;
+        }
+      }
+
+      @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        body {
+          padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        }
+      }
     </style>
   </head>
   <body>
@@ -710,7 +728,8 @@
         }
         function init() {
           resize();
-          particles = Array.from({ length: 80 }, mkParticle);
+          const count = window.innerWidth < 768 ? 28 : 80;
+          particles = Array.from({ length: count }, mkParticle);
           window.addEventListener("resize", resize);
         }
         function draw() {
