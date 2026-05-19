@@ -1703,9 +1703,465 @@
       .meals-target-banner strong {
         color: var(--text-primary);
       }
+
+      /* ══════════════════════════════════════════════════
+         ENHANCED ANIMATIONS - BLOOM THEME (Rose/Purple)
+      ══════════════════════════════════════════════════ */
+
+      /* ── Additional orbs ── */
+      body::before {
+        animation:
+          orbDrift 18s var(--ease-out) infinite,
+          neonPulseOrbB 6s ease-in-out infinite;
+        opacity: 0.65;
+      }
+      body::after {
+        animation:
+          orbDrift 26s var(--ease-out) infinite reverse,
+          neonPulseOrbB2 9s ease-in-out infinite;
+        opacity: 0.6;
+        animation-delay:
+          -11s,
+          -4s;
+      }
+
+      .extra-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(90px);
+        pointer-events: none;
+        z-index: 0;
+        animation: orbDrift 34s var(--ease-out) infinite;
+      }
+      .extra-orb-1 {
+        width: min(38vw, 320px);
+        height: min(38vw, 320px);
+        top: 38%;
+        left: 28%;
+        background: radial-gradient(circle, rgba(206, 147, 216, 0.16) 0%, transparent 70%);
+        opacity: 0.5;
+        animation-delay: -10s;
+      }
+      .extra-orb-2 {
+        width: min(26vw, 200px);
+        height: min(26vw, 200px);
+        top: 68%;
+        right: 12%;
+        background: radial-gradient(circle, rgba(255, 179, 0, 0.1) 0%, transparent 70%);
+        opacity: 0.4;
+        animation-delay: -18s;
+        animation-direction: reverse;
+      }
+
+      @keyframes neonPulseOrbB {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 0.78;
+        }
+      }
+      @keyframes neonPulseOrbB2 {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      /* ── Particle canvas ── */
+      #particle-canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── Holographic shimmer (rose palette) ── */
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          transparent 0%,
+          rgba(240, 98, 146, 0.04) 30%,
+          rgba(206, 147, 216, 0.05) 50%,
+          rgba(244, 143, 177, 0.03) 70%,
+          transparent 100%
+        );
+        background-size: 300% 300%;
+        animation: holoShimmerB 11s linear infinite;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+      @keyframes holoShimmerB {
+        0% {
+          background-position: 200% 50%;
+        }
+        100% {
+          background-position: -200% 50%;
+        }
+      }
+
+      /* ── 3D tilt ── */
+      .card {
+        transform-style: preserve-3d;
+        will-change: transform;
+      }
+      .card:hover {
+        border-color: rgba(240, 98, 146, 0.35) !important;
+        box-shadow:
+          var(--shadow-card),
+          0 0 48px rgba(240, 98, 146, 0.14) !important;
+      }
+
+      /* ── KPI hover ── */
+      .kpi-card:hover {
+        transform: translateY(-6px) scale(1.02) !important;
+        border-color: rgba(240, 98, 146, 0.4) !important;
+        box-shadow:
+          var(--shadow-card),
+          0 16px 48px rgba(240, 98, 146, 0.22),
+          0 0 0 1px rgba(240, 98, 146, 0.12) !important;
+      }
+
+      /* ── Logo breath (uses .logo-mark like the HTML) ── */
+      .logo-mark {
+        animation: logoBadgeBreath 4s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+      }
+      @keyframes logoBadgeBreath {
+        0%,
+        100% {
+          box-shadow: var(--shadow-glow);
+        }
+        50% {
+          box-shadow: 0 0 32px 4px rgba(240, 98, 146, 0.55);
+        }
+      }
+      .logo-mark::after {
+        content: "";
+        position: absolute;
+        inset: -50%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+        transform: translateX(-100%) rotate(25deg);
+        transition: transform 0s;
+      }
+      .logo:hover .logo-mark::after {
+        transform: translateX(200%) rotate(25deg);
+        transition: transform 0.5s ease;
+      }
+
+      /* ── Nav tabs ── */
+      .nav-tab {
+        transition:
+          color 0.3s var(--ease-out),
+          transform 0.25s var(--ease-spring),
+          background 0.25s;
+      }
+      .nav-tab:hover {
+        color: var(--text-primary);
+        transform: translateY(-2px);
+        background: rgba(240, 98, 146, 0.08);
+      }
+      .nav-tab.active {
+        color: white;
+        transform: none;
+      }
+
+      /* ── Header line animation ── */
+      .header::after {
+        animation: headerLineShiftB 7s linear infinite;
+      }
+      @keyframes headerLineShiftB {
+        0% {
+          opacity: 0.6;
+          background-position: 0% 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.6;
+          background-position: 200% 0;
+        }
+      }
+
+      /* ── Ripple ── */
+      .ripple-effect {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(240, 98, 146, 0.32) 0%, transparent 70%);
+        transform: scale(0);
+        animation: rippleExpand 0.7s linear;
+        pointer-events: none;
+      }
+      @keyframes rippleExpand {
+        to {
+          transform: scale(5);
+          opacity: 0;
+        }
+      }
+
+      /* ── Meal item ── */
+      .meal-item:hover {
+        transform: translateX(4px) translateY(-2px) !important;
+        border-color: rgba(240, 98, 146, 0.35) !important;
+        box-shadow: 0 4px 24px rgba(240, 98, 146, 0.15) !important;
+      }
+
+      /* ── Check cell ── */
+      .check-cell:hover {
+        transform: scale(1.15) !important;
+      }
+      .check-cell.checked {
+        animation: checkBounceB 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      @keyframes checkBounceB {
+        0% {
+          transform: scale(0.6);
+        }
+        60% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* ── Workout toggle ── */
+      .workout-toggle-switch.on {
+        animation: toggleGlowB 2.5s ease-in-out infinite;
+      }
+      @keyframes toggleGlowB {
+        0%,
+        100% {
+          box-shadow: 0 0 12px rgba(240, 98, 146, 0.4);
+        }
+        50% {
+          box-shadow: 0 0 28px rgba(240, 98, 146, 0.7);
+        }
+      }
+
+      /* ── Stat bars ── */
+      .stat-bar-fill {
+        transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+
+      /* ── Hero entrance ── */
+      .hero-card {
+        animation: heroEntranceB 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @keyframes heroEntranceB {
+        from {
+          opacity: 0;
+          transform: translateY(24px) scale(0.96);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* ── Scanline ── */
+      .scanline-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 999;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.015) 2px,
+          rgba(0, 0, 0, 0.015) 4px
+        );
+        animation: scanMoveB 9s linear infinite;
+      }
+      @keyframes scanMoveB {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 0 100vh;
+        }
+      }
+
+      /* ── Rose sparkles ── */
+      .sparkle {
+        position: fixed;
+        pointer-events: none;
+        z-index: 1;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 6px 2px var(--accent-glow);
+        animation: sparkleFlyB linear forwards;
+        opacity: 0;
+      }
+      @keyframes sparkleFlyB {
+        0% {
+          opacity: 0;
+          transform: scale(0) translateY(0);
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.5) translateY(-80px);
+        }
+      }
+
+      /* ── Focus glow ── */
+      input:focus,
+      select:focus,
+      textarea:focus {
+        box-shadow:
+          0 0 0 2px rgba(240, 98, 146, 0.25),
+          0 0 20px rgba(240, 98, 146, 0.15) !important;
+        border-color: var(--accent) !important;
+      }
+
+      /* ── Number pop ── */
+      .kpi-value,
+      .ring-value {
+        transition: transform 0.3s var(--ease-spring);
+      }
+      .kpi-value.updating,
+      .ring-value.updating {
+        animation: numPopB 0.4s var(--ease-spring);
+      }
+      @keyframes numPopB {
+        0% {
+          transform: scale(0.85);
+          opacity: 0.5;
+        }
+        60% {
+          transform: scale(1.08);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* ── Gradient ring ── */
+      .ring-value {
+        animation: ringCounterInB 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @keyframes ringCounterInB {
+        from {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+         MOBILE RESPONSIVENESS
+      ══════════════════════════════════════════════════ */
+
+      @supports (padding-top: env(safe-area-inset-top)) {
+        .header {
+          padding-top: env(safe-area-inset-top);
+        }
+        .app {
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+      }
+
+      .tracker-table-wrap {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 16px;
+        }
+
+        .header-inner {
+          padding: 12px 16px;
+        }
+
+        .nav-tab {
+          padding: 10px 12px;
+          font-size: 12px;
+          gap: 4px;
+        }
+
+        .hero-card {
+          padding: 20px 18px;
+        }
+
+        .kpi-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .meal-add-form {
+          grid-template-columns: 1fr;
+        }
+
+        .meal-add-form input,
+        .meal-add-form select {
+          font-size: 16px;
+        }
+
+        .user-menu-panel {
+          width: calc(100vw - 20px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .protein-input,
+        .water-input {
+          font-size: 16px;
+        }
+      }
+
+      @media (hover: none) and (pointer: coarse) {
+        .check-cell {
+          min-width: 44px;
+          min-height: 44px;
+        }
+
+        .nav-tab {
+          min-height: 44px;
+        }
+
+        button,
+        .btn,
+        .meal-item {
+          min-height: 44px;
+        }
+
+        .card,
+        .kpi-card {
+          transform: none !important;
+          transition:
+            border-color 0.4s,
+            box-shadow 0.4s !important;
+        }
+
+        .scanline-overlay {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <div class="extra-orb extra-orb-1" aria-hidden="true"></div>
+    <div class="extra-orb extra-orb-2" aria-hidden="true"></div>
+    <div class="scanline-overlay" aria-hidden="true"></div>
     <div class="bg-decor" aria-hidden="true">
       <div class="decor-item decor-gym" data-parallax="0.12" data-rotate="0.05" data-base-rot="-10">
         <img
@@ -3661,6 +4117,153 @@
       initUserMenu();
       attachLogoutHandler();
       bootstrapApp();
+    </script>
+
+    <script>
+      /* ══════════════════════════════════════════════════
+         BLOOM · Enhanced Animations Runtime (Rose/Purple)
+      ══════════════════════════════════════════════════ */
+      (function () {
+        /* ── Particle system (rose palette) ── */
+        const canvas = document.getElementById("particle-canvas");
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          let W,
+            H,
+            pts = [];
+          const COLORS = [
+            "rgba(240,98,146,",
+            "rgba(206,147,216,",
+            "rgba(244,143,177,",
+            "rgba(255,179,0,",
+          ];
+          function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+          }
+          function mkPt() {
+            const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+            return {
+              x: Math.random() * W,
+              y: Math.random() * H,
+              r: Math.random() * 1.6 + 0.3,
+              vx: (Math.random() - 0.5) * 0.2,
+              vy: (Math.random() - 0.5) * 0.2,
+              a: Math.random() * 0.4 + 0.08,
+              da: (Math.random() - 0.5) * 0.003,
+              c,
+            };
+          }
+          const ptCount = () => (window.innerWidth < 768 ? 30 : 85);
+          resize();
+          pts = Array.from({ length: ptCount() }, mkPt);
+          window.addEventListener("resize", () => {
+            resize();
+            pts = Array.from({ length: ptCount() }, mkPt);
+          });
+          (function loop() {
+            ctx.clearRect(0, 0, W, H);
+            for (const p of pts) {
+              p.x += p.vx;
+              p.y += p.vy;
+              p.a += p.da;
+              if (p.a <= 0.04 || p.a >= 0.55) p.da *= -1;
+              if (p.x < -4) p.x = W + 4;
+              if (p.x > W + 4) p.x = -4;
+              if (p.y < -4) p.y = H + 4;
+              if (p.y > H + 4) p.y = -4;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+              ctx.fillStyle = p.c + p.a + ")";
+              ctx.fill();
+            }
+            requestAnimationFrame(loop);
+          })();
+        }
+
+        /* ── 3D card tilt (desktop with hover only) ── */
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          document.querySelectorAll(".card, .kpi-card").forEach((card) => {
+            card.addEventListener("mousemove", (e) => {
+              const r = card.getBoundingClientRect();
+              const cx = r.left + r.width / 2,
+                cy = r.top + r.height / 2;
+              const dx = (e.clientX - cx) / (r.width / 2),
+                dy = (e.clientY - cy) / (r.height / 2);
+              card.style.transform = `perspective(900px) rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg) translateY(-4px)`;
+            });
+            card.addEventListener("mouseleave", () => {
+              card.style.transform = "";
+              card.style.transition = "transform 0.55s cubic-bezier(0.16,1,0.3,1)";
+            });
+            card.addEventListener("mouseenter", () => {
+              card.style.transition = "transform 0.1s linear";
+            });
+          });
+        }
+
+        /* ── Ripple ── */
+        document.addEventListener("click", (e) => {
+          const target = e.target.closest("button, .meal-item, .nav-tab");
+          if (!target) return;
+          const r = target.getBoundingClientRect();
+          const el = document.createElement("span");
+          el.className = "ripple-effect";
+          const size = Math.max(r.width, r.height) * 2.5;
+          Object.assign(el.style, {
+            width: size + "px",
+            height: size + "px",
+            left: e.clientX - r.left - size / 2 + "px",
+            top: e.clientY - r.top - size / 2 + "px",
+          });
+          if (getComputedStyle(target).position === "static") target.style.position = "relative";
+          target.style.overflow = "hidden";
+          target.appendChild(el);
+          setTimeout(() => el.remove(), 750);
+        });
+
+        /* ── Sparkle burst on check ── */
+        document.addEventListener("click", (e) => {
+          const cell = e.target.closest(".check-cell");
+          if (!cell) return;
+          const r = cell.getBoundingClientRect();
+          for (let i = 0; i < 7; i++) {
+            const s = document.createElement("div");
+            s.className = "sparkle";
+            const size = Math.random() * 4 + 2;
+            const angle = (360 / 7) * i + Math.random() * 18;
+            const dist = 28 + Math.random() * 22;
+            const rad = (angle * Math.PI) / 180;
+            Object.assign(s.style, {
+              width: size + "px",
+              height: size + "px",
+              left: r.left + r.width / 2 + Math.cos(rad) * dist + "px",
+              top: r.top + r.height / 2 + Math.sin(rad) * dist + "px",
+              animationDuration: 0.5 + Math.random() * 0.4 + "s",
+              animationDelay: Math.random() * 0.1 + "s",
+            });
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+          }
+        });
+
+        /* ── Number pop on DOM update ── */
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((m) => {
+            const el = m.target.parentElement || m.target;
+            if (el && (el.classList.contains("kpi-value") || el.classList.contains("ring-value"))) {
+              el.classList.remove("updating");
+              void el.offsetWidth;
+              el.classList.add("updating");
+            }
+          });
+        });
+        document
+          .querySelectorAll(".kpi-value, .ring-value")
+          .forEach((el) =>
+            observer.observe(el, { childList: true, characterData: true, subtree: true })
+          );
+      })();
     </script>
   </body>
 </html>
