@@ -2384,59 +2384,150 @@
       }
 
       /* ══════════════════════════════════════════════════
-         EXAMPLE MEAL PLAN
+         EXAMPLE DAY GUIDE (Meals tab)
       ══════════════════════════════════════════════════ */
-      .example-plan {
-        margin-top: 32px;
+      .ep-section {
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
       }
-      .example-banner {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 6px;
-        padding: 14px 18px;
-        border-radius: var(--radius-md);
-        background: linear-gradient(135deg, rgba(255, 92, 122, 0.12), rgba(78, 205, 196, 0.08));
-        border: 1px solid rgba(255, 92, 122, 0.25);
-        font-size: 14px;
-        color: var(--text-secondary);
-        margin-bottom: 24px;
+      .ep-header {
+        margin-bottom: 14px;
       }
-      .example-banner strong {
-        color: var(--accent);
-        font-size: 16px;
-      }
-      .example-block {
-        margin-bottom: 28px;
-      }
-      .example-time-header {
+      .ep-header-title {
         font-family: "Syne", sans-serif;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 16px;
         color: var(--text-primary);
-        letter-spacing: 0.02em;
-        margin-bottom: 10px;
-        padding-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .ep-header-sub {
+        font-size: 13px;
+        color: var(--text-secondary);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+      }
+      .ep-header-sub strong {
+        color: var(--accent);
+      }
+      .ep-range-note {
+        font-size: 11px;
+        opacity: 0.7;
+        margin-left: 2px;
+      }
+      .ep-cat-tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        margin-bottom: 16px;
+        scrollbar-width: none;
+      }
+      .ep-cat-tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .ep-cat-btn {
+        flex-shrink: 0;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+        white-space: nowrap;
+      }
+      .ep-cat-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .ep-cat-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .ep-panel {
+        display: none;
+      }
+      .ep-panel.active {
+        display: block;
+      }
+      .ep-time-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px 12px;
+        margin-bottom: 14px;
+      }
+      .ep-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        margin-bottom: 14px;
+        transition: border-color 0.2s;
+      }
+      .ep-card:hover {
+        border-color: rgba(255, 92, 122, 0.35);
+      }
+      .ep-card-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px 10px;
         border-bottom: 1px solid var(--border);
       }
-      .example-dish-name {
-        font-size: 13px;
+      .ep-option-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        background: var(--bg-secondary);
+        border-radius: 4px;
+        padding: 2px 7px;
+      }
+      .ep-card-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
+        flex: 1;
+      }
+      .ep-macros-badge {
+        font-size: 11px;
         font-weight: 600;
         color: var(--accent);
-        margin: 14px 0 8px;
-        letter-spacing: 0.01em;
+        background: rgba(255, 92, 122, 0.1);
+        border: 1px solid rgba(255, 92, 122, 0.2);
+        border-radius: 999px;
+        padding: 3px 10px;
+        white-space: nowrap;
       }
       .example-table-wrap {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        border-radius: var(--radius-sm);
-        margin-bottom: 10px;
       }
       .example-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 13px;
-        min-width: 320px;
+        min-width: 280px;
       }
       .example-table th {
         background: var(--bg-secondary);
@@ -2482,7 +2573,7 @@
         border-radius: var(--radius-md);
         overflow: hidden;
         border: 1px solid rgba(255, 92, 122, 0.22);
-        margin-top: 4px;
+        margin-bottom: 12px;
       }
       .example-day-total .example-table th {
         background: rgba(255, 92, 122, 0.1);
@@ -2498,7 +2589,6 @@
         color: var(--accent);
       }
       .example-note {
-        margin-top: 10px;
         font-size: 13px;
         color: var(--text-secondary);
         padding: 10px 14px;
@@ -2934,6 +3024,658 @@
           </div>
 
           <div id="meal-cards"></div>
+
+          <!-- EXAMPLE DAY GUIDE -->
+          <div class="ep-section" id="example-plan">
+            <div class="ep-header">
+              <div class="ep-header-title">📋 Example Day Guide</div>
+              <div class="ep-header-sub">
+                Built for your targets:
+                <strong><span id="example-pro">115</span>g protein</strong>
+                &middot; <strong><span id="example-cal">2000</span> kcal</strong>
+                <span class="ep-range-note"
+                  >(range: <span id="example-cal-range">1900–2100</span> cal &middot;
+                  <span id="example-pro-range">110–125g</span> protein)</span
+                >
+              </div>
+            </div>
+
+            <div class="ep-cat-tabs" role="tablist">
+              <button class="ep-cat-btn active" data-ep="lunch" role="tab">🥗 Lunch</button>
+              <button class="ep-cat-btn" data-ep="snack" role="tab">🍎 Snack</button>
+              <button class="ep-cat-btn" data-ep="prewo" role="tab">⚡ Pre-WO</button>
+              <button class="ep-cat-btn" data-ep="postwo" role="tab">🏋️ Post-WO</button>
+              <button class="ep-cat-btn" data-ep="dinner" role="tab">🌙 Dinner</button>
+              <button class="ep-cat-btn" data-ep="summary" role="tab">📊 Day</button>
+            </div>
+
+            <!-- LUNCH: 3 options -->
+            <div class="ep-panel active" id="ep-panel-lunch">
+              <div class="ep-time-badge">🕛 12–1 PM · pick one</div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 1</span>
+                  <span class="ep-card-name">🍗 Chicken Rice Bowl</span>
+                  <span class="ep-macros-badge">620 kcal · 47g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Chicken breast</td>
+                        <td>180g</td>
+                        <td>300</td>
+                        <td>40g</td>
+                      </tr>
+                      <tr>
+                        <td>Rice</td>
+                        <td>1 cup</td>
+                        <td>200</td>
+                        <td>4g</td>
+                      </tr>
+                      <tr>
+                        <td>Vegetables</td>
+                        <td>2 cups</td>
+                        <td>80</td>
+                        <td>3g</td>
+                      </tr>
+                      <tr>
+                        <td>Oil / ghee</td>
+                        <td>1 tsp</td>
+                        <td>40</td>
+                        <td>—</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>620</td>
+                        <td>47g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 2</span>
+                  <span class="ep-card-name">🐟 Salmon Quinoa Bowl</span>
+                  <span class="ep-macros-badge">660 kcal · 44g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Salmon</td>
+                        <td>180g</td>
+                        <td>360</td>
+                        <td>35g</td>
+                      </tr>
+                      <tr>
+                        <td>Quinoa</td>
+                        <td>1 cup</td>
+                        <td>220</td>
+                        <td>6g</td>
+                      </tr>
+                      <tr>
+                        <td>Vegetables</td>
+                        <td>2 cups</td>
+                        <td>80</td>
+                        <td>3g</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>660</td>
+                        <td>44g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 3</span>
+                  <span class="ep-card-name">🥫 Tuna Rice Bowl</span>
+                  <span class="ep-macros-badge">485 kcal · 41g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Tuna (canned)</td>
+                        <td>165g</td>
+                        <td>165</td>
+                        <td>36g</td>
+                      </tr>
+                      <tr>
+                        <td>Rice</td>
+                        <td>1 cup</td>
+                        <td>200</td>
+                        <td>4g</td>
+                      </tr>
+                      <tr>
+                        <td>Cucumber</td>
+                        <td>1 cup</td>
+                        <td>15</td>
+                        <td>1g</td>
+                      </tr>
+                      <tr>
+                        <td>Light mayo</td>
+                        <td>1 tbsp</td>
+                        <td>45</td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>Avocado</td>
+                        <td>¼</td>
+                        <td>60</td>
+                        <td>—</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>485</td>
+                        <td>41g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SNACK: 2 options -->
+            <div class="ep-panel" id="ep-panel-snack">
+              <div class="ep-time-badge">🕒 3–4 PM · pick one</div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 1</span>
+                  <span class="ep-card-name">🥣 Greek Yogurt Parfait</span>
+                  <span class="ep-macros-badge">325 kcal · 22g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Greek yogurt</td>
+                        <td>200g</td>
+                        <td>150</td>
+                        <td>18g</td>
+                      </tr>
+                      <tr>
+                        <td>Mixed fruit</td>
+                        <td>1 serving</td>
+                        <td>80</td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>Peanut butter</td>
+                        <td>1 tbsp</td>
+                        <td>95</td>
+                        <td>4g</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>325</td>
+                        <td>22g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 2</span>
+                  <span class="ep-card-name">🥚 Hard-boiled Eggs + Almonds</span>
+                  <span class="ep-macros-badge">260 kcal · 16g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Hard-boiled eggs</td>
+                        <td>2</td>
+                        <td>143</td>
+                        <td>12g</td>
+                      </tr>
+                      <tr>
+                        <td>Almonds</td>
+                        <td>20g</td>
+                        <td>116</td>
+                        <td>4g</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>259</td>
+                        <td>16g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRE-WO: 2 options -->
+            <div class="ep-panel" id="ep-panel-prewo">
+              <div class="ep-time-badge">⚡ ~60 min before training</div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 1 · Light</span>
+                  <span class="ep-card-name">☕ Coffee + Banana</span>
+                  <span class="ep-macros-badge">55 kcal</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Black coffee</td>
+                        <td>1 cup</td>
+                        <td>5</td>
+                      </tr>
+                      <tr>
+                        <td>Banana</td>
+                        <td>½</td>
+                        <td>50</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>55</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 2 · Fuelling</span>
+                  <span class="ep-card-name">☕ Coffee + Rice Cakes + PB</span>
+                  <span class="ep-macros-badge">220 kcal · 5g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Black coffee</td>
+                        <td>1 cup</td>
+                        <td>5</td>
+                      </tr>
+                      <tr>
+                        <td>Rice cakes</td>
+                        <td>2</td>
+                        <td>70</td>
+                      </tr>
+                      <tr>
+                        <td>Peanut butter</td>
+                        <td>1 tbsp</td>
+                        <td>95</td>
+                      </tr>
+                      <tr>
+                        <td>Banana</td>
+                        <td>½</td>
+                        <td>50</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>220</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- POST-WO: 2 options -->
+            <div class="ep-panel" id="ep-panel-postwo">
+              <div class="ep-time-badge">🏋️ Within 30 min of training</div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 1</span>
+                  <span class="ep-card-name">🥛 Protein Shake</span>
+                  <span class="ep-macros-badge">130 kcal · 28g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Transparent Labs Whey</td>
+                        <td>1 scoop</td>
+                        <td>130</td>
+                        <td>28g</td>
+                      </tr>
+                      <tr>
+                        <td>Water</td>
+                        <td>300ml</td>
+                        <td>0</td>
+                        <td>—</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>130</td>
+                        <td>28g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 2 · Refuel</span>
+                  <span class="ep-card-name">🥛 Shake + Banana</span>
+                  <span class="ep-macros-badge">230 kcal · 29g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Transparent Labs Whey</td>
+                        <td>1 scoop</td>
+                        <td>130</td>
+                        <td>28g</td>
+                      </tr>
+                      <tr>
+                        <td>Banana</td>
+                        <td>1</td>
+                        <td>100</td>
+                        <td>1g</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>230</td>
+                        <td>29g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- DINNER: 3 options -->
+            <div class="ep-panel" id="ep-panel-dinner">
+              <div class="ep-time-badge">🌙 7:30–8:30 PM · pick one</div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 1</span>
+                  <span class="ep-card-name">🍗 Chicken + Rice + Veg</span>
+                  <span class="ep-macros-badge">430 kcal · 40g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Chicken breast</td>
+                        <td>150g</td>
+                        <td>250</td>
+                        <td>35g</td>
+                      </tr>
+                      <tr>
+                        <td>Vegetables</td>
+                        <td>2 cups</td>
+                        <td>80</td>
+                        <td>3g</td>
+                      </tr>
+                      <tr>
+                        <td>Rice</td>
+                        <td>½ cup</td>
+                        <td>100</td>
+                        <td>2g</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>430</td>
+                        <td>40g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 2</span>
+                  <span class="ep-card-name">🥩 Ground Turkey Bowl</span>
+                  <span class="ep-macros-badge">430 kcal · 39g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Ground turkey (lean)</td>
+                        <td>150g</td>
+                        <td>220</td>
+                        <td>34g</td>
+                      </tr>
+                      <tr>
+                        <td>Sweet potato</td>
+                        <td>100g</td>
+                        <td>90</td>
+                        <td>2g</td>
+                      </tr>
+                      <tr>
+                        <td>Vegetables</td>
+                        <td>2 cups</td>
+                        <td>80</td>
+                        <td>3g</td>
+                      </tr>
+                      <tr>
+                        <td>Olive oil</td>
+                        <td>1 tsp</td>
+                        <td>40</td>
+                        <td>—</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>430</td>
+                        <td>39g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="ep-card">
+                <div class="ep-card-head">
+                  <span class="ep-option-label">Option 3</span>
+                  <span class="ep-card-name">🐟 Baked Fish + Veg</span>
+                  <span class="ep-macros-badge">300 kcal · 41g protein</span>
+                </div>
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Food</th>
+                        <th>Qty</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Tilapia / cod</td>
+                        <td>200g</td>
+                        <td>180</td>
+                        <td>38g</td>
+                      </tr>
+                      <tr>
+                        <td>Roasted veg</td>
+                        <td>2 cups</td>
+                        <td>80</td>
+                        <td>3g</td>
+                      </tr>
+                      <tr>
+                        <td>Olive oil</td>
+                        <td>1 tsp</td>
+                        <td>40</td>
+                        <td>—</td>
+                      </tr>
+                      <tr class="row-total">
+                        <td>Total</td>
+                        <td></td>
+                        <td>300</td>
+                        <td>41g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="ep-panel" id="ep-panel-summary">
+              <div class="ep-time-badge">📊 Example day using Option 1 each</div>
+              <div class="example-day-total">
+                <div class="example-table-wrap">
+                  <table class="example-table">
+                    <thead>
+                      <tr>
+                        <th>Meal</th>
+                        <th>Kcal</th>
+                        <th>Protein</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Lunch — Chicken Rice Bowl</td>
+                        <td>620</td>
+                        <td>47g</td>
+                      </tr>
+                      <tr>
+                        <td>Snack — Greek Yogurt</td>
+                        <td>325</td>
+                        <td>22g</td>
+                      </tr>
+                      <tr>
+                        <td>Pre-WO — Coffee + Banana</td>
+                        <td>55</td>
+                        <td>—</td>
+                      </tr>
+                      <tr>
+                        <td>Post-WO — Protein Shake</td>
+                        <td>130</td>
+                        <td>28g</td>
+                      </tr>
+                      <tr>
+                        <td>Dinner — Chicken + Rice</td>
+                        <td>430</td>
+                        <td>40g</td>
+                      </tr>
+                      <tr class="row-grand">
+                        <td>Day Total</td>
+                        <td>1560</td>
+                        <td>137g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="example-note">
+                👉 Add a carb-heavy snack (fruit, bread, oats) to bridge the gap to your
+                <strong id="example-note-cal">2000</strong> kcal target.
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- IBS SECTION -->
@@ -3098,319 +3840,6 @@
           </div>
 
           <div class="tip-grid" id="tip-grid"></div>
-
-          <!-- EXAMPLE MEAL PLAN -->
-          <div class="example-plan" id="example-plan">
-            <div class="example-banner">
-              📋 Example day designed to reach your targets:
-              <strong id="example-pro">115</strong>g protein ·
-              <strong id="example-cal">2000</strong> kcal
-            </div>
-
-            <!-- Daily Targets -->
-            <div class="example-block">
-              <div class="example-time-header">🎯 Daily Targets</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                      <th>Goal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td id="example-cal-range">1900–2100</td>
-                      <td id="example-pro-range">110–125g</td>
-                      <td>Body recomposition</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Lunch -->
-            <div class="example-block">
-              <div class="example-time-header">🕛 Lunch (12–1 PM)</div>
-
-              <div class="example-dish-name">🍗 Chicken Rice Bowl</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Chicken breast</td>
-                      <td>180g</td>
-                      <td>300</td>
-                      <td>40g</td>
-                    </tr>
-                    <tr>
-                      <td>Rice</td>
-                      <td>1 cup</td>
-                      <td>200</td>
-                      <td>4g</td>
-                    </tr>
-                    <tr>
-                      <td>Vegetables</td>
-                      <td>2 cups</td>
-                      <td>80</td>
-                      <td>3g</td>
-                    </tr>
-                    <tr>
-                      <td>Oil / ghee</td>
-                      <td>1 tsp</td>
-                      <td>40</td>
-                      <td>0g</td>
-                    </tr>
-                    <tr class="row-total">
-                      <td>Lunch Total</td>
-                      <td></td>
-                      <td>620</td>
-                      <td>47g</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="example-dish-name">🐟 Salmon Quinoa Bowl</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Salmon</td>
-                      <td>180g</td>
-                      <td>360</td>
-                      <td>35g</td>
-                    </tr>
-                    <tr>
-                      <td>Quinoa</td>
-                      <td>1 cup</td>
-                      <td>220</td>
-                      <td>6g</td>
-                    </tr>
-                    <tr>
-                      <td>Vegetables</td>
-                      <td>2 cups</td>
-                      <td>80</td>
-                      <td>3g</td>
-                    </tr>
-                    <tr class="row-total">
-                      <td>Lunch Total</td>
-                      <td></td>
-                      <td>660</td>
-                      <td>44g</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Snack -->
-            <div class="example-block">
-              <div class="example-time-header">🕒 Snack (3–4 PM)</div>
-              <div class="example-dish-name">🥣 Greek Yogurt Snack</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Greek yogurt</td>
-                      <td>200g</td>
-                      <td>150</td>
-                      <td>18g</td>
-                    </tr>
-                    <tr>
-                      <td>Fruit</td>
-                      <td>1 serving</td>
-                      <td>80</td>
-                      <td>0g</td>
-                    </tr>
-                    <tr>
-                      <td>Peanut butter</td>
-                      <td>1 tbsp</td>
-                      <td>95</td>
-                      <td>4g</td>
-                    </tr>
-                    <tr class="row-total">
-                      <td>Snack Total</td>
-                      <td></td>
-                      <td>325</td>
-                      <td>22g</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Pre-Workout -->
-            <div class="example-block">
-              <div class="example-time-header">⚡ Pre-Workout (5 PM)</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Black coffee</td>
-                      <td>1 cup</td>
-                      <td>5</td>
-                    </tr>
-                    <tr>
-                      <td>Banana (optional)</td>
-                      <td>½ banana</td>
-                      <td>50</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Post-Workout -->
-            <div class="example-block">
-              <div class="example-time-header">🏋️ Post-Workout (6:30–7 PM)</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Transparent Labs Whey</td>
-                      <td>1 scoop</td>
-                      <td>130</td>
-                      <td>28g</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Dinner -->
-            <div class="example-block">
-              <div class="example-time-header">🍽️ Dinner (7:30–8:30 PM)</div>
-              <div class="example-dish-name">🍗 Chicken Dinner</div>
-              <div class="example-table-wrap">
-                <table class="example-table">
-                  <thead>
-                    <tr>
-                      <th>Food</th>
-                      <th>Qty</th>
-                      <th>Calories</th>
-                      <th>Protein</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Chicken breast</td>
-                      <td>150g</td>
-                      <td>250</td>
-                      <td>35g</td>
-                    </tr>
-                    <tr>
-                      <td>Vegetables</td>
-                      <td>2 cups</td>
-                      <td>80</td>
-                      <td>3g</td>
-                    </tr>
-                    <tr>
-                      <td>Rice</td>
-                      <td>½ cup</td>
-                      <td>100</td>
-                      <td>2g</td>
-                    </tr>
-                    <tr class="row-total">
-                      <td>Dinner Total</td>
-                      <td></td>
-                      <td>430</td>
-                      <td>40g</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Full Day Summary -->
-            <div class="example-block">
-              <div class="example-time-header">📊 Example Full Day</div>
-              <div class="example-day-total">
-                <div class="example-table-wrap">
-                  <table class="example-table">
-                    <thead>
-                      <tr>
-                        <th>Meal</th>
-                        <th>Calories</th>
-                        <th>Protein</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Lunch</td>
-                        <td>620</td>
-                        <td>47g</td>
-                      </tr>
-                      <tr>
-                        <td>Snack</td>
-                        <td>325</td>
-                        <td>22g</td>
-                      </tr>
-                      <tr>
-                        <td>Protein Shake</td>
-                        <td>130</td>
-                        <td>28g</td>
-                      </tr>
-                      <tr>
-                        <td>Dinner</td>
-                        <td>430</td>
-                        <td>40g</td>
-                      </tr>
-                      <tr class="row-grand">
-                        <td>Daily Total</td>
-                        <td>1505</td>
-                        <td>137g</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="example-note">
-                👉 Add carbs or extra snacks as needed to reach your
-                <strong id="example-note-cal">2000</strong> kcal target.
-              </div>
-            </div>
-          </div>
         </section>
       </main>
 
@@ -4716,6 +5145,18 @@
         });
       });
       window.addEventListener("resize", updateNavIndicator);
+
+      // Example day guide tab switching
+      document.querySelectorAll(".ep-cat-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const cat = btn.dataset.ep;
+          document.querySelectorAll(".ep-cat-btn").forEach((b) => b.classList.remove("active"));
+          document.querySelectorAll(".ep-panel").forEach((p) => p.classList.remove("active"));
+          btn.classList.add("active");
+          const panel = document.getElementById("ep-panel-" + cat);
+          if (panel) panel.classList.add("active");
+        });
+      });
 
       // ═══════════════════════════════════════════════════════════════════════
       // SCROLL PARALLAX DECOR
