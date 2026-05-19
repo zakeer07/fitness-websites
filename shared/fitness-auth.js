@@ -29,7 +29,7 @@
 
   function getSession() {
     try {
-      const raw = sessionStorage.getItem(SESSION_KEY);
+      const raw = localStorage.getItem(SESSION_KEY);
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
@@ -37,8 +37,8 @@
   }
 
   function setSession(session) {
-    if (session) sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    else sessionStorage.removeItem(SESSION_KEY);
+    if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    else localStorage.removeItem(SESSION_KEY);
   }
 
   function loginUrl() {
@@ -221,9 +221,7 @@
       });
       if (error) throw error;
       if (!data.session) {
-        throw new Error(
-          "Check your email to confirm your account, then sign in."
-        );
+        throw new Error("Check your email to confirm your account, then sign in.");
       }
       const u = data.user;
       const session = {
