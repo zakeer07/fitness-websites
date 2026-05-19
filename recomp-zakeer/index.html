@@ -1149,6 +1149,29 @@
         overflow-x: auto;
         box-shadow: var(--shadow-card);
       }
+      .tracker-expand-row {
+        display: flex;
+        justify-content: center;
+        padding: 14px 0 4px;
+      }
+      .btn-tracker-expand {
+        padding: 8px 22px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .btn-tracker-expand:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
       table {
         width: 100%;
         border-collapse: collapse;
@@ -3827,6 +3850,11 @@
               <tbody id="tracker-rows"></tbody>
             </table>
           </div>
+          <div class="tracker-expand-row">
+            <button class="btn-tracker-expand" id="btn-tracker-expand" type="button">
+              Show full year ↓
+            </button>
+          </div>
         </section>
 
         <!-- TIPS SECTION -->
@@ -4773,6 +4801,7 @@
       // TRACKER TAB
       // ═══════════════════════════════════════════════════════════════════════
       const TRACKER_START = new Date(2026, 4, 7); // May 7, 2026
+      let trackerExpanded = false;
       const TRACKER_PRO_FIELDS = ["lunch", "snack", "shake", "dinner"];
 
       function toDateKey(d) {
@@ -4947,9 +4976,23 @@
         const today = new Date();
         const p = getProfile();
 
-        for (let i = 0; i < 30; i++) {
+        // Collapsed: show through end of current month. Expanded: full year end.
+        const endDate = trackerExpanded
+          ? new Date(today.getFullYear(), 11, 31)
+          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        const btn = document.getElementById("btn-tracker-expand");
+        if (btn) {
+          btn.textContent = trackerExpanded ? "Show less ↑" : "Show full year ↓";
+        }
+
+        let i = 0;
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
           const d = new Date(start);
           d.setDate(d.getDate() + i);
+          if (d > endDate) break;
+          i++;
           const dateKey = toDateKey(d);
           const isToday = d.toDateString() === today.toDateString();
           const dow = d.getDay();
@@ -5028,6 +5071,16 @@
           });
         });
       }
+
+      document.getElementById("btn-tracker-expand").addEventListener("click", () => {
+        trackerExpanded = !trackerExpanded;
+        renderTracker();
+        if (trackerExpanded) {
+          document
+            .getElementById("btn-tracker-expand")
+            .scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      });
 
       // ═══════════════════════════════════════════════════════════════════════
       // TIPS TAB
