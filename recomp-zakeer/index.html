@@ -2619,6 +2619,239 @@
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--border);
       }
+      /* ══════════════════════════════════════════════════
+         WORKOUTS TAB
+      ══════════════════════════════════════════════════ */
+      .routine-tabs-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        margin-bottom: 20px;
+        scrollbar-width: none;
+      }
+      .routine-tabs-row::-webkit-scrollbar {
+        display: none;
+      }
+      .routine-tab-btn {
+        flex-shrink: 0;
+        padding: 7px 18px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+        white-space: nowrap;
+      }
+      .routine-tab-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .routine-tab-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .routine-name-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .routine-name-input {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid var(--border);
+        color: var(--text-primary);
+        padding: 4px 6px;
+        flex: 1;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .routine-name-input:focus {
+        border-bottom-color: var(--accent);
+      }
+      .btn-delete-routine {
+        padding: 5px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 80, 80, 0.35);
+        background: transparent;
+        color: rgba(255, 100, 100, 0.8);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        white-space: nowrap;
+      }
+      .btn-delete-routine:hover {
+        background: rgba(255, 80, 80, 0.12);
+        color: #ff6464;
+      }
+      .exercise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .exercise-row {
+        display: grid;
+        grid-template-columns: 1fr 56px 56px 32px;
+        gap: 8px;
+        align-items: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 10px 12px;
+        transition: border-color 0.2s;
+      }
+      .exercise-row:hover {
+        border-color: rgba(255, 92, 122, 0.25);
+      }
+      .exercise-field {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-primary);
+        font-size: 13px;
+        padding: 3px 4px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+      .exercise-field:focus {
+        border-bottom-color: var(--accent);
+      }
+      .exercise-field::placeholder {
+        color: var(--text-muted);
+      }
+      .exercise-field-label {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+      }
+      .exercise-col {
+        display: flex;
+        flex-direction: column;
+      }
+      .btn-delete-exercise {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        flex-shrink: 0;
+      }
+      .btn-delete-exercise:hover {
+        background: rgba(255, 80, 80, 0.12);
+        color: #ff6464;
+        border-color: rgba(255, 80, 80, 0.3);
+      }
+      .add-exercise-form {
+        display: grid;
+        grid-template-columns: 1fr 64px 64px auto;
+        gap: 8px;
+        align-items: end;
+        background: var(--bg-secondary);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-md);
+        padding: 12px;
+      }
+      .add-exercise-form input {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-size: 13px;
+        padding: 7px 10px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+      .add-exercise-form input:focus {
+        border-color: var(--accent);
+      }
+      .add-exercise-form input::placeholder {
+        color: var(--text-muted);
+      }
+      .btn-add-exercise {
+        padding: 7px 14px;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+      }
+      .btn-add-exercise:hover {
+        opacity: 0.85;
+      }
+      .routine-empty {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 13px;
+        padding: 32px 0;
+      }
+      @media (max-width: 600px) {
+        .add-exercise-form {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto;
+        }
+        .add-exercise-form input:first-child {
+          grid-column: 1 / -1;
+        }
+        .btn-add-exercise {
+          grid-column: 1 / -1;
+        }
+        .exercise-row {
+          grid-template-columns: 1fr 50px 50px 28px;
+          gap: 6px;
+        }
+      }
+      /* Burnt input in tracker */
+      .burnt-input {
+        width: 64px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-size: 13px;
+        font-family: "Space Mono", monospace;
+        padding: 4px 6px;
+        text-align: center;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .burnt-input:focus {
+        border-color: #ff8c42;
+      }
     </style>
   </head>
   <body>
@@ -2813,6 +3046,7 @@
           <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
           <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs" hidden>🌿 IBS Guide</button>
           <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
+          <button class="nav-tab" data-tab="workouts">💪 Workouts</button>
           <button class="nav-tab" data-tab="tips">💡 Tips</button>
         </nav>
 
@@ -2950,6 +3184,13 @@
               <div class="kpi-label">Protein goal</div>
               <div class="kpi-value num">
                 <span id="kpi-protein">115</span><span class="kpi-unit">g</span>
+              </div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-icon">🔥</div>
+              <div class="kpi-label">Burnt today</div>
+              <div class="kpi-value num">
+                <span id="kpi-burnt">0</span><span class="kpi-unit"> kcal</span>
               </div>
             </div>
             <div class="kpi">
@@ -3833,6 +4074,9 @@
                       ><span id="tracker-table-bottle-ml">500</span>ml</span
                     >
                   </th>
+                  <th rowspan="2" class="th-cal">
+                    Burnt<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
+                  </th>
                   <th rowspan="2" class="th-hydro">H₂O left</th>
                   <th rowspan="2" class="th-pro">
                     Pro left<br /><span style="font-weight: 500; opacity: 0.8">g</span>
@@ -3855,6 +4099,21 @@
               Show full year ↓
             </button>
           </div>
+        </section>
+
+        <!-- WORKOUTS SECTION -->
+        <section class="section" id="workouts-section">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Workout Routines</div>
+              <div class="section-subtitle">Build and manage your training plans</div>
+            </div>
+            <button class="btn-secondary" id="btn-add-routine" type="button">+ New Routine</button>
+          </div>
+
+          <div class="routine-tabs-row" id="routine-tabs-row"></div>
+
+          <div id="routine-detail"></div>
         </section>
 
         <!-- TIPS SECTION -->
@@ -4130,8 +4389,10 @@
         trackerData: {},
         mealLibrary: [],
         todayPlan: [],
+        workouts: [],
       };
       let state = { ...defaultState };
+      let selectedRoutineId = null;
 
       function getLocalStorageKey() {
         if (window.FitnessAuth && FitnessAuth.getSession()) {
@@ -4484,6 +4745,11 @@
         document.getElementById("meals-fill").style.width = (mealsLogged / 5) * 100 + "%";
 
         renderCharts();
+
+        const todayKey = toDateKey(new Date());
+        const todayBurnt = parseInt(state.trackerData[todayKey]?.burnt || "0", 10) || 0;
+        const burntEl = document.getElementById("kpi-burnt");
+        if (burntEl) burntEl.textContent = String(todayBurnt);
       }
 
       function renderWorkoutToggle() {
@@ -4976,7 +5242,10 @@
         const today = new Date();
         const p = getProfile();
 
-        // Collapsed: show through end of current month. Expanded: full year end.
+        // Collapsed: entire current month. Expanded: TRACKER_START through Dec 31.
+        const renderStart = trackerExpanded
+          ? start
+          : new Date(today.getFullYear(), today.getMonth(), 1);
         const endDate = trackerExpanded
           ? new Date(today.getFullYear(), 11, 31)
           : new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -4989,7 +5258,7 @@
         let i = 0;
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          const d = new Date(start);
+          const d = new Date(renderStart);
           d.setDate(d.getDate() + i);
           if (d > endDate) break;
           i++;
@@ -5007,6 +5276,7 @@
             dinner: "",
             creatine: false,
             water: "",
+            burnt: "",
           };
           state.trackerData[dateKey] = dayData;
 
@@ -5040,6 +5310,7 @@
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
       <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="${p.creatineG}g creatine"></div></td>
       <td><input class="water-input num" type="number" min="0" max="24" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="${p.waterBottleMl}ml bottles"></td>
+      <td><input class="burnt-input num" type="number" min="0" placeholder="0" value="${dayData.burnt || ""}" data-date="${dateKey}" data-field="burnt"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
       <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
@@ -5051,7 +5322,7 @@
         updateTrackerSummary();
 
         // Wire up inputs
-        document.querySelectorAll(".protein-input, .water-input").forEach((input) => {
+        document.querySelectorAll(".protein-input, .water-input, .burnt-input").forEach((input) => {
           input.addEventListener("input", (e) => {
             const dateKey = e.target.dataset.date;
             const field = e.target.dataset.field;
@@ -5059,6 +5330,7 @@
             saveState();
             refreshTrackerRow(dateKey);
             updateTrackerSummary();
+            updateDashboardStats();
           });
         });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
@@ -5080,6 +5352,176 @@
             .getElementById("btn-tracker-expand")
             ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
+      });
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // WORKOUTS TAB
+      // ═══════════════════════════════════════════════════════════════════════
+      function getWorkouts() {
+        if (!Array.isArray(state.workouts)) state.workouts = [];
+        return state.workouts;
+      }
+
+      function renderWorkouts() {
+        const workouts = getWorkouts();
+        const tabsRow = document.getElementById("routine-tabs-row");
+        const detail = document.getElementById("routine-detail");
+        if (!tabsRow || !detail) return;
+
+        // If selected routine was deleted, reset
+        if (selectedRoutineId && !workouts.find((r) => r.id === selectedRoutineId)) {
+          selectedRoutineId = workouts.length ? workouts[0].id : null;
+        }
+        if (!selectedRoutineId && workouts.length) {
+          selectedRoutineId = workouts[0].id;
+        }
+
+        // Render tab buttons
+        tabsRow.innerHTML = "";
+        workouts.forEach((r) => {
+          const btn = document.createElement("button");
+          btn.className = "routine-tab-btn" + (r.id === selectedRoutineId ? " active" : "");
+          btn.textContent = r.name;
+          btn.type = "button";
+          btn.addEventListener("click", () => {
+            selectedRoutineId = r.id;
+            renderWorkouts();
+          });
+          tabsRow.appendChild(btn);
+        });
+
+        // Render detail
+        if (!selectedRoutineId) {
+          detail.innerHTML =
+            '<div class="routine-empty">No routines yet. Click "+ New Routine" to create one.</div>';
+          return;
+        }
+
+        const routine = workouts.find((r) => r.id === selectedRoutineId);
+        if (!routine) return;
+
+        const exRows = (routine.exercises || [])
+          .map(
+            (ex) => `
+          <div class="exercise-row" data-ex-id="${ex.id}">
+            <div class="exercise-col">
+              <div class="exercise-field-label">Exercise</div>
+              <input class="exercise-field ex-name" type="text" value="${escHtml(ex.name)}" placeholder="e.g. Pull Ups" data-routine="${routine.id}" data-ex="${ex.id}" data-field="name">
+            </div>
+            <div class="exercise-col">
+              <div class="exercise-field-label">Sets</div>
+              <input class="exercise-field ex-num" type="text" value="${escHtml(ex.sets)}" placeholder="3" data-routine="${routine.id}" data-ex="${ex.id}" data-field="sets">
+            </div>
+            <div class="exercise-col">
+              <div class="exercise-field-label">Reps</div>
+              <input class="exercise-field ex-num" type="text" value="${escHtml(ex.reps)}" placeholder="10" data-routine="${routine.id}" data-ex="${ex.id}" data-field="reps">
+            </div>
+            <button class="btn-delete-exercise" type="button" data-routine="${routine.id}" data-ex="${ex.id}" title="Remove">×</button>
+          </div>`
+          )
+          .join("");
+
+        detail.innerHTML = `
+          <div class="routine-name-row">
+            <input class="routine-name-input" id="routine-name-input" type="text" value="${escHtml(routine.name)}" maxlength="40" spellcheck="false">
+            <button class="btn-delete-routine" id="btn-delete-routine" type="button">Delete routine</button>
+          </div>
+          <div class="exercise-list" id="exercise-list">${exRows || '<div class="routine-empty">No exercises yet. Add one below.</div>'}</div>
+          <div class="add-exercise-form" id="add-exercise-form">
+            <input type="text" id="new-ex-name" placeholder="Exercise name" maxlength="60">
+            <input type="text" id="new-ex-sets" placeholder="Sets" maxlength="8">
+            <input type="text" id="new-ex-reps" placeholder="Reps" maxlength="12">
+            <button class="btn-add-exercise" id="btn-add-exercise" type="button">+ Add</button>
+          </div>`;
+
+        // Wire rename
+        document.getElementById("routine-name-input").addEventListener("input", (e) => {
+          routine.name = e.target.value || "Routine";
+          // update tab button label live
+          tabsRow.querySelectorAll(".routine-tab-btn").forEach((b, i) => {
+            if (workouts[i]?.id === routine.id) b.textContent = routine.name;
+          });
+          saveState();
+        });
+
+        // Wire delete routine
+        document.getElementById("btn-delete-routine").addEventListener("click", () => {
+          if (!confirm(`Delete "${routine.name}"?`)) return;
+          state.workouts = workouts.filter((r) => r.id !== routine.id);
+          selectedRoutineId = null;
+          saveState();
+          renderWorkouts();
+        });
+
+        // Wire exercise field edits
+        detail.querySelectorAll(".exercise-field").forEach((input) => {
+          input.addEventListener("input", (e) => {
+            const { routine: rId, ex: exId, field } = e.target.dataset;
+            const r = getWorkouts().find((x) => x.id === rId);
+            const ex = r?.exercises?.find((x) => x.id === exId);
+            if (ex) {
+              ex[field] = e.target.value;
+              saveState();
+            }
+          });
+        });
+
+        // Wire delete exercise
+        detail.querySelectorAll(".btn-delete-exercise").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const { routine: rId, ex: exId } = btn.dataset;
+            const r = getWorkouts().find((x) => x.id === rId);
+            if (r) {
+              r.exercises = r.exercises.filter((x) => x.id !== exId);
+              saveState();
+              renderWorkouts();
+            }
+          });
+        });
+
+        // Wire add exercise
+        document.getElementById("btn-add-exercise").addEventListener("click", () => {
+          const nameInput = document.getElementById("new-ex-name");
+          const setsInput = document.getElementById("new-ex-sets");
+          const repsInput = document.getElementById("new-ex-reps");
+          const name = nameInput.value.trim();
+          if (!name) {
+            nameInput.focus();
+            return;
+          }
+          if (!routine.exercises) routine.exercises = [];
+          routine.exercises.push({
+            id: crypto.randomUUID(),
+            name,
+            sets: setsInput.value.trim() || "3",
+            reps: repsInput.value.trim() || "10",
+          });
+          saveState();
+          renderWorkouts();
+        });
+
+        // Allow Enter key in add-exercise form
+        document.getElementById("add-exercise-form").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") document.getElementById("btn-add-exercise").click();
+        });
+      }
+
+      function escHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      document.getElementById("btn-add-routine").addEventListener("click", () => {
+        if (!Array.isArray(state.workouts)) state.workouts = [];
+        const n = state.workouts.length + 1;
+        const r = { id: crypto.randomUUID(), name: `Routine ${n}`, exercises: [] };
+        state.workouts.push(r);
+        selectedRoutineId = r.id;
+        saveState();
+        renderWorkouts();
       });
 
       // ═══════════════════════════════════════════════════════════════════════
@@ -5273,6 +5715,7 @@
           renderTracker();
           renderIBS();
           renderTips();
+          renderWorkouts();
           renderExamplePlan();
           updateNavIndicator();
         } catch (err) {
