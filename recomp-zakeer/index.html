@@ -2786,8 +2786,10 @@
           gap: 6px;
         }
       }
-      /* Burnt input in tracker */
-      .burnt-input {
+      /* Burnt / weight / macro inputs in tracker */
+      .burnt-input,
+      .weight-input,
+      .macro-input {
         width: 64px;
         background: transparent;
         border: 1px solid var(--border);
@@ -2802,6 +2804,12 @@
       }
       .burnt-input:focus {
         border-color: #ff8c42;
+      }
+      .weight-input:focus {
+        border-color: var(--accent-secondary);
+      }
+      .macro-input:focus {
+        border-color: var(--info);
       }
 
       /* ══════════════════════════════════════════════════
@@ -4642,9 +4650,9 @@
                   <th rowspan="2" class="th-cal">
                     Cal target<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
-                  <th colspan="4" class="th-group">Protein per meal — enter grams (g)</th>
+                  <th colspan="5" class="th-group">Protein per meal — enter grams (g)</th>
                   <th rowspan="2" class="th-hydro" id="tracker-creatine-th" title="5g creatine">
-                    Cre<br /><span style="font-weight: 500; opacity: 0.8"
+                    Creatine<br /><span style="font-weight: 500; opacity: 0.8"
                       ><span id="tracker-creatine-g">5</span>g</span
                     >
                   </th>
@@ -4656,18 +4664,17 @@
                   <th rowspan="2" class="th-cal">
                     Burnt<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
-                  <th rowspan="2" class="th-hydro">H₂O left</th>
+                  <th rowspan="2" class="th-hydro">💧 left</th>
                   <th rowspan="2" class="th-pro">
-                    Pro left<br /><span style="font-weight: 500; opacity: 0.8">g</span>
+                    Protein left<br /><span style="font-weight: 500; opacity: 0.8">g</span>
                   </th>
-                  <th rowspan="2" class="th-pro">Pro met</th>
-                  <th rowspan="2" class="th-hydro">H₂O met</th>
                   <th rowspan="2" class="th-pro">
-                    ⚖️<br /><span style="font-weight: 500; opacity: 0.8">kg</span>
+                    Weight<br /><span style="font-weight: 500; opacity: 0.8">kg</span>
                   </th>
                   <th colspan="2" class="th-group">Macros (from scan)</th>
                 </tr>
                 <tr>
+                  <th class="th-pro">Breakfast</th>
                   <th class="th-pro">Lunch</th>
                   <th class="th-pro">Snack</th>
                   <th class="th-pro">Shake</th>
@@ -5878,7 +5885,7 @@
       // ═══════════════════════════════════════════════════════════════════════
       const TRACKER_START = new Date(2026, 4, 7); // May 7, 2026
       let trackerExpanded = false;
-      const TRACKER_PRO_FIELDS = ["lunch", "snack", "shake", "dinner"];
+      const TRACKER_PRO_FIELDS = ["breakfast", "lunch", "snack", "shake", "dinner"];
 
       function toDateKey(d) {
         return (
@@ -6095,6 +6102,7 @@
           // Get or default (items 2 & 6: add weightKg, carbs, fat)
           const dayData = state.trackerData[dateKey] || {
             isWorkout: defaultWorkout,
+            breakfast: "",
             lunch: "",
             snack: "",
             shake: "",
@@ -6106,6 +6114,7 @@
             carbs: "",
             fat: "",
           };
+          if (!("breakfast" in dayData)) dayData.breakfast = "";
           if (!("weightKg" in dayData)) dayData.weightKg = "";
           if (!("carbs" in dayData)) dayData.carbs = "";
           if (!("fat" in dayData)) dayData.fat = "";
@@ -6135,6 +6144,7 @@
       <td><div class="day-cell"><div class="day-date num">${fmtDate(d)}</div><div class="day-name">${dayNames[dow]}</div></div></td>
       <td><div class="check-cell ${dayData.isWorkout ? "checked" : ""}" data-date="${dateKey}" data-field="isWorkout"></div></td>
       <td><span class="target-cell num">${target}<span class="cell-unit">kcal</span></span></td>
+      <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.breakfast}" data-date="${dateKey}" data-field="breakfast"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.lunch}" data-date="${dateKey}" data-field="lunch"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
@@ -6144,8 +6154,6 @@
       <td><input class="burnt-input num" type="number" min="0" placeholder="0" value="${dayData.burnt || ""}" data-date="${dateKey}" data-field="burnt"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
-      <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
-      <td><span class="goal-met-cell tracker-water-met ${goalMetClass(waterGoalTier)}">${waterMetDisplay}</span></td>
       <td><input class="weight-input num" type="number" min="0" max="999" step="0.1" placeholder="—" value="${dayData.weightKg || ""}" data-date="${dateKey}" data-field="weightKg"></td>
       <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.carbs || ""}" data-date="${dateKey}" data-field="carbs"></td>
       <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.fat || ""}" data-date="${dateKey}" data-field="fat"></td>
@@ -7146,6 +7154,7 @@
           if (!state.trackerData[todayKey]) {
             state.trackerData[todayKey] = {
               isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
+              breakfast: "",
               lunch: "",
               snack: "",
               shake: "",
@@ -7464,6 +7473,7 @@
                 if (!state.trackerData[todayKey]) {
                   state.trackerData[todayKey] = {
                     isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
+                    breakfast: "",
                     lunch: "",
                     snack: "",
                     shake: "",
