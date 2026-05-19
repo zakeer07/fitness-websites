@@ -3150,6 +3150,9 @@
       .setup-banner-btn:hover {
         opacity: 0.88;
       }
+      .setup-banner[hidden] {
+        display: none;
+      }
       .weekly-summary-card {
         background: linear-gradient(135deg, rgba(255, 92, 122, 0.07), rgba(78, 205, 196, 0.05));
         border: 1px solid rgba(255, 92, 122, 0.22);
@@ -7648,7 +7651,10 @@
           // Item 5: quick-log
           initQuickLog();
           updateSetupBanner();
-          document.getElementById("setup-banner-open")?.addEventListener("click", openUserMenu);
+          document.getElementById("setup-banner-open")?.addEventListener("click", () => {
+            openUserMenu();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
         } catch (err) {
           console.error("bootstrapApp failed:", err);
           const banner = document.getElementById("meals-target-banner");
