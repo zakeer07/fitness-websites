@@ -2298,19 +2298,6 @@
         overscroll-behavior-x: contain;
       }
 
-      /* Scroll fade hint on right edge of table */
-      .tracker-table-wrap::after {
-        content: "";
-        position: sticky;
-        right: 0;
-        top: 0;
-        width: 32px;
-        height: 100%;
-        background: linear-gradient(to right, transparent, rgba(6, 8, 15, 0.7));
-        pointer-events: none;
-        flex-shrink: 0;
-      }
-
       @media (max-width: 600px) {
         /* Tighter page padding */
         .container {
@@ -2353,7 +2340,6 @@
         /* User menu panel — full width with safe margins */
         .user-menu-panel {
           width: calc(100vw - 20px);
-          right: -4px;
         }
       }
 
