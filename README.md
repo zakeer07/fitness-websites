@@ -1,36 +1,29 @@
-# 🏋️ Fitness Apps — Family Edition
+# Fitness App — Family Edition
 
-Two self-contained fitness tracking websites, organized in separate folders:
+One app, two themes. Sign in and pick **RECOMP** (red/teal) or **BLOOM** (pink/purple) in your profile — same account, same data, just different colors and defaults.
 
 ```
 fitness-apps/
-├── recomp-zakeer/    🔥 Zakeer's plan (RECOMP)
-│   ├── index.html
-│   ├── README.md
-│   └── .nojekyll
-│
-└── recomp-aadila/    🌸 Aadila's plan (BLOOM)
-    ├── index.html
-    ├── README.md
-    └── .nojekyll
+├── index.html          ← Sign-in page (start here)
+├── recomp-zakeer/      ← The app (both RECOMP and BLOOM themes)
+│   └── index.html
+├── recomp-aadila/      ← Redirects to recomp-zakeer/
+└── shared/             ← Auth, meal library, UI utilities
 ```
-
-Each app is one HTML file with design, code, and storage. **Sign in** at the site home page first ([accounts guide](docs/AUTH.md)) — then open RECOMP or BLOOM to track meals and set your goals.
 
 ---
 
-## 🖥️ How to View Locally (Easiest Method)
+## How to View Locally
 
-1. **Unzip this folder** to anywhere on your computer (Documents is great)
-2. Open the `fitness-apps` folder
-3. **Double-click the root `index.html`** — sign in or create an account
-4. Choose **RECOMP** or **BLOOM** — your tracker and profile goals load for that account
+1. Open the `fitness-apps` folder
+2. Double-click `index.html` — sign in or create an account
+3. You'll land in the app automatically
 
-**Pro tip:** For best results, drag `index.html` into Chrome or Firefox (instead of opening in Safari).
+**Pro tip:** Drag `index.html` into Chrome or Firefox (Safari can have issues with local file storage).
 
-### Want it to behave exactly like the deployed version?
+### Live Server (recommended for development)
 
-Install **VS Code** (free) and the **"Live Server"** extension. Then:
+Install **VS Code** and the **"Live Server"** extension, then:
 
 1. Open the folder in VS Code
 2. Right-click `index.html` → "Open with Live Server"
@@ -38,66 +31,64 @@ Install **VS Code** (free) and the **"Live Server"** extension. Then:
 
 ---
 
-## 🌐 Live sites (auto-deploy)
+## Live sites (auto-deploy)
 
 | Environment     | When                  | URL                                              |
 | --------------- | --------------------- | ------------------------------------------------ |
 | **Production**  | Merge to `main`       | https://zakeer07.github.io/fitness-websites/     |
 | **Dev preview** | Open a PR into `main` | https://zakeer07.github.io/fitness-websites/dev/ |
 
-Branch off `main`, open a PR — the dev site shows your PR branch. Merge the PR for production. See [CONTRIBUTING.md](CONTRIBUTING.md).
+**App URL:** https://zakeer07.github.io/fitness-websites/recomp-zakeer/
 
-**Apps on production:**
-
-- https://zakeer07.github.io/fitness-websites/recomp-zakeer/
-- https://zakeer07.github.io/fitness-websites/recomp-aadila/
+Branch off `main`, open a PR — the dev site shows your PR branch. Merge for production. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## 📱 How to Use as an App on Your Phone
+## How to Use as an App on Your Phone
 
-After deploying, open the live URL on your phone:
+Open the live URL on your phone:
 
 - **iPhone (Safari):** Tap Share → "Add to Home Screen"
 - **Android (Chrome):** Tap ⋮ menu → "Install app" or "Add to Home Screen"
 
-Now it lives on your home screen and opens like a native app.
+---
+
+## Where Your Data Is Stored
+
+Tracking data is saved in your browser's **localStorage** under key `fitness-app-v1`, scoped per user account. If cloud sync (Supabase) is configured, data follows you across devices automatically.
+
+**Important:** Data is tied to the URL — `file://`, `localhost`, and `github.io` each have separate storage. Use the deployed GitHub Pages version for consistent data across sessions.
 
 ---
 
-## 💾 Where Your Data Is Stored
+## Themes
 
-All your tracking data (meals eaten, protein logged, workout days) is saved in your browser's **localStorage**:
+Switch theme anytime in **Profile → Theme**:
 
-- **RECOMP** uses storage key `recomp-app-v1`
-- **BLOOM** uses storage key `bloom-app-v1`
+- **RECOMP** — red/teal, workout schedule Mon/Wed/Fri/Sun, IBS guide off by default
+- **BLOOM** — pink/purple, workout schedule Mon/Tue/Thu/Fri, IBS guide on by default
 
-They're completely separate, so both can run on the same browser without conflicts.
-
-**Important:** The data is tied to the URL. So data saved locally (`file://`) is separate from data saved on `localhost` is separate from data on `github.io`. We recommend using the deployed GitHub Pages version on your phone so the data is consistent across sessions.
+Both themes share the same account, data, and features.
 
 ---
 
-## 🎨 Customizing
+## Customizing
 
-Open `index.html` in any text editor (or VS Code). Find these arrays near the bottom of the file to customize:
+Open `recomp-zakeer/index.html` in any text editor. Key arrays near the bottom:
 
 - **MEALS** — add/remove meal options
-- **TODAY_PLAN** — change which meals appear on the dashboard
-- **TIPS** — update principles
-- For Aadila: **SAFE_FOODS** and **AVOID_FOODS** for the IBS guide
-
-Re-upload to GitHub after editing and changes go live in ~30 seconds.
+- **SAFE_FOODS** / **AVOID_FOODS** — IBS guide food lists
+- **TIPS** — daily principles
 
 ---
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 **"The app looks broken / fonts don't load"**
-You need an internet connection on first load (it pulls Google Fonts). After that it works offline.
+You need an internet connection on first load (pulls Google Fonts). Works offline after that.
 
 **"My data disappeared!"**
-You probably cleared browser data, or switched browsers/devices. localStorage is per-browser. Use the deployed GitHub Pages version for the most reliable storage.
+You probably cleared browser data or switched browsers/devices. localStorage is per-browser. Use the deployed GitHub Pages version for reliable storage.
 
 **"Charts aren't showing"**
 Make sure JavaScript is enabled in your browser.
@@ -110,11 +101,7 @@ This repo uses [pre-commit](https://pre-commit.com/) so formatting and basic che
 
 ```bash
 make setup    # once: install hooks
-make lint       # run all checks manually
+make lint     # run all checks manually
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details. Pull requests run the same checks in GitHub Actions.
-
----
-
-Built with care for the fitness journey. 💪🌸
