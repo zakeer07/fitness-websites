@@ -1542,6 +1542,58 @@
       .profile-save-btn:hover {
         opacity: 0.9;
       }
+      .change-password-section {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .change-password-toggle {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 13px;
+        cursor: pointer;
+        padding: 0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .change-password-toggle:hover {
+        color: var(--text-primary);
+      }
+      .change-password-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .change-password-fields[hidden] {
+        display: none;
+      }
+      .change-password-fields input {
+        width: 100%;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-size: 14px;
+        padding: 9px 12px;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      .change-password-fields input:focus {
+        border-color: var(--accent);
+      }
+      .change-password-msg {
+        font-size: 13px;
+        min-height: 18px;
+      }
+      .change-password-msg.error {
+        color: var(--danger, #ff5c7a);
+      }
+      .change-password-msg.success {
+        color: var(--success);
+      }
       .profile-saved-msg {
         font-size: 13px;
         color: var(--success);
@@ -3595,6 +3647,35 @@
               <div class="profile-actions">
                 <button type="button" class="profile-save-btn" id="profile-save-btn">Save</button>
                 <span class="profile-saved-msg" id="profile-saved-msg">Saved</span>
+              </div>
+              <div class="change-password-section">
+                <button type="button" class="change-password-toggle" id="change-password-toggle">
+                  Change password
+                </button>
+                <div class="change-password-fields" id="change-password-fields" hidden>
+                  <input
+                    type="password"
+                    id="cp-current"
+                    placeholder="Current password"
+                    autocomplete="current-password"
+                  />
+                  <input
+                    type="password"
+                    id="cp-new"
+                    placeholder="New password"
+                    autocomplete="new-password"
+                  />
+                  <input
+                    type="password"
+                    id="cp-confirm"
+                    placeholder="Confirm new password"
+                    autocomplete="new-password"
+                  />
+                  <div class="change-password-msg" id="change-password-msg"></div>
+                  <button type="button" class="profile-save-btn" id="cp-submit-btn">
+                    Update password
+                  </button>
+                </div>
               </div>
               <div
                 class="profile-actions"
@@ -7362,6 +7443,71 @@
         });
       }
 
+      function attachChangePasswordHandler() {
+        const toggle = document.getElementById("change-password-toggle");
+        const fields = document.getElementById("change-password-fields");
+        const msg = document.getElementById("change-password-msg");
+        const submitBtn = document.getElementById("cp-submit-btn");
+        if (!toggle || toggle.dataset.bound === "1") return;
+        toggle.dataset.bound = "1";
+
+        toggle.addEventListener("click", () => {
+          fields.hidden = !fields.hidden;
+          if (!fields.hidden) document.getElementById("cp-current").focus();
+        });
+
+        submitBtn.addEventListener("click", async () => {
+          const current = document.getElementById("cp-current").value;
+          const newPass = document.getElementById("cp-new").value;
+          const confirm = document.getElementById("cp-confirm").value;
+          msg.className = "change-password-msg";
+          msg.textContent = "";
+
+          if (!newPass || newPass.length < 6) {
+            msg.className = "change-password-msg error";
+            msg.textContent = "New password must be at least 6 characters.";
+            return;
+          }
+          if (newPass !== confirm) {
+            msg.className = "change-password-msg error";
+            msg.textContent = "Passwords don't match.";
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Updating…";
+
+          try {
+            const session = FitnessAuth.getSession();
+            if (session?.mode === "supabase") {
+              await FitnessAuth.setNewPassword(newPass);
+            } else {
+              if (!current) {
+                msg.className = "change-password-msg error";
+                msg.textContent = "Enter your current password.";
+                return;
+              }
+              await FitnessAuth.changeLocalPassword(session.email, current, newPass);
+            }
+            msg.className = "change-password-msg success";
+            msg.textContent = "Password updated.";
+            document.getElementById("cp-current").value = "";
+            document.getElementById("cp-new").value = "";
+            document.getElementById("cp-confirm").value = "";
+            setTimeout(() => {
+              fields.hidden = true;
+              msg.textContent = "";
+            }, 2000);
+          } catch (e) {
+            msg.className = "change-password-msg error";
+            msg.textContent = e.message || "Failed to update password.";
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Update password";
+          }
+        });
+      }
+
       // ═══════════════════════════════════════════════════════════════════════
       // TAB SWITCHING
       // ═══════════════════════════════════════════════════════════════════════
@@ -7668,6 +7814,7 @@
 
       initUserMenu();
       attachLogoutHandler();
+      attachChangePasswordHandler();
       bootstrapApp();
     </script>
 

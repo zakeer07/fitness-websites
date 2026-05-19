@@ -263,6 +263,28 @@
     return session;
   }
 
+  async function changeLocalPassword(email, currentPassword, newPassword) {
+    const db = await openDb();
+    const normalized = email.trim().toLowerCase();
+    const user = await new Promise((resolve, reject) => {
+      const tx = db.transaction("users", "readonly");
+      const r = tx.objectStore("users").index("email").get(normalized);
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+    if (!user) throw new Error("Account not found.");
+    const currentHash = await hashPassword(currentPassword, user.salt);
+    if (currentHash !== user.hash) throw new Error("Current password is incorrect.");
+    const newSalt = randomSalt();
+    const newHash = await hashPassword(newPassword, newSalt);
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction("users", "readwrite");
+      tx.objectStore("users").put({ ...user, salt: newSalt, hash: newHash });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   async function setNewPassword(password) {
     const sb = await initSupabase();
     if (!sb) throw new Error("Password update requires a Supabase account.");
@@ -413,6 +435,7 @@
     initSupabase,
     signUp,
     signIn,
+    changeLocalPassword,
     setNewPassword,
     resetPassword,
     signOut,
