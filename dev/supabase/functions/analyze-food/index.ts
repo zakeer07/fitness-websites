@@ -3,6 +3,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
+// Max base64 length ~3.75MB binary → safe under Supabase's 6MB body limit
+const MAX_BASE64_BYTES = 4_000_000;
+
+// Gemini request timeout
+const GEMINI_TIMEOUT_MS = 30_000;
+
 const SYSTEM_PROMPT = `You are a professional dietitian and nutritionist analyzing a food photograph.
 
 Your job is to identify every food item visible and provide accurate nutritional data.
@@ -16,7 +22,7 @@ Rules:
 - Never fabricate foods that are not visible. If something is unclear, say so in notes.
 - If the image is not food, return an empty foods array with a note.
 
-Return ONLY valid JSON matching this exact schema (no markdown, no explanation):
+Return ONLY valid JSON — no markdown fences, no explanation, just raw JSON:
 {
   "foods": [
     {
@@ -91,26 +97,44 @@ Deno.serve(async (req: Request) => {
   if (!["image/jpeg", "image/png", "image/webp", "image/heic"].includes(mimeType)) {
     return json({ error: "Unsupported image type" }, 400);
   }
+  if (image.length > MAX_BASE64_BYTES) {
+    return json({ error: "Image too large. Please compress or resize before uploading." }, 413);
+  }
 
-  // Call Gemini Vision
-  const geminiRes = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { text: SYSTEM_PROMPT },
-            { inline_data: { mime_type: mimeType, data: image } },
-          ],
+  // Call Gemini Vision with timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+
+  let geminiRes: Response;
+  try {
+    geminiRes = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: SYSTEM_PROMPT },
+              { inline_data: { mime_type: mimeType, data: image } },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.1,
+          // response_mime_type omitted — relying on prompt to enforce JSON output
+          // (Gemini 1.5 Flash JSON mode requires jsonSchema which we skip for simplicity)
         },
-      ],
-      generationConfig: {
-        temperature: 0.1,
-        response_mime_type: "application/json",
-      },
-    }),
-  });
+      }),
+    });
+  } catch (err) {
+    if ((err as Error).name === "AbortError") {
+      return json({ error: "AI analysis timed out. Try again." }, 504);
+    }
+    return json({ error: "Failed to reach AI service." }, 502);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!geminiRes.ok) {
     const err = await geminiRes.text();
@@ -119,10 +143,13 @@ Deno.serve(async (req: Request) => {
   }
 
   const geminiData = await geminiRes.json();
-  const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let rawText: string = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
   if (!rawText) {
     return json({ error: "Empty response from AI" }, 502);
   }
+
+  // Strip markdown fences if Gemini wraps the JSON anyway
+  rawText = rawText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
   let analysis: unknown;
   try {
