@@ -140,7 +140,7 @@
           background-position: 200% center;
         }
       }
-/* Typography */
+      /* Typography */
       .display {
         font-family: "Syne", sans-serif;
         font-weight: 700;
@@ -546,7 +546,6 @@
         text-transform: uppercase;
         margin-top: 6px;
       }
-
 
       .tracking-legend {
         display: grid;
@@ -3290,60 +3289,61 @@
             </div>
 
             <div class="stats-stack">
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">🔥 Calories eaten</div>
-                    <div class="stat-bar-value num">
-                      <span id="cal-current">0</span><span class="kpi-unit"> / </span><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
-                    </div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div
-                      class="stat-bar-fill"
-                      id="cal-fill"
-                      style="width: 0%; background: var(--info)"
-                    ></div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🔥 Calories eaten</div>
+                  <div class="stat-bar-value num">
+                    <span id="cal-current">0</span><span class="kpi-unit"> / </span
+                    ><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
                   </div>
                 </div>
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">💪 Protein (grams)</div>
-                    <div class="stat-bar-value num">
-                      <span id="prot-current">0</span><span class="kpi-unit">g</span> /
-                      <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
-                    </div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div
-                      class="stat-bar-fill"
-                      id="prot-fill"
-                      style="width: 0%; background: var(--accent)"
-                    ></div>
-                  </div>
-                </div>
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">🍽️ Meals Logged</div>
-                    <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div
-                      class="stat-bar-fill"
-                      id="meals-fill"
-                      style="width: 0%; background: var(--success)"
-                    ></div>
-                  </div>
-                </div>
-                <div class="stat-bar">
-                  <div class="stat-bar-top">
-                    <div class="stat-bar-label">🔥 Streak</div>
-                    <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
-                  </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="cal-fill"
+                    style="width: 0%; background: var(--info)"
+                  ></div>
                 </div>
               </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">💪 Protein (grams)</div>
+                  <div class="stat-bar-value num">
+                    <span id="prot-current">0</span><span class="kpi-unit">g</span> /
+                    <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
+                  </div>
+                </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="prot-fill"
+                    style="width: 0%; background: var(--accent)"
+                  ></div>
+                </div>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🍽️ Meals Logged</div>
+                  <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
+                </div>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    id="meals-fill"
+                    style="width: 0%; background: var(--success)"
+                  ></div>
+                </div>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
+                  <div class="stat-bar-label">🔥 Streak</div>
+                  <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
+                </div>
+                <div class="stat-bar-track">
+                  <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="kpi-grid">
@@ -4289,12 +4289,20 @@
             <div class="card">
               <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
               <div class="chart-unit-hint">Daily total (g) — dashed = goal</div>
-              <canvas id="tracker-protein-chart" height="180" style="width:100%;display:block"></canvas>
+              <canvas
+                id="tracker-protein-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
             </div>
             <div class="card">
               <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
               <div class="chart-unit-hint">Daily kcal burned — from Burnt column</div>
-              <canvas id="tracker-burnt-chart" height="180" style="width:100%;display:block"></canvas>
+              <canvas
+                id="tracker-burnt-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
             </div>
           </div>
         </section>
@@ -5681,7 +5689,20 @@
 
         const n = dates.length;
         const todayKey = toDateKey(today);
-        const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const MON = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
 
         function labelStep(count) {
           if (count <= 15) return 1;
@@ -5698,10 +5719,15 @@
 
         function drawLine(canvas, values, goalLine, color) {
           const ctx = setupCanvas(canvas);
-          const W = canvas.width, H = canvas.height;
+          const W = canvas.width,
+            H = canvas.height;
           ctx.clearRect(0, 0, W, H);
-          const mL = 42, mR = 10, mT = 12, mB = 32;
-          const cW = W - mL - mR, cH = H - mT - mB;
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR,
+            cH = H - mT - mB;
           const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
           const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
           const yOf = (v) => mT + cH * (1 - v / maxV);
@@ -5746,7 +5772,8 @@
             ctx.beginPath();
             let first = true;
             values.forEach((v, i) => {
-              const x = xOf(i), y = yOf(v);
+              const x = xOf(i),
+                y = yOf(v);
               if (first) {
                 ctx.moveTo(x, y);
                 first = false;
@@ -5764,7 +5791,8 @@
             ctx.beginPath();
             first = true;
             values.forEach((v, i) => {
-              const x = xOf(i), y = yOf(v);
+              const x = xOf(i),
+                y = yOf(v);
               if (first) {
                 ctx.moveTo(x, y);
                 first = false;
@@ -5797,10 +5825,15 @@
 
         function drawBars(canvas, values, color) {
           const ctx = setupCanvas(canvas);
-          const W = canvas.width, H = canvas.height;
+          const W = canvas.width,
+            H = canvas.height;
           ctx.clearRect(0, 0, W, H);
-          const mL = 42, mR = 10, mT = 12, mB = 32;
-          const cW = W - mL - mR, cH = H - mT - mB;
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR,
+            cH = H - mT - mB;
           const maxV = Math.max(...values, 1) * 1.18;
           const barW = Math.max(1, cW / n - 1);
           const xOf = (i) => mL + (i / n) * cW;
@@ -5829,7 +5862,9 @@
           } else {
             values.forEach((v, i) => {
               if (!v) return;
-              const x = xOf(i), y = yOf(v), h = mT + cH - y;
+              const x = xOf(i),
+                y = yOf(v),
+                h = mT + cH - y;
               ctx.fillStyle = toDateKey(dates[i]) === todayKey ? color : color + "BB";
               if (ctx.roundRect) {
                 ctx.beginPath();
