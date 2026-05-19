@@ -263,6 +263,21 @@
     return session;
   }
 
+  async function setNewPassword(password) {
+    const sb = await initSupabase();
+    if (!sb) throw new Error("Password update requires a Supabase account.");
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) throw error;
+  }
+
+  async function resetPassword(email) {
+    const sb = await initSupabase();
+    if (!sb) throw new Error("Password reset requires a Supabase account. Local accounts cannot reset passwords.");
+    const redirectTo = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "/");
+    const { error } = await sb.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+    if (error) throw error;
+  }
+
   async function signOut() {
     const sb = await initSupabase();
     if (sb) await sb.auth.signOut();
@@ -398,6 +413,8 @@
     initSupabase,
     signUp,
     signIn,
+    setNewPassword,
+    resetPassword,
     signOut,
     restoreSupabaseSession,
     loadAppState,

@@ -3654,6 +3654,14 @@
               </div>
               <div class="stat-bar">
                 <div class="stat-bar-top">
+                  <div class="stat-bar-label">🔥 Burnt today</div>
+                  <div class="stat-bar-value num">
+                    <span id="hero-burnt">0</span><span class="kpi-unit"> kcal</span>
+                  </div>
+                </div>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-bar-top">
                   <div class="stat-bar-label">🔥 Streak</div>
                   <div class="stat-bar-value num"><span id="streak-days">0</span> Days</div>
                 </div>
@@ -3820,9 +3828,10 @@
             <div>
               <label for="meal-add-cat">Category</label>
               <select id="meal-add-cat">
+                <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
                 <option value="snack">Snack</option>
-                <option value="peri">Peri-WO</option>
+                <option value="peri">Pre/Post Workout</option>
                 <option value="dinner">Dinner</option>
               </select>
             </div>
@@ -3843,9 +3852,10 @@
 
           <div class="meal-category-tabs">
             <button class="meal-cat-btn active" data-cat="all">All</button>
+            <button class="meal-cat-btn" data-cat="breakfast">🌅 Breakfast</button>
             <button class="meal-cat-btn" data-cat="lunch">🥗 Lunch</button>
             <button class="meal-cat-btn" data-cat="snack">🍎 Snack</button>
-            <button class="meal-cat-btn" data-cat="peri">⚡ Peri-WO</button>
+            <button class="meal-cat-btn" data-cat="peri">⚡ Pre/Post Workout</button>
             <button class="meal-cat-btn" data-cat="dinner">🌙 Dinner</button>
           </div>
 
@@ -5508,6 +5518,8 @@
         const todayBurnt = parseInt(state.trackerData[todayKey]?.burnt || "0", 10) || 0;
         const burntEl = document.getElementById("kpi-burnt");
         if (burntEl) burntEl.textContent = String(todayBurnt);
+        const heroBurntEl = document.getElementById("hero-burnt");
+        if (heroBurntEl) heroBurntEl.textContent = String(todayBurnt);
 
         // Item 3: Dynamic streak
         if (window.FitnessUI) {
