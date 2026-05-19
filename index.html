@@ -646,6 +646,23 @@
           </form>
         </div>
 
+        <div class="panel" id="panel-newpass">
+          <form id="form-newpass">
+            <p style="margin-bottom: 12px; font-size: 14px; opacity: 0.8">Choose a new password.</p>
+            <div class="field">
+              <label for="newpass-password">New password (min 6 characters)</label>
+              <input
+                type="password"
+                id="newpass-password"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+            </div>
+            <button type="submit" class="btn" id="btn-newpass">Set new password</button>
+          </form>
+        </div>
+
         <div class="panel" id="panel-signup">
           <form id="form-signup">
             <div class="field">
@@ -920,8 +937,43 @@
           setMsg("");
         });
 
+        document.getElementById("form-newpass").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-newpass");
+          btn.disabled = true;
+          setMsg("Updating password…");
+          try {
+            await FitnessAuth.setNewPassword(document.getElementById("newpass-password").value);
+            setMsg("Password updated! Signing you in…", "ok");
+            const session = await FitnessAuth.restoreSupabaseSession();
+            if (session) {
+              setTimeout(() => showApps(session), 1000);
+            }
+          } catch (err) {
+            setMsg(err.message || "Could not update password", "error");
+            btn.disabled = false;
+          }
+        });
+
         (async function init() {
-          await FitnessAuth.initSupabase();
+          // Supabase puts #access_token=...&type=recovery in the hash after a reset link click
+          const sb = await FitnessAuth.initSupabase();
+          const hash = new URLSearchParams(window.location.hash.slice(1));
+          if (hash.get("type") === "recovery") {
+            if (sb) {
+              await sb.auth.setSession({
+                access_token: hash.get("access_token"),
+                refresh_token: hash.get("refresh_token"),
+              });
+            }
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+            authCard.style.display = "block";
+            document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+            document.getElementById("panel-newpass").classList.add("active");
+            setMsg("Enter your new password below.");
+            return;
+          }
+
           let session = FitnessAuth.getSession();
           if (!session) session = await FitnessAuth.restoreSupabaseSession();
           if (session) showApps(session);

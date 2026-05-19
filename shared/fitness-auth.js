@@ -263,6 +263,13 @@
     return session;
   }
 
+  async function setNewPassword(password) {
+    const sb = await initSupabase();
+    if (!sb) throw new Error("Password update requires a Supabase account.");
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) throw error;
+  }
+
   async function resetPassword(email) {
     const sb = await initSupabase();
     if (!sb) throw new Error("Password reset requires a Supabase account. Local accounts cannot reset passwords.");
@@ -406,6 +413,7 @@
     initSupabase,
     signUp,
     signIn,
+    setNewPassword,
     resetPassword,
     signOut,
     restoreSupabaseSession,
