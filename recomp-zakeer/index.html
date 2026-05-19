@@ -389,6 +389,29 @@
       .nav-tabs::-webkit-scrollbar {
         display: none;
       }
+      .nav-tabs-outer {
+        position: relative;
+        margin-bottom: 32px;
+      }
+      .nav-tabs-outer .nav-tabs {
+        margin-bottom: 0;
+      }
+      .nav-tabs-outer::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 52px;
+        background: linear-gradient(to right, transparent, var(--bg-primary));
+        pointer-events: none;
+        z-index: 5;
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        transition: opacity 0.2s;
+      }
+      .nav-tabs-outer:not(.can-scroll-right)::after {
+        opacity: 0;
+      }
       .nav-indicator {
         position: absolute;
         top: 5px;
@@ -3053,6 +3076,257 @@
           width: 100%;
         }
       }
+
+      /* ── Item 4: Weekly summary card ── */
+      .weekly-summary-card {
+        background: linear-gradient(135deg, rgba(255, 92, 122, 0.07), rgba(78, 205, 196, 0.05));
+        border: 1px solid rgba(255, 92, 122, 0.22);
+        border-radius: var(--radius-lg);
+        padding: 14px 16px 16px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .weekly-summary-dismiss {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 18px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: color 0.15s;
+      }
+      .weekly-summary-dismiss:hover {
+        color: var(--text-secondary);
+      }
+      .weekly-summary-heading {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+      .weekly-summary-range {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-left: 8px;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      .wsum-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+        gap: 10px;
+      }
+      .wsum-stat {
+        text-align: center;
+      }
+      .wsum-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+      .wsum-unit {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .wsum-label {
+        font-size: 9px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-top: 4px;
+      }
+
+      /* ── Item 5: Quick-log FAB ── */
+      .quick-log-fab {
+        position: fixed;
+        bottom: 28px;
+        right: 22px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ff8a9b);
+        border: none;
+        color: #fff;
+        font-size: 26px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 4px 20px var(--accent-glow);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.15s var(--ease-spring),
+          box-shadow 0.15s;
+      }
+      .quick-log-fab:hover {
+        transform: scale(1.07);
+        box-shadow: 0 6px 28px var(--accent-glow);
+      }
+      .quick-log-fab:active {
+        transform: scale(0.92);
+      }
+      .quick-log-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 300;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .quick-log-backdrop.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .quick-log-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-card-solid);
+        border-top: 1px solid var(--border-strong);
+        border-radius: 20px 20px 0 0;
+        padding: 12px 20px env(safe-area-inset-bottom, 24px);
+        z-index: 301;
+        transform: translateY(100%);
+        transition: transform 0.3s var(--ease-out);
+        max-height: 72vh;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .quick-log-sheet.open {
+        transform: translateY(0);
+      }
+      .quick-log-handle {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border-strong);
+        margin: 0 auto 4px;
+        flex-shrink: 0;
+      }
+      .quick-log-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--text-primary);
+        flex-shrink: 0;
+      }
+      .quick-log-search {
+        width: 100%;
+        padding: 10px 14px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        outline: none;
+        flex-shrink: 0;
+        transition: border-color 0.2s;
+      }
+      .quick-log-search:focus {
+        border-color: var(--accent);
+      }
+      .quick-log-results {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .quick-log-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        background: var(--bg-card);
+      }
+      .quick-log-item:hover,
+      .quick-log-item:focus {
+        background: var(--bg-elevated);
+        border-color: var(--border);
+        outline: none;
+      }
+      .quick-log-item-emoji {
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      .quick-log-item-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+        flex: 1;
+      }
+      .quick-log-item-macros {
+        font-size: 12px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+      .quick-log-empty {
+        color: var(--text-muted);
+        font-size: 13px;
+        text-align: center;
+        padding: 28px 0;
+      }
+      .quick-log-success {
+        padding: 10px 14px;
+        background: rgba(61, 214, 140, 0.1);
+        border: 1px solid rgba(61, 214, 140, 0.3);
+        border-radius: var(--radius-sm);
+        color: var(--success);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        flex-shrink: 0;
+        display: none;
+      }
+      .quick-log-success.visible {
+        display: block;
+      }
+
+      /* ── Item 10: Chart tooltip overlay ── */
+      .chart-tip {
+        position: absolute;
+        background: rgba(6, 8, 15, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-family: "Inter", sans-serif;
+        color: var(--text-primary);
+        pointer-events: none;
+        white-space: nowrap;
+        z-index: 10;
+        display: none;
+        line-height: 1.5;
+      }
+      .chart-tip.visible {
+        display: block;
+      }
+      .chart-card-wrap {
+        position: relative;
+      }
     </style>
   </head>
   <body>
@@ -3242,17 +3516,20 @@
       </header>
 
       <main class="container">
-        <nav class="nav-tabs">
-          <button class="nav-tab active" data-tab="dashboard">⚡ Dashboard</button>
-          <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
-          <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs" hidden>🌿 IBS Guide</button>
-          <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
-          <button class="nav-tab" data-tab="workouts">💪 Workouts</button>
-          <button class="nav-tab" data-tab="scan">
-            📸 Scan Food <span style="font-size: 10px; opacity: 0.7; font-weight: 500">(beta)</span>
-          </button>
-          <button class="nav-tab" data-tab="tips">💡 Tips</button>
-        </nav>
+        <div class="nav-tabs-outer" id="nav-tabs-outer">
+          <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard">⚡ Dashboard</button>
+            <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
+            <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs" hidden>🌿 IBS Guide</button>
+            <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
+            <button class="nav-tab" data-tab="workouts">💪 Workouts</button>
+            <button class="nav-tab" data-tab="scan">
+              📸 Scan Food
+              <span style="font-size: 10px; opacity: 0.7; font-weight: 500">(beta)</span>
+            </button>
+            <button class="nav-tab" data-tab="tips">💡 Tips</button>
+          </nav>
+        </div>
 
         <!-- DASHBOARD SECTION -->
         <section class="section active" id="dashboard-section">
@@ -3337,10 +3614,14 @@
               <div class="stat-bar">
                 <div class="stat-bar-top">
                   <div class="stat-bar-label">🔥 Streak</div>
-                  <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
+                  <div class="stat-bar-value num"><span id="streak-days">0</span> Days</div>
                 </div>
                 <div class="stat-bar-track">
-                  <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
+                  <div
+                    class="stat-bar-fill"
+                    id="streak-fill"
+                    style="width: 0%; background: var(--warning)"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -3381,7 +3662,38 @@
             <div class="kpi">
               <div class="kpi-icon">🏃</div>
               <div class="kpi-label">Workouts</div>
-              <div class="kpi-value num">3<span class="kpi-unit">/4</span></div>
+              <div class="kpi-value num" id="kpi-workouts">—</div>
+            </div>
+          </div>
+
+          <div id="weekly-summary-card" class="weekly-summary-card" hidden>
+            <button class="weekly-summary-dismiss" id="weekly-summary-dismiss" title="Dismiss">
+              ×
+            </button>
+            <div class="weekly-summary-heading">
+              Last week <span class="weekly-summary-range" id="wsum-range"></span>
+            </div>
+            <div class="wsum-stats">
+              <div class="wsum-stat">
+                <div class="wsum-val" id="wsum-pro">—</div>
+                <div class="wsum-unit">g avg</div>
+                <div class="wsum-label">Protein</div>
+              </div>
+              <div class="wsum-stat">
+                <div class="wsum-val" id="wsum-goal-days">—</div>
+                <div class="wsum-unit">/ 7</div>
+                <div class="wsum-label">Goal days</div>
+              </div>
+              <div class="wsum-stat">
+                <div class="wsum-val" id="wsum-workouts">—</div>
+                <div class="wsum-unit">days</div>
+                <div class="wsum-label">Workouts</div>
+              </div>
+              <div class="wsum-stat" id="wsum-weight-stat" hidden>
+                <div class="wsum-val" id="wsum-weight">—</div>
+                <div class="wsum-unit">kg avg</div>
+                <div class="wsum-label">Weight</div>
+              </div>
             </div>
           </div>
 
@@ -3392,18 +3704,42 @@
           </div>
 
           <div class="charts-grid">
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Protein by Meal</div>
               <div class="chart-unit-hint">Grams (g) per meal — from checked meals</div>
               <canvas id="protein-chart" width="400" height="280"></canvas>
             </div>
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Calories by Meal</div>
               <div class="chart-unit-hint">Kilocalories (kcal) per meal — from checked meals</div>
               <canvas id="calorie-chart" width="400" height="280"></canvas>
             </div>
           </div>
         </section>
+
+        <!-- Quick-log FAB + sheet (shown when on dashboard) -->
+        <button
+          class="quick-log-fab"
+          id="quick-log-fab"
+          title="Quick-log a meal"
+          aria-label="Quick log meal"
+        >
+          +
+        </button>
+        <div class="quick-log-backdrop" id="quick-log-backdrop"></div>
+        <div class="quick-log-sheet" id="quick-log-sheet" role="dialog" aria-label="Quick log meal">
+          <div class="quick-log-handle"></div>
+          <div class="quick-log-title">Quick-log a meal</div>
+          <input
+            class="quick-log-search"
+            id="quick-log-search"
+            type="search"
+            placeholder="Search your meal library…"
+            autocomplete="off"
+          />
+          <div class="quick-log-results" id="quick-log-results"></div>
+          <div class="quick-log-success" id="quick-log-success"></div>
+        </div>
 
         <!-- MEALS SECTION -->
         <section class="section" id="meals-section">
@@ -4275,12 +4611,22 @@
                   </th>
                   <th rowspan="2" class="th-pro">Pro met</th>
                   <th rowspan="2" class="th-hydro">H₂O met</th>
+                  <th rowspan="2" class="th-pro">
+                    ⚖️<br /><span style="font-weight: 500; opacity: 0.8">kg</span>
+                  </th>
+                  <th colspan="2" class="th-group">Macros (from scan)</th>
                 </tr>
                 <tr>
                   <th class="th-pro">Lunch</th>
                   <th class="th-pro">Snack</th>
                   <th class="th-pro">Shake</th>
                   <th class="th-pro">Dinner</th>
+                  <th class="th-pro">
+                    Carbs<br /><span style="font-weight: 500; opacity: 0.8">g</span>
+                  </th>
+                  <th class="th-pro">
+                    Fat<br /><span style="font-weight: 500; opacity: 0.8">g</span>
+                  </th>
                 </tr>
               </thead>
               <tbody id="tracker-rows"></tbody>
@@ -4293,40 +4639,51 @@
           </div>
 
           <div class="charts-grid">
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
-              <div class="chart-unit-hint">Daily total (g) — dashed = goal</div>
+              <div class="chart-unit-hint">Daily total (g) — dashed = goal · hover for values</div>
               <canvas
                 id="tracker-protein-chart"
                 height="180"
-                style="width: 100%; display: block"
+                style="width: 100%; display: block; cursor: crosshair"
               ></canvas>
             </div>
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
-              <div class="chart-unit-hint">Daily kcal burned — from Burnt column</div>
+              <div class="chart-unit-hint">Daily kcal burned — hover for values</div>
               <canvas
                 id="tracker-burnt-chart"
                 height="180"
-                style="width: 100%; display: block"
+                style="width: 100%; display: block; cursor: crosshair"
               ></canvas>
             </div>
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Water Intake</div>
-              <div class="chart-unit-hint">Daily bottles — dashed = target</div>
+              <div class="chart-unit-hint">Daily bottles — dashed = target · hover for values</div>
               <canvas
                 id="tracker-water-chart"
                 height="180"
-                style="width: 100%; display: block"
+                style="width: 100%; display: block; cursor: crosshair"
               ></canvas>
             </div>
-            <div class="card">
+            <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Goal Compliance</div>
               <div class="chart-unit-hint">% of days each goal hit this period</div>
               <canvas
                 id="tracker-compliance-chart"
                 height="180"
                 style="width: 100%; display: block"
+              ></canvas>
+            </div>
+            <div class="card chart-card-wrap">
+              <div class="card-title"><span class="card-title-dot"></span>Weight Trend</div>
+              <div class="chart-unit-hint">
+                Daily weigh-ins (kg) — log in ⚖️ column · hover for values
+              </div>
+              <canvas
+                id="tracker-weight-chart"
+                height="180"
+                style="width: 100%; display: block; cursor: crosshair"
               ></canvas>
             </div>
           </div>
@@ -4495,7 +4852,7 @@
     <script>
       (function () {
         var base = window.FITNESS_SHARED_BASE;
-        ["meal-library.js", "fitness-auth.js"].forEach(function (file) {
+        ["meal-library.js", "fitness-auth.js", "ui-utils.js"].forEach(function (file) {
           var url = base + file;
           try {
             var xhr = new XMLHttpRequest();
@@ -4727,11 +5084,14 @@
       };
       const defaultState = {
         isWorkoutDay: true,
+        workoutToggleDate: null,
         mealsEaten: {},
+        mealsEatenDate: null,
         trackerData: {},
         mealLibrary: [],
         todayPlan: [],
         workouts: [],
+        dismissedWeeklySummary: null,
       };
       let state = { ...defaultState };
       let selectedRoutineId = null;
@@ -5055,6 +5415,16 @@
         });
       }
 
+      // Item 9: If the toggle was set on a different calendar day, re-seed from schedule.
+      const RECOMP_WORKOUT_SCHEDULE = [1, 3, 5, 0]; // Mon Wed Fri Sun
+      function syncWorkoutToggleToCalendar() {
+        const todayKey = toDateKey(new Date());
+        if (state.workoutToggleDate !== todayKey) {
+          state.isWorkoutDay = RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay());
+          state.workoutToggleDate = todayKey;
+        }
+      }
+
       function updateDashboardStats() {
         let cal = 0,
           pro = 0,
@@ -5090,6 +5460,23 @@
         const todayBurnt = parseInt(state.trackerData[todayKey]?.burnt || "0", 10) || 0;
         const burntEl = document.getElementById("kpi-burnt");
         if (burntEl) burntEl.textContent = String(todayBurnt);
+
+        // Item 3: Dynamic streak
+        if (window.FitnessUI) {
+          const streak = FitnessUI.computeStreak(state.trackerData);
+          const streakEl = document.getElementById("streak-days");
+          const streakFill = document.getElementById("streak-fill");
+          if (streakEl) streakEl.textContent = String(streak);
+          if (streakFill) streakFill.style.width = Math.min((streak / 7) * 100, 100) + "%";
+
+          // Dynamic workouts KPI (this week)
+          const { done, total } = FitnessUI.weekWorkoutsCount(
+            state.trackerData,
+            RECOMP_WORKOUT_SCHEDULE
+          );
+          const woEl = document.getElementById("kpi-workouts");
+          if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${total}</span>`;
+        }
       }
 
       function renderWorkoutToggle() {
@@ -5102,6 +5489,7 @@
 
       document.getElementById("workout-toggle").addEventListener("click", (e) => {
         state.isWorkoutDay = !state.isWorkoutDay;
+        state.workoutToggleDate = toDateKey(new Date());
         saveState();
         renderWorkoutToggle();
         updateDashboardStats();
@@ -5622,7 +6010,7 @@
           const dow = d.getDay();
           const defaultWorkout = [1, 3, 5, 0].includes(dow);
 
-          // Get or default
+          // Get or default (items 2 & 6: add weightKg, carbs, fat)
           const dayData = state.trackerData[dateKey] || {
             isWorkout: defaultWorkout,
             lunch: "",
@@ -5632,7 +6020,13 @@
             creatine: false,
             water: "",
             burnt: "",
+            weightKg: "",
+            carbs: "",
+            fat: "",
           };
+          if (!("weightKg" in dayData)) dayData.weightKg = "";
+          if (!("carbs" in dayData)) dayData.carbs = "";
+          if (!("fat" in dayData)) dayData.fat = "";
           state.trackerData[dateKey] = dayData;
 
           const m = computeTrackerDay(dayData);
@@ -5670,6 +6064,9 @@
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
       <td><span class="goal-met-cell tracker-pro-met ${goalMetClass(proGoalTier)}">${proMetDisplay}</span></td>
       <td><span class="goal-met-cell tracker-water-met ${goalMetClass(waterGoalTier)}">${waterMetDisplay}</span></td>
+      <td><input class="weight-input num" type="number" min="0" max="999" step="0.1" placeholder="—" value="${dayData.weightKg || ""}" data-date="${dateKey}" data-field="weightKg"></td>
+      <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.carbs || ""}" data-date="${dateKey}" data-field="carbs"></td>
+      <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.fat || ""}" data-date="${dateKey}" data-field="fat"></td>
     `;
           rows.appendChild(tr);
         }
@@ -5678,19 +6075,23 @@
         renderTrackerCharts();
 
         // Wire up inputs
-        document.querySelectorAll(".protein-input, .water-input, .burnt-input").forEach((input) => {
-          input.addEventListener("input", (e) => {
-            const dateKey = e.target.dataset.date;
-            const field = e.target.dataset.field;
-            state.trackerData[dateKey][field] = e.target.value;
-            saveState();
-            refreshTrackerRow(dateKey);
-            updateTrackerSummary();
-            updateDashboardStats();
-            clearTimeout(renderTrackerCharts._t);
-            renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
+        document
+          .querySelectorAll(
+            ".protein-input, .water-input, .burnt-input, .weight-input, .macro-input"
+          )
+          .forEach((input) => {
+            input.addEventListener("input", (e) => {
+              const dateKey = e.target.dataset.date;
+              const field = e.target.dataset.field;
+              state.trackerData[dateKey][field] = e.target.value;
+              saveState();
+              refreshTrackerRow(dateKey);
+              updateTrackerSummary();
+              updateDashboardStats();
+              clearTimeout(renderTrackerCharts._t);
+              renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
+            });
           });
-        });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
           cell.addEventListener("click", () => {
             const dateKey = cell.dataset.date;
@@ -5725,6 +6126,7 @@
           proValues = [],
           burntValues = [],
           waterValues = [],
+          weightValues = [],
           creatineValues = [];
         let proMet = 0,
           waterMet = 0,
@@ -5744,6 +6146,7 @@
           proValues.push(pro);
           burntValues.push(parseFloat(day.burnt) || 0);
           waterValues.push(bottles);
+          weightValues.push(parseFloat(day.weightKg) || 0);
           creatineValues.push(!!day.creatine);
           if (pro >= p.proteinG) proMet++;
           if (bottles >= p.waterBottles) waterMet++;
@@ -6087,12 +6490,124 @@
           }
         }
 
+        // Returns hit-test points for a line chart (for tooltip)
+        function linePoints(canvas, values, goalLine) {
+          const W = canvas.width,
+            H = canvas.height;
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR,
+            cH = H - mT - mB;
+          const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
+          const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
+          const yOf = (v) => mT + cH * (1 - v / maxV);
+          return values.map((v, i) => ({
+            x: xOf(i),
+            y: yOf(v),
+            value: v,
+            label: dates[i].getDate() + " " + MON[dates[i].getMonth()],
+          }));
+        }
+
+        // Returns hit-test points for a bar chart
+        function barPoints(canvas, values) {
+          const W = canvas.width,
+            H = canvas.height;
+          const mL = 42,
+            mR = 10,
+            mT = 12,
+            mB = 32;
+          const cW = W - mL - mR;
+          const barW = n > 0 ? Math.max(1, (cW / n) * 0.7) : 4;
+          const step = n > 1 ? cW / (n - 1) : cW;
+          const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
+          const maxV = Math.max(...values, 1) * 1.18;
+          const cH = H - mT - mB;
+          return values.map((v, i) => ({
+            x: xOf(i) + barW / 2,
+            y: mT + cH * (1 - v / maxV),
+            value: v,
+            label: dates[i].getDate() + " " + MON[dates[i].getMonth()],
+          }));
+        }
+
         drawLine(pCanvas, proValues, p.proteinG, "#E94560", "No protein logged yet");
         drawBars(bCanvas, burntValues, "#F39C12", null, "No burnt calories logged yet");
         if (wCanvas)
           drawLine(wCanvas, waterValues, p.waterBottles, "#4A9EFF", "No water logged yet");
         if (cCanvas) drawComplianceRings(cCanvas);
         if (crCanvas) drawCreatineHeatmap(crCanvas);
+
+        // Item 2: Weight trend chart
+        const wtCanvas = document.getElementById("tracker-weight-chart");
+        if (wtCanvas) {
+          const hasWeight = weightValues.some((v) => v > 0);
+          if (hasWeight) {
+            drawLine(wtCanvas, weightValues, 0, "#CE93D8", "No weight logged yet");
+          } else {
+            const ctx = wtCanvas.getContext("2d");
+            setupCanvas(wtCanvas);
+            ctx.clearRect(0, 0, wtCanvas.width, wtCanvas.height);
+            ctx.fillStyle = "#4B5563";
+            ctx.font = "11px Inter,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+              "Log your weight in the ⚖️ column",
+              wtCanvas.width / 2,
+              wtCanvas.height / 2 - 4
+            );
+          }
+        }
+
+        // Item 10: Chart tooltips via HTML overlay divs
+        if (window.FitnessUI) {
+          function attachTip(canvas, getPointsFn, unit) {
+            const card = canvas.closest(".chart-card-wrap");
+            if (!card) return;
+            let tip = card.querySelector(".chart-tip");
+            if (!tip) {
+              tip = document.createElement("div");
+              tip.className = "chart-tip";
+              card.appendChild(tip);
+            }
+            canvas._chartGetPoints = getPointsFn;
+            canvas._chartUnit = unit;
+            if (canvas._tipBound) return; // already wired
+            canvas._tipBound = true;
+
+            canvas.addEventListener("mousemove", (e) => {
+              const pts = canvas._chartGetPoints ? canvas._chartGetPoints() : [];
+              if (!pts.length) return;
+              const rect = canvas.getBoundingClientRect();
+              const mx = e.clientX - rect.left;
+              const nearest = pts.reduce((a, b) =>
+                Math.abs(b.x * (rect.width / canvas.width) - mx) <
+                Math.abs(a.x * (rect.width / canvas.width) - mx)
+                  ? b
+                  : a
+              );
+              if (nearest.value === 0 && canvas._chartUnit !== " kg") return;
+              tip.innerHTML = `<strong>${nearest.label}</strong><br>${nearest.value}${canvas._chartUnit}`;
+              tip.classList.add("visible");
+              const cardRect = card.getBoundingClientRect();
+              let tx = e.clientX - cardRect.left + 12;
+              let ty = e.clientY - cardRect.top - 36;
+              if (tx + 110 > cardRect.width) tx = e.clientX - cardRect.left - 122;
+              if (ty < 4) ty = 4;
+              tip.style.left = tx + "px";
+              tip.style.top = ty + "px";
+            });
+            canvas.addEventListener("mouseleave", () => tip.classList.remove("visible"));
+          }
+
+          attachTip(pCanvas, () => linePoints(pCanvas, proValues, p.proteinG), "g");
+          attachTip(bCanvas, () => barPoints(bCanvas, burntValues), " kcal");
+          if (wCanvas)
+            attachTip(wCanvas, () => linePoints(wCanvas, waterValues, p.waterBottles), " btl");
+          if (wtCanvas) attachTip(wtCanvas, () => linePoints(wtCanvas, weightValues, 0), " kg");
+        }
       }
 
       document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
@@ -6548,7 +7063,7 @@
           const todayKey = toDateKey(new Date());
           if (!state.trackerData[todayKey]) {
             state.trackerData[todayKey] = {
-              isWorkout: [1, 3, 5, 0].includes(new Date().getDay()),
+              isWorkout: RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay()),
               lunch: "",
               snack: "",
               shake: "",
@@ -6556,16 +7071,30 @@
               creatine: false,
               water: "",
               burnt: "",
+              weightKg: "",
+              carbs: "",
+              fat: "",
             };
           }
-          // Add protein to the chosen meal slot (accumulate if already has a value)
-          let pro = 0;
+          // Add protein, carbs, fat to the chosen meal slot (accumulate)
+          let pro = 0,
+            carb = 0,
+            fat = 0;
           scanFoods.forEach((food) => {
             const p = food.portions?.[food.selectedSize];
-            if (p) pro += p.protein || 0;
+            if (p) {
+              pro += p.protein || 0;
+              carb += p.carbs || 0;
+              fat += p.fat || 0;
+            }
           });
           const existing = parseFloat(state.trackerData[todayKey][meal]) || 0;
           state.trackerData[todayKey][meal] = String(Math.round(existing + pro));
+          // Accumulate carbs & fat in tracker day
+          const existCarb = parseFloat(state.trackerData[todayKey].carbs) || 0;
+          const existFat = parseFloat(state.trackerData[todayKey].fat) || 0;
+          state.trackerData[todayKey].carbs = String(Math.round(existCarb + carb));
+          state.trackerData[todayKey].fat = String(Math.round(existFat + fat));
           saveState();
           refreshTrackerRow(todayKey);
           updateTrackerSummary();
@@ -6738,6 +7267,161 @@
       // ═══════════════════════════════════════════════════════════════════════
       // INIT
       // ═══════════════════════════════════════════════════════════════════════
+      // ═══════════════════════════════════════════════════════════════════════
+      // ITEM 4: Weekly summary card
+      // ═══════════════════════════════════════════════════════════════════════
+      function renderWeeklySummary() {
+        const card = document.getElementById("weekly-summary-card");
+        if (!card || !window.FitnessUI) return;
+        const summary = FitnessUI.computeWeeklySummary(state.trackerData, getProfile());
+        if (!summary) {
+          card.hidden = true;
+          return;
+        }
+        if (state.dismissedWeeklySummary === summary.weekKey) {
+          card.hidden = true;
+          return;
+        }
+
+        document.getElementById("wsum-range").textContent = summary.startLabel;
+        document.getElementById("wsum-pro").textContent = summary.avgPro + "g";
+        document.getElementById("wsum-goal-days").textContent = summary.proGoalDays;
+        document.getElementById("wsum-workouts").textContent = summary.workoutDays;
+        const wStat = document.getElementById("wsum-weight-stat");
+        const wEl = document.getElementById("wsum-weight");
+        if (summary.avgWeight) {
+          wStat.hidden = false;
+          wEl.textContent = summary.avgWeight;
+        } else {
+          wStat.hidden = true;
+        }
+        card.hidden = false;
+      }
+      document.getElementById("weekly-summary-dismiss")?.addEventListener("click", () => {
+        if (!window.FitnessUI) return;
+        const summary = FitnessUI.computeWeeklySummary(state.trackerData, getProfile());
+        if (summary) {
+          state.dismissedWeeklySummary = summary.weekKey;
+          saveState();
+        }
+        document.getElementById("weekly-summary-card").hidden = true;
+      });
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // ITEM 5: Quick-log FAB
+      // ═══════════════════════════════════════════════════════════════════════
+      function initQuickLog() {
+        const fab = document.getElementById("quick-log-fab");
+        const backdrop = document.getElementById("quick-log-backdrop");
+        const sheet = document.getElementById("quick-log-sheet");
+        const searchEl = document.getElementById("quick-log-search");
+        const resultsEl = document.getElementById("quick-log-results");
+        const successEl = document.getElementById("quick-log-success");
+        if (!fab || !sheet) return;
+
+        function openSheet() {
+          backdrop.classList.add("open");
+          sheet.classList.add("open");
+          searchEl.value = "";
+          renderResults("");
+          requestAnimationFrame(() => searchEl.focus());
+        }
+        function closeSheet() {
+          backdrop.classList.remove("open");
+          sheet.classList.remove("open");
+          successEl.classList.remove("visible");
+        }
+        fab.addEventListener("click", openSheet);
+        backdrop.addEventListener("click", closeSheet);
+
+        function escHtmlQL(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function renderResults(query) {
+          const lib = getMealLibrary();
+          const q = query.toLowerCase().trim();
+          const matches = q
+            ? lib.filter((m) => m.name.toLowerCase().includes(q) || (m.cat || "").includes(q))
+            : lib.slice(0, 12);
+          resultsEl.innerHTML = "";
+          if (!matches.length) {
+            resultsEl.innerHTML =
+              '<div class="quick-log-empty">No meals match. Add meals in the Meals tab.</div>';
+            return;
+          }
+          matches.forEach((meal) => {
+            const el = document.createElement("div");
+            el.className = "quick-log-item";
+            el.tabIndex = 0;
+            el.innerHTML = `
+              <span class="quick-log-item-emoji">${escHtmlQL(meal.emoji)}</span>
+              <span class="quick-log-item-name">${escHtmlQL(meal.name)}</span>
+              <span class="quick-log-item-macros">${meal.cal} kcal · ${meal.pro}g</span>
+            `;
+            const doLog = () => {
+              // Find an unlogged slot or default to first
+              const plan = getTodayPlan();
+              let slot = plan.find(
+                (p) => !state.mealsEaten[p.slot] && getMeal(p.mealId)?.id === meal.id
+              );
+              if (!slot) slot = plan.find((p) => !state.mealsEaten[p.slot]);
+              if (slot) {
+                state.mealsEaten[slot.slot] = true;
+                saveState();
+                renderTodayMeals();
+                updateDashboardStats();
+                successEl.textContent = `✓ ${meal.name} logged!`;
+              } else {
+                // Not in today's plan — update tracker protein directly
+                const todayKey = toDateKey(new Date());
+                if (!state.trackerData[todayKey]) {
+                  state.trackerData[todayKey] = {
+                    isWorkout: RECOMP_WORKOUT_SCHEDULE.includes(new Date().getDay()),
+                    lunch: "",
+                    snack: "",
+                    shake: "",
+                    dinner: "",
+                    creatine: false,
+                    water: "",
+                    burnt: "",
+                    weightKg: "",
+                    carbs: "",
+                    fat: "",
+                  };
+                }
+                const existing = parseFloat(state.trackerData[todayKey].lunch) || 0;
+                state.trackerData[todayKey].lunch = String(Math.round(existing + meal.pro));
+                saveState();
+                refreshTrackerRow(todayKey);
+                updateDashboardStats();
+                successEl.textContent = `✓ ${meal.name} → ${meal.pro}g protein logged`;
+              }
+              successEl.classList.add("visible");
+              setTimeout(closeSheet, 1800);
+            };
+            el.addEventListener("click", doLog);
+            el.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") doLog();
+            });
+            resultsEl.appendChild(el);
+          });
+        }
+
+        searchEl.addEventListener("input", (e) => renderResults(e.target.value));
+
+        // Hide FAB when not on dashboard
+        document.querySelectorAll(".nav-tab").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            fab.style.display = btn.dataset.tab === "dashboard" ? "" : "none";
+          });
+        });
+      }
+
       async function bootstrapApp() {
         try {
           if (!window.MealLibrary) {
@@ -6756,6 +7440,7 @@
           }
           migrateStateProfile();
           applySessionToProfile();
+          syncWorkoutToggleToCalendar();
           saveState();
           initProfile();
           applyProfileToUI();
@@ -6772,6 +7457,32 @@
           renderWorkouts();
           renderExamplePlan();
           updateNavIndicator();
+          // Item 8: nav fade
+          if (window.FitnessUI) {
+            FitnessUI.applyNavFade(document.querySelector(".nav-tabs"));
+            document.querySelector(".nav-tabs")?.addEventListener(
+              "scroll",
+              () => {
+                const outer = document.getElementById("nav-tabs-outer");
+                if (outer) {
+                  const nav = outer.querySelector(".nav-tabs");
+                  const canScroll = nav.scrollWidth - nav.scrollLeft > nav.clientWidth + 2;
+                  outer.classList.toggle("can-scroll-right", canScroll);
+                }
+              },
+              { passive: true }
+            );
+            // Initial check
+            const outer = document.getElementById("nav-tabs-outer");
+            if (outer) {
+              const nav = outer.querySelector(".nav-tabs");
+              outer.classList.toggle("can-scroll-right", nav.scrollWidth > nav.clientWidth + 2);
+            }
+          }
+          // Item 4: weekly summary
+          renderWeeklySummary();
+          // Item 5: quick-log
+          initQuickLog();
         } catch (err) {
           console.error("bootstrapApp failed:", err);
           const banner = document.getElementById("meals-target-banner");
