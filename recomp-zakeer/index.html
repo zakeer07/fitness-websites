@@ -5072,13 +5072,13 @@
         });
       }
 
-      document.getElementById("btn-tracker-expand").addEventListener("click", () => {
+      document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
         trackerExpanded = !trackerExpanded;
         renderTracker();
         if (trackerExpanded) {
           document
             .getElementById("btn-tracker-expand")
-            .scrollIntoView({ behavior: "smooth", block: "nearest" });
+            ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
       });
 
