@@ -1882,9 +1882,271 @@
         margin-top: 16px;
         text-align: center;
       }
+
+      /* ══════════════════════════════════════════════════
+         ENHANCED ANIMATIONS - RECOMP THEME
+      ══════════════════════════════════════════════════ */
+
+      /* ── Additional background orbs ── */
+      body::before { animation: orbDrift 18s var(--ease-out) infinite, neonPulseOrb 6s ease-in-out infinite; opacity: 0.65; }
+      body::after  { animation: orbDrift 26s var(--ease-out) infinite reverse, neonPulseOrb2 8s ease-in-out infinite; opacity: 0.6; animation-delay: -11s, -3s; }
+
+      .extra-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(90px);
+        pointer-events: none;
+        z-index: 0;
+        animation: orbDrift 34s var(--ease-out) infinite;
+      }
+      .extra-orb-1 {
+        width: min(38vw, 320px); height: min(38vw, 320px);
+        top: 40%; left: 30%;
+        background: radial-gradient(circle, rgba(130,60,255,0.14) 0%, transparent 70%);
+        opacity: 0.5;
+        animation-delay: -8s;
+      }
+      .extra-orb-2 {
+        width: min(28vw, 220px); height: min(28vw, 220px);
+        top: 70%; right: 15%;
+        background: radial-gradient(circle, rgba(255,200,80,0.12) 0%, transparent 70%);
+        opacity: 0.45;
+        animation-delay: -16s;
+        animation-direction: reverse;
+      }
+
+      @keyframes neonPulseOrb {
+        0%,100% { opacity: 0.55; }
+        50%      { opacity: 0.75; }
+      }
+      @keyframes neonPulseOrb2 {
+        0%,100% { opacity: 0.5; }
+        50%      { opacity: 0.68; }
+      }
+
+      /* ── Particle canvas ── */
+      #particle-canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── Holographic shimmer on cards ── */
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          transparent 0%,
+          rgba(255,92,122,0.04) 30%,
+          rgba(78,205,196,0.05) 50%,
+          rgba(130,80,255,0.03) 70%,
+          transparent 100%
+        );
+        background-size: 300% 300%;
+        animation: holoShimmer 10s linear infinite;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes holoShimmer {
+        0%   { background-position: 200% 50%; }
+        100% { background-position: -200% 50%; }
+      }
+
+      /* ── 3D tilt cards ── */
+      .card { transform-style: preserve-3d; will-change: transform; }
+      .card:hover {
+        border-color: rgba(255,92,122,0.35);
+        box-shadow: var(--shadow-card), 0 0 48px rgba(255,92,122,0.14);
+      }
+
+      /* ── KPI card enhanced glow ── */
+      .kpi-card:hover {
+        transform: translateY(-6px) scale(1.02) !important;
+        border-color: rgba(255,92,122,0.4) !important;
+        box-shadow: var(--shadow-card), 0 16px 48px rgba(255,92,122,0.22), 0 0 0 1px rgba(255,92,122,0.12) !important;
+      }
+
+      /* ── Logo mark enhanced ── */
+      .logo-mark {
+        position: relative;
+        overflow: hidden;
+        animation: logoBreath 4s ease-in-out infinite;
+      }
+      @keyframes logoBreath {
+        0%,100% { box-shadow: var(--shadow-glow); }
+        50%      { box-shadow: 0 0 32px 4px rgba(255,92,122,0.55); }
+      }
+      .logo-mark::after {
+        content: "";
+        position: absolute;
+        inset: -50%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+        transform: translateX(-100%) rotate(25deg);
+        transition: transform 0s;
+      }
+      .logo:hover .logo-mark::after {
+        transform: translateX(200%) rotate(25deg);
+        transition: transform 0.5s ease;
+      }
+
+      /* ── Progress ring enhanced ── */
+      .ring-svg circle.ring-track { stroke: rgba(255,92,122,0.1); }
+      .ring-value {
+        animation: ringCounterIn 1.2s cubic-bezier(0.16,1,0.3,1) both;
+      }
+      @keyframes ringCounterIn {
+        from { opacity: 0; transform: scale(0.7); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+
+      /* ── Nav tabs magnetic hover ── */
+      .nav-tab {
+        transition: color 0.3s var(--ease-out), transform 0.25s var(--ease-spring), background 0.25s;
+      }
+      .nav-tab:hover {
+        color: var(--text-primary);
+        transform: translateY(-2px);
+        background: rgba(255,92,122,0.08);
+      }
+      .nav-tab.active { color: white; transform: none; }
+
+      /* ── Header glow line animation ── */
+      .header::after {
+        animation: headerLineShift 6s linear infinite;
+      }
+      @keyframes headerLineShift {
+        0%   { opacity: 0.6; background-position: 0% 0; }
+        50%  { opacity: 1; }
+        100% { opacity: 0.6; background-position: 200% 0; }
+      }
+
+      /* ── Ripple effect ── */
+      .ripple-effect {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,92,122,0.35) 0%, transparent 70%);
+        transform: scale(0);
+        animation: rippleExpand 0.7s linear;
+        pointer-events: none;
+      }
+      @keyframes rippleExpand {
+        to { transform: scale(5); opacity: 0; }
+      }
+
+      /* ── Meal item hover ── */
+      .meal-item:hover {
+        transform: translateX(4px) translateY(-2px) !important;
+        border-color: rgba(255,92,122,0.35) !important;
+        box-shadow: 0 4px 24px rgba(255,92,122,0.15) !important;
+      }
+
+      /* ── Check cell bounce ── */
+      .check-cell:hover { transform: scale(1.15) !important; }
+      .check-cell.checked { animation: checkBounce 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+      @keyframes checkBounce {
+        0%  { transform: scale(0.6); }
+        60% { transform: scale(1.2); }
+        100%{ transform: scale(1); }
+      }
+
+      /* ── Workout toggle glow ── */
+      .workout-toggle-switch.on {
+        animation: toggleGlow 2.5s ease-in-out infinite;
+      }
+      @keyframes toggleGlow {
+        0%,100% { box-shadow: 0 0 12px rgba(255,92,122,0.4); }
+        50%      { box-shadow: 0 0 28px rgba(255,92,122,0.7); }
+      }
+
+      /* ── Stat bars animated fill ── */
+      .stat-bar-fill { transition: width 1.2s cubic-bezier(0.16,1,0.3,1) !important; }
+
+      /* ── Enhanced entrance stagger ── */
+      .hero-card { animation: heroEntrance 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+      @keyframes heroEntrance {
+        from { opacity: 0; transform: translateY(24px) scale(0.96); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      /* ── Scanline overlay (very subtle) ── */
+      .scanline-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 999;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,0,0.018) 2px,
+          rgba(0,0,0,0.018) 4px
+        );
+        animation: scanMove 8s linear infinite;
+      }
+      @keyframes scanMove {
+        from { background-position: 0 0; }
+        to   { background-position: 0 100vh; }
+      }
+
+      /* ── Floating sparkles ── */
+      .sparkle {
+        position: fixed;
+        pointer-events: none;
+        z-index: 1;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 6px 2px var(--accent-glow);
+        animation: sparkleFly linear forwards;
+        opacity: 0;
+      }
+      @keyframes sparkleFly {
+        0%   { opacity: 0; transform: scale(0) translateY(0); }
+        20%  { opacity: 1; }
+        100% { opacity: 0; transform: scale(1.5) translateY(-80px); }
+      }
+
+      /* ── Neon border pulse on focus elements ── */
+      input:focus, select:focus, textarea:focus {
+        box-shadow: 0 0 0 2px rgba(255,92,122,0.25), 0 0 20px rgba(255,92,122,0.15) !important;
+        border-color: var(--accent) !important;
+      }
+
+      /* ── Glitch effect on logo text on hover ── */
+      .logo:hover .logo-text {
+        animation: glitchText 0.35s steps(1) both;
+      }
+      @keyframes glitchText {
+        0%  { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+        20% { clip-path: inset(20% 0 60% 0); transform: translateX(-2px); }
+        40% { clip-path: inset(50% 0 30% 0); transform: translateX(2px); }
+        60% { clip-path: inset(70% 0 10% 0); transform: translateX(-1px); }
+        80% { clip-path: inset(10% 0 80% 0); transform: translateX(1px); }
+        100%{ clip-path: inset(0 0 0 0); transform: translateX(0); }
+      }
+
+      /* ── Number counter animation ── */
+      .kpi-value, .ring-value {
+        transition: transform 0.3s var(--ease-spring);
+      }
+      .kpi-value.updating, .ring-value.updating {
+        animation: numPop 0.4s var(--ease-spring);
+      }
+      @keyframes numPop {
+        0%  { transform: scale(0.85); opacity: 0.5; }
+        60% { transform: scale(1.08); opacity: 1; }
+        100%{ transform: scale(1); }
+      }
     </style>
   </head>
   <body>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <div class="extra-orb extra-orb-1" aria-hidden="true"></div>
+    <div class="extra-orb extra-orb-2" aria-hidden="true"></div>
+    <div class="scanline-overlay" aria-hidden="true"></div>
     <div class="bg-decor" aria-hidden="true">
       <div class="decor-item decor-gym" data-parallax="0.14" data-rotate="0.04" data-base-rot="-8">
         <img
@@ -3837,6 +4099,122 @@
       initUserMenu();
       attachLogoutHandler();
       bootstrapApp();
+    </script>
+
+    <script>
+      /* ══════════════════════════════════════════════════
+         RECOMP · Enhanced Animations Runtime
+      ══════════════════════════════════════════════════ */
+      (function () {
+        /* ── Particle system ── */
+        const canvas = document.getElementById("particle-canvas");
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          let W, H, pts = [];
+          const COLORS = [
+            "rgba(255,92,122,", "rgba(78,205,196,",
+            "rgba(180,100,255,", "rgba(255,180,60,"
+          ];
+          function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+          function mkPt() {
+            const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+            return { x: Math.random()*W, y: Math.random()*H,
+              r: Math.random()*1.6+0.3, vx:(Math.random()-0.5)*0.22, vy:(Math.random()-0.5)*0.22,
+              a: Math.random()*0.45+0.08, da:(Math.random()-0.5)*0.003, c };
+          }
+          resize();
+          pts = Array.from({length:90}, mkPt);
+          window.addEventListener("resize", () => { resize(); pts = Array.from({length:90}, mkPt); });
+          (function loop() {
+            ctx.clearRect(0,0,W,H);
+            for (const p of pts) {
+              p.x+=p.vx; p.y+=p.vy; p.a+=p.da;
+              if (p.a<=0.04||p.a>=0.6) p.da*=-1;
+              if (p.x<-4) p.x=W+4; if (p.x>W+4) p.x=-4;
+              if (p.y<-4) p.y=H+4; if (p.y>H+4) p.y=-4;
+              ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+              ctx.fillStyle = p.c+p.a+")"; ctx.fill();
+            }
+            requestAnimationFrame(loop);
+          })();
+        }
+
+        /* ── 3D card tilt ── */
+        document.querySelectorAll(".card, .kpi-card").forEach(card => {
+          card.addEventListener("mousemove", e => {
+            const r = card.getBoundingClientRect();
+            const cx = r.left + r.width/2, cy = r.top + r.height/2;
+            const dx = (e.clientX - cx) / (r.width/2);
+            const dy = (e.clientY - cy) / (r.height/2);
+            card.style.transform = `perspective(900px) rotateX(${-dy*5}deg) rotateY(${dx*5}deg) translateY(-4px)`;
+          });
+          card.addEventListener("mouseleave", () => {
+            card.style.transform = "";
+            card.style.transition = "transform 0.55s cubic-bezier(0.16,1,0.3,1)";
+          });
+          card.addEventListener("mouseenter", () => { card.style.transition = "transform 0.1s linear"; });
+        });
+
+        /* ── Ripple on clickable elements ── */
+        document.addEventListener("click", e => {
+          const target = e.target.closest("button, .meal-item, .nav-tab, .theme-card");
+          if (!target) return;
+          const r = target.getBoundingClientRect();
+          const el = document.createElement("span");
+          el.className = "ripple-effect";
+          const size = Math.max(r.width, r.height) * 2.5;
+          Object.assign(el.style, {
+            width: size+"px", height: size+"px",
+            left: (e.clientX - r.left - size/2)+"px",
+            top:  (e.clientY - r.top  - size/2)+"px",
+          });
+          if (getComputedStyle(target).position === "static") target.style.position = "relative";
+          target.style.overflow = "hidden";
+          target.appendChild(el);
+          setTimeout(() => el.remove(), 750);
+        });
+
+        /* ── Sparkle burst on check ── */
+        document.addEventListener("click", e => {
+          const cell = e.target.closest(".check-cell");
+          if (!cell) return;
+          const r = cell.getBoundingClientRect();
+          for (let i = 0; i < 6; i++) {
+            const s = document.createElement("div");
+            s.className = "sparkle";
+            const size = Math.random()*4+2;
+            const angle = (360/6)*i + Math.random()*20;
+            const dist = 30 + Math.random()*25;
+            const rad = angle * Math.PI / 180;
+            Object.assign(s.style, {
+              width: size+"px", height: size+"px",
+              left: (r.left + r.width/2 + Math.cos(rad)*dist)+"px",
+              top:  (r.top  + r.height/2+ Math.sin(rad)*dist)+"px",
+              animationDuration: (0.5+Math.random()*0.4)+"s",
+              animationDelay: (Math.random()*0.1)+"s",
+            });
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+          }
+        });
+
+        /* ── Number pop on value update ── */
+        const observer = new MutationObserver(mutations => {
+          mutations.forEach(m => {
+            if (m.type === "characterData" || m.type === "childList") {
+              const el = m.target.parentElement || m.target;
+              if (el && (el.classList.contains("kpi-value") || el.classList.contains("ring-value"))) {
+                el.classList.remove("updating");
+                void el.offsetWidth;
+                el.classList.add("updating");
+              }
+            }
+          });
+        });
+        document.querySelectorAll(".kpi-value, .ring-value").forEach(el =>
+          observer.observe(el, { childList: true, characterData: true, subtree: true })
+        );
+      })();
     </script>
   </body>
 </html>
