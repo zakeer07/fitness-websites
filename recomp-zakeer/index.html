@@ -159,8 +159,21 @@
       .mono {
         font-family: "JetBrains Mono", monospace;
       }
-      .num {
+      .num,
+      .kpi-value,
+      .ring-value,
+      .stat-bar-value,
+      .stat-mini-val,
+      .tracker-targets strong,
+      .left-cell,
+      .goal-met-cell {
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          sans-serif;
         font-variant-numeric: tabular-nums;
+        letter-spacing: 0;
       }
 
       /* Layout */
@@ -579,14 +592,12 @@
         justify-content: center;
       }
       .ring-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 40px;
-        line-height: 1;
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 1.15;
         display: flex;
         align-items: baseline;
         gap: 4px;
-        letter-spacing: -0.02em;
       }
       .ring-unit {
         font-family: "Inter";
@@ -695,10 +706,8 @@
         text-transform: uppercase;
       }
       .stat-bar-value {
-        font-family: "Syne", sans-serif;
         font-weight: 700;
-        font-size: 20px;
-        letter-spacing: -0.02em;
+        font-size: 18px;
       }
       .stat-bar-track {
         height: 6px;
@@ -768,11 +777,9 @@
         margin-bottom: 8px;
       }
       .kpi-value {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 26px;
-        line-height: 1;
-        letter-spacing: -0.02em;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 1.2;
       }
       .kpi-unit {
         font-size: 12px;
@@ -1070,11 +1077,9 @@
         flex-direction: column;
       }
       .stat-mini-val {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: -0.02em;
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 1.2;
       }
       .stat-mini-lbl {
         font-size: 10px;
@@ -1305,17 +1310,13 @@
       }
       .tracker-targets strong {
         color: var(--accent);
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 20px;
-        letter-spacing: -0.02em;
+        font-weight: 700;
+        font-size: 18px;
       }
       .left-cell {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
-        font-size: 17px;
+        font-weight: 600;
+        font-size: 16px;
         color: var(--warning);
-        letter-spacing: -0.02em;
       }
       .left-cell.done {
         color: var(--success);
@@ -1351,12 +1352,10 @@
         border-color: #5dade2;
       }
       .goal-met-cell {
-        font-family: "Syne", sans-serif;
-        font-weight: 700;
-        font-size: 16px;
+        font-weight: 600;
+        font-size: 15px;
         text-align: center;
         color: var(--text-muted);
-        letter-spacing: -0.02em;
         transition: color 0.3s var(--ease-out);
       }
       .goal-met-cell.yes {
