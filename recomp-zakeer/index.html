@@ -4976,7 +4976,10 @@
         const today = new Date();
         const p = getProfile();
 
-        // Collapsed: show through end of current month. Expanded: full year end.
+        // Collapsed: entire current month. Expanded: TRACKER_START through Dec 31.
+        const renderStart = trackerExpanded
+          ? start
+          : new Date(today.getFullYear(), today.getMonth(), 1);
         const endDate = trackerExpanded
           ? new Date(today.getFullYear(), 11, 31)
           : new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -4989,7 +4992,7 @@
         let i = 0;
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          const d = new Date(start);
+          const d = new Date(renderStart);
           d.setDate(d.getDate() + i);
           if (d > endDate) break;
           i++;
