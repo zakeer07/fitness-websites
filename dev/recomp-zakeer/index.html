@@ -140,6 +140,16 @@
           background-position: 200% center;
         }
       }
+      @keyframes ringPulse {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 6px rgba(255, 92, 122, 0.35));
+        }
+        50% {
+          filter: drop-shadow(0 0 14px rgba(255, 92, 122, 0.55));
+        }
+      }
+
       /* Typography */
       .display {
         font-family: "Syne", sans-serif;
@@ -151,6 +161,7 @@
       }
       .num,
       .kpi-value,
+      .ring-value,
       .stat-bar-value,
       .stat-mini-val,
       .tracker-targets strong,
@@ -547,6 +558,70 @@
         margin-top: 6px;
       }
 
+      .progress-wrapper {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        flex-wrap: wrap;
+        position: relative;
+      }
+      .ring-container {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        flex-shrink: 0;
+        animation: ringPulse 3s ease-in-out infinite;
+      }
+      .ring-svg {
+        transform: rotate(-90deg);
+      }
+      .ring-bg {
+        stroke: rgba(255, 255, 255, 0.06);
+      }
+      .ring-fill {
+        stroke: url(#ringGradient);
+        transition: stroke-dashoffset 1.2s var(--ease-out);
+        filter: drop-shadow(0 0 8px var(--accent-glow));
+      }
+      .ring-inner {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .ring-value {
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 1.15;
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+      }
+      .ring-unit {
+        font-family: "Inter";
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+      .ring-label {
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+      .ring-target {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 6px;
+      }
+      .ring-target .unit-hint {
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
       .tracking-legend {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -599,10 +674,11 @@
       }
 
       .stats-stack {
+        flex: 1;
+        min-width: 220px;
         display: flex;
         flex-direction: column;
         gap: 12px;
-        width: 100%;
       }
       .stat-bar {
         background: rgba(255, 255, 255, 0.03);
@@ -1407,6 +1483,13 @@
         .hero {
           padding: 24px 20px;
         }
+        .ring-container {
+          width: 140px;
+          height: 140px;
+        }
+        .ring-value {
+          font-size: 36px;
+        }
         .hero-date {
           font-size: 28px;
         }
@@ -1976,6 +2059,13 @@
         transition: transform 0.5s ease;
       }
 
+      /* ── Progress ring enhanced ── */
+      .ring-svg circle.ring-track {
+        stroke: rgba(255, 92, 122, 0.1);
+      }
+      .ring-value {
+        animation: ringCounterIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
       @keyframes ringCounterIn {
         from {
           opacity: 0;
@@ -2189,10 +2279,12 @@
       }
 
       /* ── Number counter animation ── */
-      .kpi-value {
+      .kpi-value,
+      .ring-value {
         transition: transform 0.3s var(--ease-spring);
       }
-      .kpi-value.updating {
+      .kpi-value.updating,
+      .ring-value.updating {
         animation: numPop 0.4s var(--ease-spring);
       }
       @keyframes numPop {
@@ -2796,8 +2888,14 @@
         color: var(--text-secondary);
         max-width: 220px;
       }
-      .scan-upload-btn {
+      .scan-upload-btns {
+        display: flex;
+        gap: 10px;
         margin-top: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .scan-upload-btn {
         font-size: 14px;
         padding: 9px 20px;
       }
@@ -2841,6 +2939,9 @@
         align-items: center;
         gap: 12px;
         padding: 32px;
+      }
+      .scan-loading[hidden] {
+        display: none;
       }
       .scan-spinner {
         width: 36px;
@@ -3279,59 +3380,78 @@
               </div>
             </div>
 
-            <div class="stats-stack">
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Calories eaten</div>
-                  <div class="stat-bar-value num">
-                    <span id="cal-current">0</span><span class="kpi-unit"> / </span
-                    ><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
+            <div class="progress-wrapper">
+              <div class="ring-container">
+                <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+                  <defs>
+                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ff5c7a" />
+                      <stop offset="100%" stop-color="#4ecdc4" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="ring-bg" cx="80" cy="80" r="68" fill="none" stroke-width="10" />
+                  <circle
+                    class="ring-fill"
+                    id="cal-ring"
+                    cx="80"
+                    cy="80"
+                    r="68"
+                    fill="none"
+                    stroke-width="10"
+                    stroke-dasharray="427"
+                    stroke-dashoffset="427"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <div class="ring-inner">
+                  <div class="ring-value num">
+                    <span id="cal-current">0</span><span class="ring-unit">kcal</span>
+                  </div>
+                  <div class="ring-label">Calories eaten</div>
+                  <div class="ring-target num">
+                    of <span id="cal-target">2000</span> <span class="unit-hint">kcal goal</span>
                   </div>
                 </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="cal-fill"
-                    style="width: 0%; background: var(--info)"
-                  ></div>
-                </div>
               </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">💪 Protein (grams)</div>
-                  <div class="stat-bar-value num">
-                    <span id="prot-current">0</span><span class="kpi-unit">g</span> /
-                    <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
+
+              <div class="stats-stack">
+                <div class="stat-bar">
+                  <div class="stat-bar-top">
+                    <div class="stat-bar-label">💪 Protein (grams)</div>
+                    <div class="stat-bar-value num">
+                      <span id="prot-current">0</span><span class="kpi-unit">g</span> /
+                      <span id="prot-goal-label">115</span><span class="kpi-unit">g</span> daily
+                    </div>
+                  </div>
+                  <div class="stat-bar-track">
+                    <div
+                      class="stat-bar-fill"
+                      id="prot-fill"
+                      style="width: 0%; background: var(--accent)"
+                    ></div>
                   </div>
                 </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="prot-fill"
-                    style="width: 0%; background: var(--accent)"
-                  ></div>
+                <div class="stat-bar">
+                  <div class="stat-bar-top">
+                    <div class="stat-bar-label">🍽️ Meals Logged</div>
+                    <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
+                  </div>
+                  <div class="stat-bar-track">
+                    <div
+                      class="stat-bar-fill"
+                      id="meals-fill"
+                      style="width: 0%; background: var(--success)"
+                    ></div>
+                  </div>
                 </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🍽️ Meals Logged</div>
-                  <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="meals-fill"
-                    style="width: 0%; background: var(--success)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Streak</div>
-                  <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
+                <div class="stat-bar">
+                  <div class="stat-bar-top">
+                    <div class="stat-bar-label">🔥 Streak</div>
+                    <div class="stat-bar-value num"><span id="streak-days">3</span> Days</div>
+                  </div>
+                  <div class="stat-bar-track">
+                    <div class="stat-bar-fill" style="width: 43%; background: var(--warning)"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4275,27 +4395,6 @@
               Show full year ↓
             </button>
           </div>
-
-          <div class="charts-grid">
-            <div class="card">
-              <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
-              <div class="chart-unit-hint">Daily total (g) — dashed = goal</div>
-              <canvas
-                id="tracker-protein-chart"
-                height="180"
-                style="width: 100%; display: block"
-              ></canvas>
-            </div>
-            <div class="card">
-              <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
-              <div class="chart-unit-hint">Daily kcal burned — from Burnt column</div>
-              <canvas
-                id="tracker-burnt-chart"
-                height="180"
-                style="width: 100%; display: block"
-              ></canvas>
-            </div>
-          </div>
         </section>
 
         <!-- WORKOUTS SECTION -->
@@ -4324,13 +4423,25 @@
 
           <!-- Upload area -->
           <div class="scan-upload-area" id="scan-upload-area">
-            <input type="file" id="scan-file-input" accept="image/*" capture="environment" hidden />
+            <input type="file" id="scan-file-input" accept="image/*" hidden />
+            <input
+              type="file"
+              id="scan-camera-input"
+              accept="image/*"
+              capture="environment"
+              hidden
+            />
             <div class="scan-placeholder" id="scan-placeholder">
               <div class="scan-placeholder-icon">📷</div>
-              <div class="scan-placeholder-text">Tap to take a photo or upload from gallery</div>
-              <button class="btn scan-upload-btn" type="button" id="scan-upload-btn">
-                Choose Photo
-              </button>
+              <div class="scan-placeholder-text">Take a photo or choose from your gallery</div>
+              <div class="scan-upload-btns">
+                <button class="btn scan-upload-btn" type="button" id="scan-camera-btn">
+                  📷 Camera
+                </button>
+                <button class="btn-secondary scan-upload-btn" type="button" id="scan-gallery-btn">
+                  🖼️ Gallery
+                </button>
+              </div>
             </div>
             <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
               <img id="scan-preview-img" class="scan-preview-img" alt="Food photo" />
@@ -5020,7 +5131,9 @@
         document.getElementById("meals-logged").textContent = mealsLogged;
         document.getElementById("kpi-cal").textContent = target;
 
-        document.getElementById("cal-fill").style.width = Math.min((cal / target) * 100, 100) + "%";
+        const circumference = 2 * Math.PI * 68;
+        const ringFill = Math.min(cal / target, 1);
+        document.getElementById("cal-ring").style.strokeDashoffset = circumference * (1 - ringFill);
 
         const p = getProfile();
         document.getElementById("prot-goal-label").textContent = p.proteinG;
@@ -5604,7 +5717,6 @@
         }
 
         updateTrackerSummary();
-        renderTrackerCharts();
 
         // Wire up inputs
         document.querySelectorAll(".protein-input, .water-input, .burnt-input").forEach((input) => {
@@ -5616,8 +5728,6 @@
             refreshTrackerRow(dateKey);
             updateTrackerSummary();
             updateDashboardStats();
-            clearTimeout(renderTrackerCharts._t);
-            renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
           });
         });
         document.querySelectorAll(".check-cell[data-date]").forEach((cell) => {
@@ -5629,244 +5739,6 @@
             renderTracker();
           });
         });
-      }
-
-      function renderTrackerCharts() {
-        const pCanvas = document.getElementById("tracker-protein-chart");
-        const bCanvas = document.getElementById("tracker-burnt-chart");
-        if (!pCanvas || !bCanvas) return;
-
-        const today = new Date();
-        const renderStart = trackerExpanded
-          ? TRACKER_START
-          : new Date(today.getFullYear(), today.getMonth(), 1);
-        const endDate = trackerExpanded
-          ? new Date(today.getFullYear(), 11, 31)
-          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        const p = getProfile();
-        const proteinGoal = p.proteinG;
-
-        const dates = [];
-        const proValues = [];
-        const burntValues = [];
-        let d = new Date(renderStart);
-        while (d <= endDate) {
-          const key = toDateKey(d);
-          const day = state.trackerData[key] || {};
-          const pro =
-            (parseFloat(day.lunch) || 0) +
-            (parseFloat(day.snack) || 0) +
-            (parseFloat(day.shake) || 0) +
-            (parseFloat(day.dinner) || 0);
-          dates.push(new Date(d));
-          proValues.push(pro);
-          burntValues.push(parseFloat(day.burnt) || 0);
-          d = new Date(d);
-          d.setDate(d.getDate() + 1);
-        }
-
-        const n = dates.length;
-        const todayKey = toDateKey(today);
-        const MON = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-
-        function labelStep(count) {
-          if (count <= 15) return 1;
-          if (count <= 35) return 3;
-          if (count <= 92) return 7;
-          return 14;
-        }
-
-        function setupCanvas(canvas) {
-          const w = canvas.parentElement?.clientWidth || canvas.offsetWidth || 400;
-          canvas.width = Math.max(w, 200);
-          return canvas.getContext("2d");
-        }
-
-        function drawLine(canvas, values, goalLine, color) {
-          const ctx = setupCanvas(canvas);
-          const W = canvas.width,
-            H = canvas.height;
-          ctx.clearRect(0, 0, W, H);
-          const mL = 42,
-            mR = 10,
-            mT = 12,
-            mB = 32;
-          const cW = W - mL - mR,
-            cH = H - mT - mB;
-          const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
-          const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
-          const yOf = (v) => mT + cH * (1 - v / maxV);
-
-          ctx.strokeStyle = "rgba(255,255,255,0.06)";
-          ctx.lineWidth = 1;
-          for (let g = 0; g <= 4; g++) {
-            const y = mT + (g / 4) * cH;
-            ctx.beginPath();
-            ctx.moveTo(mL, y);
-            ctx.lineTo(W - mR, y);
-            ctx.stroke();
-            ctx.fillStyle = "#6B7280";
-            ctx.font = "9px Inter,sans-serif";
-            ctx.textAlign = "right";
-            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
-          }
-
-          if (goalLine) {
-            const gy = yOf(goalLine);
-            ctx.save();
-            ctx.strokeStyle = "rgba(255,255,255,0.28)";
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(mL, gy);
-            ctx.lineTo(W - mR, gy);
-            ctx.stroke();
-            ctx.restore();
-          }
-
-          const hasData = values.some((v) => v > 0);
-          if (!hasData) {
-            ctx.fillStyle = "#4B5563";
-            ctx.font = "11px Inter,sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("No protein logged yet", W / 2, H / 2 - 4);
-          } else {
-            const grad = ctx.createLinearGradient(0, mT, 0, mT + cH);
-            grad.addColorStop(0, color + "50");
-            grad.addColorStop(1, color + "00");
-            ctx.beginPath();
-            let first = true;
-            values.forEach((v, i) => {
-              const x = xOf(i),
-                y = yOf(v);
-              if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-              } else ctx.lineTo(x, y);
-            });
-            ctx.lineTo(xOf(n - 1), mT + cH);
-            ctx.lineTo(xOf(0), mT + cH);
-            ctx.closePath();
-            ctx.fillStyle = grad;
-            ctx.fill();
-
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 2;
-            ctx.lineJoin = "round";
-            ctx.beginPath();
-            first = true;
-            values.forEach((v, i) => {
-              const x = xOf(i),
-                y = yOf(v);
-              if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-              } else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-
-            dates.forEach((lbl, i) => {
-              if (toDateKey(lbl) === todayKey && values[i] > 0) {
-                ctx.beginPath();
-                ctx.arc(xOf(i), yOf(values[i]), 4, 0, Math.PI * 2);
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.strokeStyle = "#1A2236";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-              }
-            });
-          }
-
-          const s = labelStep(n);
-          ctx.fillStyle = "#6B7280";
-          ctx.font = "9px Inter,sans-serif";
-          ctx.textAlign = "center";
-          dates.forEach((lbl, i) => {
-            if (i % s !== 0 && i !== n - 1) return;
-            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i), H - 4);
-          });
-        }
-
-        function drawBars(canvas, values, color) {
-          const ctx = setupCanvas(canvas);
-          const W = canvas.width,
-            H = canvas.height;
-          ctx.clearRect(0, 0, W, H);
-          const mL = 42,
-            mR = 10,
-            mT = 12,
-            mB = 32;
-          const cW = W - mL - mR,
-            cH = H - mT - mB;
-          const maxV = Math.max(...values, 1) * 1.18;
-          const barW = Math.max(1, cW / n - 1);
-          const xOf = (i) => mL + (i / n) * cW;
-          const yOf = (v) => mT + cH * (1 - v / maxV);
-
-          ctx.strokeStyle = "rgba(255,255,255,0.06)";
-          ctx.lineWidth = 1;
-          for (let g = 0; g <= 4; g++) {
-            const y = mT + (g / 4) * cH;
-            ctx.beginPath();
-            ctx.moveTo(mL, y);
-            ctx.lineTo(W - mR, y);
-            ctx.stroke();
-            ctx.fillStyle = "#6B7280";
-            ctx.font = "9px Inter,sans-serif";
-            ctx.textAlign = "right";
-            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
-          }
-
-          const hasData = values.some((v) => v > 0);
-          if (!hasData) {
-            ctx.fillStyle = "#4B5563";
-            ctx.font = "11px Inter,sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("No burnt calories logged yet", W / 2, H / 2 - 4);
-          } else {
-            values.forEach((v, i) => {
-              if (!v) return;
-              const x = xOf(i),
-                y = yOf(v),
-                h = mT + cH - y;
-              ctx.fillStyle = toDateKey(dates[i]) === todayKey ? color : color + "BB";
-              if (ctx.roundRect) {
-                ctx.beginPath();
-                ctx.roundRect(x, y, barW, h, [2, 2, 0, 0]);
-                ctx.fill();
-              } else {
-                ctx.fillRect(x, y, barW, h);
-              }
-            });
-          }
-
-          const s = labelStep(n);
-          ctx.fillStyle = "#6B7280";
-          ctx.font = "9px Inter,sans-serif";
-          ctx.textAlign = "center";
-          dates.forEach((lbl, i) => {
-            if (i % s !== 0 && i !== n - 1) return;
-            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i) + barW / 2, H - 4);
-          });
-        }
-
-        drawLine(pCanvas, proValues, proteinGoal, "#E94560");
-        drawBars(bCanvas, burntValues, "#F39C12");
       }
 
       document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
@@ -6055,13 +5927,12 @@
       (function () {
         let scanFoods = []; // [{ name, portions:{small,medium,large}, selectedSize }]
 
-        const elUploadArea = document.getElementById("scan-upload-area");
         const elFileInput = document.getElementById("scan-file-input");
+        const elCameraInput = document.getElementById("scan-camera-input");
         const elPlaceholder = document.getElementById("scan-placeholder");
         const elPreviewWrap = document.getElementById("scan-preview-wrap");
         const elPreviewImg = document.getElementById("scan-preview-img");
         const elRetakeBtn = document.getElementById("scan-retake-btn");
-        const elUploadBtn = document.getElementById("scan-upload-btn");
         const elAnalyzeBtn = document.getElementById("scan-analyze-btn");
         const elLoading = document.getElementById("scan-loading");
         const elError = document.getElementById("scan-error");
@@ -6098,18 +5969,7 @@
           clearError();
         }
 
-        // Click anywhere on upload area triggers file picker
-        elUploadArea.addEventListener("click", (e) => {
-          if (e.target === elRetakeBtn) return;
-          elFileInput.click();
-        });
-        elUploadBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          elFileInput.click();
-        });
-
-        elFileInput.addEventListener("change", () => {
-          const file = elFileInput.files?.[0];
+        function handleFileSelected(file) {
           if (!file) return;
           if (!file.type.startsWith("image/")) {
             showError("Please select an image file.");
@@ -6122,7 +5982,6 @@
           const reader = new FileReader();
           reader.onload = (ev) => {
             const dataUrl = ev.target.result;
-            // Compress via canvas to max 1200px and JPEG quality 0.82
             const img = new Image();
             img.onload = () => {
               const MAX = 1200;
@@ -6144,7 +6003,6 @@
               const comma = compressed.indexOf(",");
               imageBase64 = compressed.slice(comma + 1);
               imageMime = "image/jpeg";
-              // Guard: ~3MB base64 limit
               if (imageBase64.length > 4_000_000) {
                 showError("Image is still too large after compression. Try a different photo.");
                 return;
@@ -6157,8 +6015,26 @@
             img.src = dataUrl;
           };
           reader.readAsDataURL(file);
-          // Reset input so same file can be re-selected
+        }
+
+        document.getElementById("scan-camera-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          elCameraInput.click();
+        });
+        document.getElementById("scan-gallery-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          elFileInput.click();
+        });
+
+        elFileInput.addEventListener("change", () => {
+          const file = elFileInput.files?.[0];
+          if (file) handleFileSelected(file);
           elFileInput.value = "";
+        });
+        elCameraInput.addEventListener("change", () => {
+          const file = elCameraInput.files?.[0];
+          if (file) handleFileSelected(file);
+          elCameraInput.value = "";
         });
 
         elRetakeBtn.addEventListener("click", (e) => {
@@ -6460,7 +6336,6 @@
           section.classList.add("active");
           updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
-          if (tab.dataset.tab === "tracker") requestAnimationFrame(renderTrackerCharts);
         });
       });
       window.addEventListener("resize", updateNavIndicator);
