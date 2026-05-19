@@ -2888,8 +2888,14 @@
         color: var(--text-secondary);
         max-width: 220px;
       }
-      .scan-upload-btn {
+      .scan-upload-btns {
+        display: flex;
+        gap: 10px;
         margin-top: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .scan-upload-btn {
         font-size: 14px;
         padding: 9px 20px;
       }
@@ -2933,6 +2939,9 @@
         align-items: center;
         gap: 12px;
         padding: 32px;
+      }
+      .scan-loading[hidden] {
+        display: none;
       }
       .scan-spinner {
         width: 36px;
@@ -4414,13 +4423,19 @@
 
           <!-- Upload area -->
           <div class="scan-upload-area" id="scan-upload-area">
-            <input type="file" id="scan-file-input" accept="image/*" capture="environment" hidden />
+            <input type="file" id="scan-file-input" accept="image/*" hidden />
+            <input type="file" id="scan-camera-input" accept="image/*" capture="environment" hidden />
             <div class="scan-placeholder" id="scan-placeholder">
               <div class="scan-placeholder-icon">📷</div>
-              <div class="scan-placeholder-text">Tap to take a photo or upload from gallery</div>
-              <button class="btn scan-upload-btn" type="button" id="scan-upload-btn">
-                Choose Photo
-              </button>
+              <div class="scan-placeholder-text">Take a photo or choose from your gallery</div>
+              <div class="scan-upload-btns">
+                <button class="btn scan-upload-btn" type="button" id="scan-camera-btn">
+                  📷 Camera
+                </button>
+                <button class="btn-secondary scan-upload-btn" type="button" id="scan-gallery-btn">
+                  🖼️ Gallery
+                </button>
+              </div>
             </div>
             <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
               <img id="scan-preview-img" class="scan-preview-img" alt="Food photo" />
@@ -5906,13 +5921,12 @@
       (function () {
         let scanFoods = []; // [{ name, portions:{small,medium,large}, selectedSize }]
 
-        const elUploadArea = document.getElementById("scan-upload-area");
         const elFileInput = document.getElementById("scan-file-input");
+        const elCameraInput = document.getElementById("scan-camera-input");
         const elPlaceholder = document.getElementById("scan-placeholder");
         const elPreviewWrap = document.getElementById("scan-preview-wrap");
         const elPreviewImg = document.getElementById("scan-preview-img");
         const elRetakeBtn = document.getElementById("scan-retake-btn");
-        const elUploadBtn = document.getElementById("scan-upload-btn");
         const elAnalyzeBtn = document.getElementById("scan-analyze-btn");
         const elLoading = document.getElementById("scan-loading");
         const elError = document.getElementById("scan-error");
@@ -5949,18 +5963,7 @@
           clearError();
         }
 
-        // Click anywhere on upload area triggers file picker
-        elUploadArea.addEventListener("click", (e) => {
-          if (e.target === elRetakeBtn) return;
-          elFileInput.click();
-        });
-        elUploadBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          elFileInput.click();
-        });
-
-        elFileInput.addEventListener("change", () => {
-          const file = elFileInput.files?.[0];
+        function handleFileSelected(file) {
           if (!file) return;
           if (!file.type.startsWith("image/")) {
             showError("Please select an image file.");
@@ -5973,7 +5976,6 @@
           const reader = new FileReader();
           reader.onload = (ev) => {
             const dataUrl = ev.target.result;
-            // Compress via canvas to max 1200px and JPEG quality 0.82
             const img = new Image();
             img.onload = () => {
               const MAX = 1200;
@@ -5995,7 +5997,6 @@
               const comma = compressed.indexOf(",");
               imageBase64 = compressed.slice(comma + 1);
               imageMime = "image/jpeg";
-              // Guard: ~3MB base64 limit
               if (imageBase64.length > 4_000_000) {
                 showError("Image is still too large after compression. Try a different photo.");
                 return;
@@ -6008,8 +6009,26 @@
             img.src = dataUrl;
           };
           reader.readAsDataURL(file);
-          // Reset input so same file can be re-selected
+        }
+
+        document.getElementById("scan-camera-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          elCameraInput.click();
+        });
+        document.getElementById("scan-gallery-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          elFileInput.click();
+        });
+
+        elFileInput.addEventListener("change", () => {
+          const file = elFileInput.files?.[0];
+          if (file) handleFileSelected(file);
           elFileInput.value = "";
+        });
+        elCameraInput.addEventListener("change", () => {
+          const file = elCameraInput.files?.[0];
+          if (file) handleFileSelected(file);
+          elCameraInput.value = "";
         });
 
         elRetakeBtn.addEventListener("click", (e) => {
