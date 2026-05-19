@@ -4237,6 +4237,13 @@
               <div class="kpi-value num" id="sum-creatine">0</div>
               <div class="kpi-sub">logged</div>
             </div>
+            <div class="kpi">
+              <div class="kpi-label">Total Burnt</div>
+              <div class="kpi-value num">
+                <span id="sum-burnt">0</span><span class="kpi-unit"> kcal</span>
+              </div>
+              <div class="kpi-sub">this period</div>
+            </div>
           </div>
 
           <div class="tracker-table-wrap">
@@ -4304,6 +4311,34 @@
                 style="width: 100%; display: block"
               ></canvas>
             </div>
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Water Intake</div>
+              <div class="chart-unit-hint">Daily bottles — dashed = target</div>
+              <canvas
+                id="tracker-water-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="card-title-dot"></span>Goal Compliance</div>
+              <div class="chart-unit-hint">% of days each goal hit this period</div>
+              <canvas
+                id="tracker-compliance-chart"
+                height="180"
+                style="width: 100%; display: block"
+              ></canvas>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 24px">
+            <div class="card-title"><span class="card-title-dot"></span>Creatine Streak</div>
+            <div class="chart-unit-hint">Each dot = one day · 🟢 taken · ⚫ missed</div>
+            <canvas
+              id="tracker-creatine-chart"
+              height="110"
+              style="width: 100%; display: block"
+            ></canvas>
           </div>
         </section>
 
@@ -5500,29 +5535,39 @@
 
       function updateTrackerSummary() {
         const p = getProfile();
+        const today = new Date();
+        const renderStart = trackerExpanded
+          ? TRACKER_START
+          : new Date(today.getFullYear(), today.getMonth(), 1);
+        const endDate = trackerExpanded
+          ? new Date(today.getFullYear(), 11, 31)
+          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
         let totalWO = 0,
           sumP = 0,
           daysWithP = 0,
           proMet = 0,
           waterMet = 0,
-          creatineDays = 0;
-        for (let i = 0; i < 30; i++) {
-          const d = new Date(TRACKER_START);
-          d.setDate(d.getDate() + i);
+          creatineDays = 0,
+          totalBurnt = 0;
+
+        let d = new Date(renderStart);
+        while (d <= endDate) {
           const dateKey = toDateKey(d);
           const dow = d.getDay();
-          const defaultWorkout = [1, 3, 5, 0].includes(dow);
           const dayData = state.trackerData[dateKey] || {
-            isWorkout: defaultWorkout,
+            isWorkout: [1, 3, 5, 0].includes(dow),
             lunch: "",
             snack: "",
             shake: "",
             dinner: "",
             creatine: false,
             water: "",
+            burnt: "",
           };
           const total = getTrackerDayTotal(dayData);
           const bottles = Math.max(0, parseInt(dayData.water, 10) || 0);
+          totalBurnt += parseInt(dayData.burnt || "0", 10) || 0;
           if (dayData.isWorkout) totalWO++;
           if (dayData.creatine) creatineDays++;
           if (bottles >= p.waterBottles) waterMet++;
@@ -5531,13 +5576,18 @@
             daysWithP++;
           }
           if (total >= p.proteinG) proMet++;
+          d = new Date(d);
+          d.setDate(d.getDate() + 1);
         }
+
         document.getElementById("sum-workouts").textContent = totalWO;
         document.getElementById("sum-protein").textContent =
           daysWithP > 0 ? Math.round(sumP / daysWithP) : 0;
         document.getElementById("sum-pro").textContent = proMet;
         document.getElementById("sum-water").textContent = waterMet;
         document.getElementById("sum-creatine").textContent = creatineDays;
+        document.getElementById("sum-burnt").textContent =
+          totalBurnt > 0 ? totalBurnt.toLocaleString() : 0;
       }
 
       function renderTracker() {
@@ -5655,7 +5705,10 @@
       function renderTrackerCharts() {
         const pCanvas = document.getElementById("tracker-protein-chart");
         const bCanvas = document.getElementById("tracker-burnt-chart");
-        if (!pCanvas || !bCanvas) return;
+        const wCanvas = document.getElementById("tracker-water-chart");
+        const cCanvas = document.getElementById("tracker-compliance-chart");
+        const crCanvas = document.getElementById("tracker-creatine-chart");
+        if (!pCanvas) return;
 
         const today = new Date();
         const renderStart = trackerExpanded
@@ -5666,11 +5719,17 @@
           : new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
         const p = getProfile();
-        const proteinGoal = p.proteinG;
 
-        const dates = [];
-        const proValues = [];
-        const burntValues = [];
+        // Build dataset
+        const dates = [],
+          proValues = [],
+          burntValues = [],
+          waterValues = [],
+          creatineValues = [];
+        let proMet = 0,
+          waterMet = 0,
+          creatineDays = 0,
+          totalDays = 0;
         let d = new Date(renderStart);
         while (d <= endDate) {
           const key = toDateKey(d);
@@ -5680,9 +5739,16 @@
             (parseFloat(day.snack) || 0) +
             (parseFloat(day.shake) || 0) +
             (parseFloat(day.dinner) || 0);
+          const bottles = parseInt(day.water, 10) || 0;
           dates.push(new Date(d));
           proValues.push(pro);
           burntValues.push(parseFloat(day.burnt) || 0);
+          waterValues.push(bottles);
+          creatineValues.push(!!day.creatine);
+          if (pro >= p.proteinG) proMet++;
+          if (bottles >= p.waterBottles) waterMet++;
+          if (day.creatine) creatineDays++;
+          totalDays++;
           d = new Date(d);
           d.setDate(d.getDate() + 1);
         }
@@ -5717,7 +5783,55 @@
           return canvas.getContext("2d");
         }
 
-        function drawLine(canvas, values, goalLine, color) {
+        function drawGrid(ctx, W, H, mL, mR, mT, mB, maxV) {
+          ctx.strokeStyle = "rgba(255,255,255,0.06)";
+          ctx.lineWidth = 1;
+          for (let g = 0; g <= 4; g++) {
+            const y = mT + (g / 4) * (H - mT - mB);
+            ctx.beginPath();
+            ctx.moveTo(mL, y);
+            ctx.lineTo(W - mR, y);
+            ctx.stroke();
+            ctx.fillStyle = "#6B7280";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(
+              maxV <= 12 ? (maxV * (1 - g / 4)).toFixed(1) : Math.round(maxV * (1 - g / 4)),
+              mL - 3,
+              y + 3
+            );
+          }
+        }
+
+        function drawGoalLine(ctx, W, mL, mR, yPos) {
+          ctx.save();
+          ctx.strokeStyle = "rgba(255,255,255,0.28)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(mL, yPos);
+          ctx.lineTo(W - mR, yPos);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        function drawXLabels(ctx, H, xOf, barOffset) {
+          const s = labelStep(n);
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "center";
+          dates.forEach((lbl, i) => {
+            if (i % s !== 0 && i !== n - 1) return;
+            ctx.fillText(
+              lbl.getDate() + " " + MON[lbl.getMonth()],
+              xOf(i) + (barOffset || 0),
+              H - 4
+            );
+          });
+        }
+
+        // ── Line chart (protein / water) ──────────────────────────────
+        function drawLine(canvas, values, goalLine, color, noDataMsg) {
           const ctx = setupCanvas(canvas);
           const W = canvas.width,
             H = canvas.height;
@@ -5732,39 +5846,15 @@
           const xOf = (i) => mL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
           const yOf = (v) => mT + cH * (1 - v / maxV);
 
-          ctx.strokeStyle = "rgba(255,255,255,0.06)";
-          ctx.lineWidth = 1;
-          for (let g = 0; g <= 4; g++) {
-            const y = mT + (g / 4) * cH;
-            ctx.beginPath();
-            ctx.moveTo(mL, y);
-            ctx.lineTo(W - mR, y);
-            ctx.stroke();
-            ctx.fillStyle = "#6B7280";
-            ctx.font = "9px Inter,sans-serif";
-            ctx.textAlign = "right";
-            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
-          }
-
-          if (goalLine) {
-            const gy = yOf(goalLine);
-            ctx.save();
-            ctx.strokeStyle = "rgba(255,255,255,0.28)";
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(mL, gy);
-            ctx.lineTo(W - mR, gy);
-            ctx.stroke();
-            ctx.restore();
-          }
+          drawGrid(ctx, W, H, mL, mR, mT, mB, maxV);
+          if (goalLine) drawGoalLine(ctx, W, mL, mR, yOf(goalLine));
 
           const hasData = values.some((v) => v > 0);
           if (!hasData) {
             ctx.fillStyle = "#4B5563";
             ctx.font = "11px Inter,sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("No protein logged yet", W / 2, H / 2 - 4);
+            ctx.fillText(noDataMsg || "No data logged yet", W / 2, H / 2 - 4);
           } else {
             const grad = ctx.createLinearGradient(0, mT, 0, mT + cH);
             grad.addColorStop(0, color + "50");
@@ -5812,18 +5902,11 @@
               }
             });
           }
-
-          const s = labelStep(n);
-          ctx.fillStyle = "#6B7280";
-          ctx.font = "9px Inter,sans-serif";
-          ctx.textAlign = "center";
-          dates.forEach((lbl, i) => {
-            if (i % s !== 0 && i !== n - 1) return;
-            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i), H - 4);
-          });
+          drawXLabels(ctx, H, xOf, 0);
         }
 
-        function drawBars(canvas, values, color) {
+        // ── Bar chart (calories burnt) ─────────────────────────────────
+        function drawBars(canvas, values, color, goalLine, noDataMsg) {
           const ctx = setupCanvas(canvas);
           const W = canvas.width,
             H = canvas.height;
@@ -5834,31 +5917,20 @@
             mB = 32;
           const cW = W - mL - mR,
             cH = H - mT - mB;
-          const maxV = Math.max(...values, 1) * 1.18;
+          const maxV = Math.max(...values, goalLine || 0, 1) * 1.18;
           const barW = Math.max(1, cW / n - 1);
           const xOf = (i) => mL + (i / n) * cW;
           const yOf = (v) => mT + cH * (1 - v / maxV);
 
-          ctx.strokeStyle = "rgba(255,255,255,0.06)";
-          ctx.lineWidth = 1;
-          for (let g = 0; g <= 4; g++) {
-            const y = mT + (g / 4) * cH;
-            ctx.beginPath();
-            ctx.moveTo(mL, y);
-            ctx.lineTo(W - mR, y);
-            ctx.stroke();
-            ctx.fillStyle = "#6B7280";
-            ctx.font = "9px Inter,sans-serif";
-            ctx.textAlign = "right";
-            ctx.fillText(Math.round(maxV * (1 - g / 4)), mL - 3, y + 3);
-          }
+          drawGrid(ctx, W, H, mL, mR, mT, mB, maxV);
+          if (goalLine) drawGoalLine(ctx, W, mL, mR, yOf(goalLine));
 
           const hasData = values.some((v) => v > 0);
           if (!hasData) {
             ctx.fillStyle = "#4B5563";
             ctx.font = "11px Inter,sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("No burnt calories logged yet", W / 2, H / 2 - 4);
+            ctx.fillText(noDataMsg || "No data logged yet", W / 2, H / 2 - 4);
           } else {
             values.forEach((v, i) => {
               if (!v) return;
@@ -5875,19 +5947,152 @@
               }
             });
           }
+          drawXLabels(ctx, H, xOf, barW / 2);
+        }
 
-          const s = labelStep(n);
-          ctx.fillStyle = "#6B7280";
-          ctx.font = "9px Inter,sans-serif";
-          ctx.textAlign = "center";
-          dates.forEach((lbl, i) => {
-            if (i % s !== 0 && i !== n - 1) return;
-            ctx.fillText(lbl.getDate() + " " + MON[lbl.getMonth()], xOf(i) + barW / 2, H - 4);
+        // ── Compliance rings (protein / water / creatine) ─────────────
+        function drawComplianceRings(canvas) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width,
+            H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+
+          const metrics = [
+            { label: "Protein Goal", pct: totalDays ? proMet / totalDays : 0, color: "#E94560" },
+            { label: "Water Goal", pct: totalDays ? waterMet / totalDays : 0, color: "#4A9EFF" },
+            { label: "Creatine", pct: totalDays ? creatineDays / totalDays : 0, color: "#27AE60" },
+          ];
+
+          const slotW = W / metrics.length;
+          const ringR = Math.min(slotW / 2 - 18, 46);
+          const cy = H / 2 - 10;
+
+          metrics.forEach((m, i) => {
+            const cx = slotW * i + slotW / 2;
+
+            // Background ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(255,255,255,0.08)";
+            ctx.lineWidth = 9;
+            ctx.stroke();
+
+            // Progress arc
+            if (m.pct > 0) {
+              ctx.beginPath();
+              ctx.arc(cx, cy, ringR, -Math.PI / 2, -Math.PI / 2 + m.pct * Math.PI * 2);
+              ctx.strokeStyle = m.color;
+              ctx.lineWidth = 9;
+              ctx.lineCap = "round";
+              ctx.stroke();
+            }
+
+            // Center percentage
+            ctx.fillStyle = "#F7F8FC";
+            ctx.font = "bold 15px Syne,sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(Math.round(m.pct * 100) + "%", cx, cy + 5);
+
+            // Label
+            ctx.fillStyle = "#9CA3B5";
+            ctx.font = "9px Inter,sans-serif";
+            ctx.fillText(m.label, cx, H - 6);
           });
         }
 
-        drawLine(pCanvas, proValues, proteinGoal, "#E94560");
-        drawBars(bCanvas, burntValues, "#F39C12");
+        // ── Creatine heatmap calendar ──────────────────────────────────
+        function drawCreatineHeatmap(canvas) {
+          const ctx = setupCanvas(canvas);
+          const W = canvas.width,
+            H = canvas.height;
+          ctx.clearRect(0, 0, W, H);
+
+          // Layout: weeks as columns (Mon–Sun rows), scroll right for more weeks
+          const startDow = (renderStart.getDay() + 6) % 7; // Mon=0
+          const totalCells = startDow + n;
+          const weeks = Math.ceil(totalCells / 7);
+          const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+          const labelW = 22;
+          const availW = W - labelW;
+          const cellSize = Math.max(6, Math.min(20, Math.floor(availW / weeks) - 2));
+          const gapX = Math.floor((availW - weeks * cellSize) / Math.max(weeks - 1, 1));
+          const gapY = Math.floor((H - 22 - 7 * cellSize) / 6);
+
+          // Day-of-week labels
+          ctx.fillStyle = "#6B7280";
+          ctx.font = "8px Inter,sans-serif";
+          ctx.textAlign = "right";
+          DAY_LABELS.forEach((lbl, row) => {
+            const y = 14 + row * (cellSize + gapY) + cellSize / 2 + 3;
+            ctx.fillText(lbl, labelW - 3, y);
+          });
+
+          // Draw cells
+          for (let cell = 0; cell < totalCells; cell++) {
+            const col = Math.floor(cell / 7);
+            const row = cell % 7;
+            const dayIdx = cell - startDow;
+            const x = labelW + col * (cellSize + gapX);
+            const y = 14 + row * (cellSize + gapY);
+
+            if (dayIdx < 0 || dayIdx >= n) {
+              // Empty padding cell
+              ctx.fillStyle = "rgba(255,255,255,0.03)";
+              ctx.beginPath();
+              ctx.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 2, 0, Math.PI * 2);
+              ctx.fill();
+              continue;
+            }
+
+            const isToday = toDateKey(dates[dayIdx]) === todayKey;
+            const taken = creatineValues[dayIdx];
+
+            ctx.fillStyle = taken
+              ? isToday
+                ? "#2ECC71"
+                : "#27AE6088"
+              : isToday
+                ? "rgba(255,255,255,0.25)"
+                : "rgba(255,255,255,0.06)";
+
+            ctx.beginPath();
+            ctx.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Today ring
+            if (isToday) {
+              ctx.strokeStyle = taken ? "#2ECC71" : "rgba(255,255,255,0.4)";
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 2 + 1.5, 0, Math.PI * 2);
+              ctx.stroke();
+            }
+          }
+
+          // Month labels across the top
+          let lastMonth = -1;
+          for (let cell = 0; cell < totalCells; cell++) {
+            const col = Math.floor(cell / 7);
+            const dayIdx = cell - startDow;
+            if (dayIdx < 0 || dayIdx >= n) continue;
+            const month = dates[dayIdx].getMonth();
+            if (month !== lastMonth) {
+              lastMonth = month;
+              const x = labelW + col * (cellSize + gapX);
+              ctx.fillStyle = "#9CA3B5";
+              ctx.font = "8px Inter,sans-serif";
+              ctx.textAlign = "left";
+              ctx.fillText(MON[month], x, 10);
+            }
+          }
+        }
+
+        drawLine(pCanvas, proValues, p.proteinG, "#E94560", "No protein logged yet");
+        drawBars(bCanvas, burntValues, "#F39C12", null, "No burnt calories logged yet");
+        if (wCanvas)
+          drawLine(wCanvas, waterValues, p.waterBottles, "#4A9EFF", "No water logged yet");
+        if (cCanvas) drawComplianceRings(cCanvas);
+        if (crCanvas) drawCreatineHeatmap(crCanvas);
       }
 
       document.getElementById("btn-tracker-expand")?.addEventListener("click", () => {
