@@ -7458,25 +7458,19 @@
           renderExamplePlan();
           updateNavIndicator();
           // Item 8: nav fade
-          if (window.FitnessUI) {
-            FitnessUI.applyNavFade(document.querySelector(".nav-tabs"));
-            document.querySelector(".nav-tabs")?.addEventListener(
-              "scroll",
-              () => {
-                const outer = document.getElementById("nav-tabs-outer");
-                if (outer) {
-                  const nav = outer.querySelector(".nav-tabs");
-                  const canScroll = nav.scrollWidth - nav.scrollLeft > nav.clientWidth + 2;
-                  outer.classList.toggle("can-scroll-right", canScroll);
-                }
-              },
-              { passive: true }
-            );
-            // Initial check
+          {
             const outer = document.getElementById("nav-tabs-outer");
             if (outer) {
               const nav = outer.querySelector(".nav-tabs");
-              outer.classList.toggle("can-scroll-right", nav.scrollWidth > nav.clientWidth + 2);
+              const update = () => {
+                outer.classList.toggle(
+                  "can-scroll-right",
+                  nav.scrollWidth - nav.scrollLeft > nav.clientWidth + 2
+                );
+              };
+              nav.addEventListener("scroll", update, { passive: true });
+              window.addEventListener("resize", update);
+              update();
             }
           }
           // Item 4: weekly summary

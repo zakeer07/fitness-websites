@@ -192,70 +192,6 @@ window.FitnessUI = (function () {
     ctx.restore();
   }
 
-  // Attach hover tooltip to a canvas line chart.
-  // points: array of {x (canvas px), value, label (date string)}
-  // redraw: function() that redraws the chart without tooltip
-  function attachLineTooltip(canvas, getPoints, redraw, unit) {
-    let rafId = null;
-    let lastMx = null;
-
-    function onMove(clientX) {
-      const rect = canvas.getBoundingClientRect();
-      const mx = (clientX - rect.left) * (canvas.width / rect.width);
-      lastMx = mx;
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const pts = getPoints();
-        if (!pts.length) return;
-        redraw();
-        const nearest = pts.reduce((a, b) =>
-          Math.abs(b.x - lastMx) < Math.abs(a.x - lastMx) ? b : a
-        );
-        const ctx = canvas.getContext("2d");
-        // Vertical guide line
-        ctx.save();
-        ctx.strokeStyle = "rgba(255,255,255,0.18)";
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(nearest.x, 20);
-        ctx.lineTo(nearest.x, canvas.height - 30);
-        ctx.stroke();
-        ctx.restore();
-        drawCanvasTooltip(
-          ctx,
-          nearest.x,
-          nearest.y,
-          [nearest.label, nearest.value + unit],
-          canvas.width,
-          canvas.height
-        );
-      });
-    }
-
-    canvas.addEventListener("mousemove", (e) => onMove(e.clientX));
-    canvas.addEventListener(
-      "touchmove",
-      (e) => {
-        e.preventDefault();
-        onMove(e.touches[0].clientX);
-      },
-      { passive: false }
-    );
-    canvas.addEventListener("mouseleave", () => {
-      lastMx = null;
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-      redraw();
-    });
-    canvas.addEventListener("touchend", () => {
-      setTimeout(redraw, 300);
-    });
-  }
-
   return {
     computeStreak,
     weekWorkoutsCount,
@@ -264,6 +200,5 @@ window.FitnessUI = (function () {
     isoWeekKey,
     applyNavFade,
     drawCanvasTooltip,
-    attachLineTooltip,
   };
 })();
