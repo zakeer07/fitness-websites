@@ -348,6 +348,23 @@
         cursor: wait;
         transform: none;
       }
+      .btn-forgot {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 13px;
+        cursor: pointer;
+        text-align: center;
+        opacity: 0.8;
+        padding: 4px 0;
+      }
+      .btn-forgot:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
       .btn .ripple {
         position: absolute;
         border-radius: 50%;
@@ -611,6 +628,38 @@
               />
             </div>
             <button type="submit" class="btn" id="btn-signin">Sign in</button>
+            <button type="button" class="btn-forgot" id="btn-forgot">Forgot password?</button>
+          </form>
+        </div>
+
+        <div class="panel" id="panel-reset">
+          <form id="form-reset">
+            <p style="margin-bottom: 12px; font-size: 14px; opacity: 0.8">
+              Enter your email and we'll send a reset link.
+            </p>
+            <div class="field">
+              <label for="reset-email">Email</label>
+              <input type="email" id="reset-email" autocomplete="email" required />
+            </div>
+            <button type="submit" class="btn" id="btn-reset">Send reset link</button>
+            <button type="button" class="btn-forgot" id="btn-back-signin">Back to sign in</button>
+          </form>
+        </div>
+
+        <div class="panel" id="panel-newpass">
+          <form id="form-newpass">
+            <p style="margin-bottom: 12px; font-size: 14px; opacity: 0.8">Choose a new password.</p>
+            <div class="field">
+              <label for="newpass-password">New password (min 6 characters)</label>
+              <input
+                type="password"
+                id="newpass-password"
+                autocomplete="new-password"
+                required
+                minlength="6"
+              />
+            </div>
+            <button type="submit" class="btn" id="btn-newpass">Set new password</button>
           </form>
         </div>
 
@@ -855,6 +904,32 @@
           btn.disabled = false;
         });
 
+        document.getElementById("btn-forgot").addEventListener("click", () => {
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-reset").classList.add("active");
+          setMsg("");
+        });
+
+        document.getElementById("btn-back-signin").addEventListener("click", () => {
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-signin").classList.add("active");
+          setMsg("");
+        });
+
+        document.getElementById("form-reset").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-reset");
+          btn.disabled = true;
+          setMsg("Sending reset link…");
+          try {
+            await FitnessAuth.resetPassword(document.getElementById("reset-email").value);
+            setMsg("Reset link sent — check your email.", "ok");
+          } catch (err) {
+            setMsg(err.message || "Could not send reset link", "error");
+          }
+          btn.disabled = false;
+        });
+
         document.getElementById("btn-signout").addEventListener("click", async () => {
           await FitnessAuth.signOut();
           appsCard.classList.remove("visible");
@@ -862,8 +937,43 @@
           setMsg("");
         });
 
+        document.getElementById("form-newpass").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btn-newpass");
+          btn.disabled = true;
+          setMsg("Updating password…");
+          try {
+            await FitnessAuth.setNewPassword(document.getElementById("newpass-password").value);
+            setMsg("Password updated! Signing you in…", "ok");
+            const session = await FitnessAuth.restoreSupabaseSession();
+            if (session) {
+              setTimeout(() => showApps(session), 1000);
+            }
+          } catch (err) {
+            setMsg(err.message || "Could not update password", "error");
+            btn.disabled = false;
+          }
+        });
+
         (async function init() {
-          await FitnessAuth.initSupabase();
+          // Supabase puts #access_token=...&type=recovery in the hash after a reset link click
+          const sb = await FitnessAuth.initSupabase();
+          const hash = new URLSearchParams(window.location.hash.slice(1));
+          if (hash.get("type") === "recovery") {
+            if (sb) {
+              await sb.auth.setSession({
+                access_token: hash.get("access_token"),
+                refresh_token: hash.get("refresh_token"),
+              });
+            }
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+            authCard.style.display = "block";
+            document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+            document.getElementById("panel-newpass").classList.add("active");
+            setMsg("Enter your new password below.");
+            return;
+          }
+
           let session = FitnessAuth.getSession();
           if (!session) session = await FitnessAuth.restoreSupabaseSession();
           if (session) showApps(session);
