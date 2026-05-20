@@ -956,9 +956,11 @@
             return;
           }
 
+          const didLogOut = new URLSearchParams(location.search).get("logout") === "1";
+          history.replaceState(null, "", location.pathname);
           let session = FitnessAuth.getSession();
-          if (!session) session = await FitnessAuth.restoreSupabaseSession();
-          if (session) showApps();
+          if (!session && !didLogOut) session = await FitnessAuth.restoreSupabaseSession();
+          if (session && !didLogOut) showApps();
           if (FitnessAuth.isCloudEnabled()) {
             document.getElementById("storage-hint").textContent =
               "Signed in with cloud sync — your goals and tracker follow you on any device.";
