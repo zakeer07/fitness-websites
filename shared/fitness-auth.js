@@ -405,7 +405,15 @@
     }
 
     const local = localStorage.getItem(key);
-    return local ? JSON.parse(local) : { ...defaultState };
+    if (local) {
+      const parsed = JSON.parse(local);
+      // Cloud was empty but we have local data — push it up now
+      saveAppState(appId, parsed).catch((e) =>
+        console.warn("Cloud backfill failed:", e)
+      );
+      return parsed;
+    }
+    return { ...defaultState };
   }
 
   function scheduleCloudSave(appId, state, localStorageKey) {
