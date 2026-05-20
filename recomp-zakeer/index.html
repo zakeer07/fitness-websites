@@ -3187,21 +3187,6 @@
         color: var(--text-secondary);
         line-height: 1.45;
       }
-      .setup-banner-btn {
-        flex-shrink: 0;
-        background: var(--warning);
-        color: #000;
-        border: none;
-        border-radius: var(--radius-sm);
-        padding: 8px 14px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        white-space: nowrap;
-      }
-      .setup-banner-btn:hover {
-        opacity: 0.88;
-      }
       .setup-banner[hidden] {
         display: none;
       }
@@ -3722,14 +3707,10 @@
             <div class="setup-banner-body">
               <div class="setup-banner-title">Set your personal targets</div>
               <div class="setup-banner-sub">
-                The default goals shown below are placeholders. Open
-                <strong>Profile</strong> (top right) to set your actual calorie, protein, and water
-                targets.
+                The goals below are placeholders. Tap your name in the top right to set your actual
+                calorie, protein, and water targets.
               </div>
             </div>
-            <button class="setup-banner-btn" id="setup-banner-open" type="button">
-              Open Profile
-            </button>
           </div>
 
           <div class="tracking-legend">
@@ -7797,10 +7778,6 @@
           // Item 5: quick-log
           initQuickLog();
           updateSetupBanner();
-          document.getElementById("setup-banner-open")?.addEventListener("click", () => {
-            openUserMenu();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
         } catch (err) {
           console.error("bootstrapApp failed:", err);
           const banner = document.getElementById("meals-target-banner");
