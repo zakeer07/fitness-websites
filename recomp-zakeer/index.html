@@ -7420,7 +7420,7 @@
         logoutBtn.addEventListener("click", async () => {
           if (!window.FitnessAuth) return;
           await FitnessAuth.signOut();
-          location.href = FitnessAuth.loginUrl();
+          location.href = FitnessAuth.loginUrl() + "?logout=1";
         });
       }
 
