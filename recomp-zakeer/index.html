@@ -777,6 +777,134 @@
         margin-top: 4px;
       }
 
+      /* Bento dashboard cards */
+      .bento-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .bento-card {
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(var(--bento-rgb), 0.22);
+        background: rgba(var(--bento-rgb), 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      [data-color-scheme="light"] .bento-card {
+        background: rgba(var(--bento-rgb), 0.14);
+        border-color: rgba(var(--bento-rgb), 0.28);
+      }
+      .bento-cal {
+        --bento-rgb: 255, 200, 87;
+      }
+      .bento-protein {
+        --bento-rgb: 255, 92, 122;
+      }
+      .bento-weight {
+        --bento-rgb: 78, 205, 196;
+      }
+      .bento-workouts {
+        --bento-rgb: 61, 214, 140;
+      }
+      .bento-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2px;
+      }
+      .bento-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: rgba(var(--bento-rgb), 0.9);
+      }
+      .bento-delta {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+      .bento-delta-up {
+        color: var(--success);
+      }
+      .bento-delta-dn {
+        color: var(--accent);
+      }
+      .bento-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+      .bento-unit {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-left: 2px;
+      }
+      .bento-goal-row {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+      }
+      .bento-bar-track {
+        height: 4px;
+        background: rgba(var(--bento-rgb), 0.18);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .bento-bar-fill {
+        height: 100%;
+        background: rgba(var(--bento-rgb), 0.8);
+        border-radius: 2px;
+        transition: width 0.4s var(--ease-out);
+      }
+      .bento-sparkline {
+        width: 100%;
+        height: 30px;
+        margin-top: 6px;
+        overflow: visible;
+      }
+      .bento-dots {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+      }
+      .bento-dot {
+        flex: 1;
+        height: 22px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0;
+        color: rgba(var(--bento-rgb), 0.7);
+        background: rgba(var(--bento-rgb), 0.12);
+      }
+      .bento-dot-workout {
+        background: rgba(var(--bento-rgb), 0.45);
+        color: var(--text-primary);
+      }
+      .bento-dot-rest {
+        background: rgba(var(--bento-rgb), 0.08);
+        color: var(--text-muted);
+      }
+      .bento-dot-future {
+        background: transparent;
+        color: var(--text-muted);
+        opacity: 0.4;
+      }
+
       /* Workout toggle */
       .workout-toggle {
         display: flex;
@@ -3854,44 +3982,77 @@
             </div>
           </div>
 
-          <div class="kpi-grid">
-            <div class="kpi">
-              <div class="kpi-icon">👤</div>
-              <div class="kpi-label">Height</div>
-              <div class="kpi-value num" id="kpi-height">5'10"</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-icon">⚖️</div>
-              <div class="kpi-label">Weight</div>
-              <div class="kpi-value num" id="kpi-weight">75<span class="kpi-unit">kg</span></div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-icon">🎯</div>
-              <div class="kpi-label">Calorie goal</div>
-              <div class="kpi-value num" id="kpi-cal-wrap">
-                <span id="kpi-cal">2000</span><span class="kpi-unit"> kcal</span>
+          <div class="bento-grid">
+            <!-- Calories -->
+            <div class="bento-card bento-cal">
+              <div class="bento-head">
+                <span class="bento-title">Calories</span>
+                <span class="bento-delta" id="bento-cal-delta">today</span>
+              </div>
+              <div class="bento-num">
+                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal</span>
+              </div>
+              <div class="bento-goal-row">of <span id="kpi-cal">2000</span> kcal goal</div>
+              <div class="bento-bar-track">
+                <div class="bento-bar-fill" id="bento-cal-bar" style="width: 0%"></div>
               </div>
             </div>
-            <div class="kpi">
-              <div class="kpi-icon">💪</div>
-              <div class="kpi-label">Protein goal</div>
-              <div class="kpi-value num">
-                <span id="kpi-protein">115</span><span class="kpi-unit">g</span>
+
+            <!-- Protein -->
+            <div class="bento-card bento-protein">
+              <div class="bento-head">
+                <span class="bento-title">Protein</span>
+                <span class="bento-delta" id="bento-prot-delta">—</span>
               </div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-icon">🔥</div>
-              <div class="kpi-label">Burnt today</div>
-              <div class="kpi-value num">
-                <span id="kpi-burnt">0</span><span class="kpi-unit"> kcal</span>
+              <div class="bento-num">
+                <span id="bento-prot-today">0</span><span class="bento-unit">g</span>
               </div>
+              <div class="bento-goal-row">of <span id="kpi-protein">115</span>g goal</div>
+              <svg
+                class="bento-sparkline"
+                id="bento-prot-spark"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+              ></svg>
             </div>
-            <div class="kpi">
-              <div class="kpi-icon">🏃</div>
-              <div class="kpi-label">Workouts</div>
-              <div class="kpi-value num" id="kpi-workouts">—</div>
+
+            <!-- Weight -->
+            <div class="bento-card bento-weight">
+              <div class="bento-head">
+                <span class="bento-title">Weight</span>
+                <span class="bento-delta" id="bento-weight-delta">—</span>
+              </div>
+              <div class="bento-num">
+                <span id="bento-weight-val">—</span
+                ><span class="bento-unit" id="bento-weight-unit">kg</span>
+              </div>
+              <svg
+                class="bento-sparkline"
+                id="bento-weight-spark"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+              ></svg>
+            </div>
+
+            <!-- Workouts -->
+            <div class="bento-card bento-workouts">
+              <div class="bento-head">
+                <span class="bento-title">Workouts</span>
+                <span class="bento-delta" id="bento-wo-delta">—</span>
+              </div>
+              <div class="bento-num">
+                <span id="bento-wo-count">0</span
+                ><span class="bento-unit">/<span id="bento-wo-total">5</span></span>
+              </div>
+              <div class="bento-goal-row">this week</div>
+              <div class="bento-dots" id="bento-wo-dots"></div>
             </div>
           </div>
+          <!-- hidden legacy IDs still updated by applyProfileToUI -->
+          <span id="kpi-height" hidden></span>
+          <span id="kpi-weight" hidden></span>
+          <span id="kpi-burnt" hidden></span>
+          <span id="kpi-workouts" hidden></span>
 
           <div id="weekly-summary-card" class="weekly-summary-card" hidden>
             <button class="weekly-summary-dismiss" id="weekly-summary-dismiss" title="Dismiss">
@@ -5681,7 +5842,6 @@
         document.getElementById("cal-target").textContent = target;
         document.getElementById("prot-current").textContent = pro;
         document.getElementById("meals-logged").textContent = mealsLogged;
-        document.getElementById("kpi-cal").textContent = target;
 
         document.getElementById("cal-fill").style.width = Math.min((cal / target) * 100, 100) + "%";
 
@@ -5715,6 +5875,177 @@
           );
           const woEl = document.getElementById("kpi-workouts");
           if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${total}</span>`;
+        }
+        renderBentoCards();
+      }
+
+      function bentoSparkline(svgEl, values, rgb) {
+        if (!svgEl || values.length < 2) {
+          if (svgEl) svgEl.innerHTML = "";
+          return;
+        }
+        const W = 100,
+          H = 28,
+          pad = 3;
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const range = max - min || 1;
+        const pts = values.map((v, i) => {
+          const x = pad + (i / (values.length - 1)) * (W - pad * 2);
+          const y = pad + (1 - (v - min) / range) * (H - pad * 3);
+          return x.toFixed(1) + "," + y.toFixed(1);
+        });
+        const last = pts[pts.length - 1].split(",");
+        svgEl.innerHTML =
+          '<polyline points="' +
+          pts.join(" ") +
+          '" fill="none" stroke="rgba(' +
+          rgb +
+          ',0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<circle cx="' +
+          last[0] +
+          '" cy="' +
+          last[1] +
+          '" r="3" fill="rgba(' +
+          rgb +
+          ',1)"/>';
+      }
+
+      function trackerDayProtein(key) {
+        const d = state.trackerData[key];
+        if (!d) return null;
+        const sum = ["breakfast", "lunch", "snack", "dinner", "shake"].reduce(
+          (acc, s) => acc + (parseFloat(d[s]) || 0),
+          0
+        );
+        return sum > 0 ? sum : null;
+      }
+
+      function recentDailyProtein(n) {
+        const vals = [];
+        for (let i = n - 1; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          vals.push(trackerDayProtein(toDateKey(d)));
+        }
+        return vals;
+      }
+
+      function recentWeightEntries(n) {
+        const result = [];
+        const keys = Object.keys(state.trackerData).sort();
+        for (const key of keys) {
+          const w = parseFloat(state.trackerData[key]?.weightKg);
+          if (w > 0) result.push(w);
+        }
+        return result.slice(-n);
+      }
+
+      function renderBentoCards() {
+        const p = getProfile();
+
+        // Calories card
+        const calEaten = parseInt(document.getElementById("cal-current")?.textContent || "0") || 0;
+        const calGoal = getCalTarget();
+        const bcCalEaten = document.getElementById("bento-cal-eaten");
+        const bcCalBar = document.getElementById("bento-cal-bar");
+        if (bcCalEaten) bcCalEaten.textContent = calEaten;
+        if (bcCalBar) bcCalBar.style.width = Math.min((calEaten / calGoal) * 100, 100) + "%";
+        const kcalEl = document.getElementById("kpi-cal");
+        if (kcalEl) kcalEl.textContent = calGoal;
+
+        // Protein card
+        const protVals = recentDailyProtein(7);
+        const todayProt = protVals[protVals.length - 1] || 0;
+        const yestProt = protVals[protVals.length - 2];
+        const bcProtToday = document.getElementById("bento-prot-today");
+        const bcProtDelta = document.getElementById("bento-prot-delta");
+        const bcProtGoal = document.getElementById("kpi-protein");
+        if (bcProtToday) bcProtToday.textContent = Math.round(todayProt);
+        if (bcProtGoal) bcProtGoal.textContent = p.proteinG;
+        if (bcProtDelta) {
+          if (yestProt != null) {
+            const diff = Math.round(todayProt - yestProt);
+            bcProtDelta.textContent = (diff >= 0 ? "+" : "") + diff + "g vs yday";
+            bcProtDelta.className =
+              "bento-delta " + (diff >= 0 ? "bento-delta-up" : "bento-delta-dn");
+          } else {
+            bcProtDelta.textContent = "—";
+            bcProtDelta.className = "bento-delta";
+          }
+        }
+        bentoSparkline(
+          document.getElementById("bento-prot-spark"),
+          protVals.filter((v) => v != null),
+          "255,92,122"
+        );
+
+        // Weight card
+        const weights = recentWeightEntries(14);
+        const latestW = weights[weights.length - 1];
+        const prevW = weights[weights.length - 2];
+        const bcWeightVal = document.getElementById("bento-weight-val");
+        const bcWeightDelta = document.getElementById("bento-weight-delta");
+        if (bcWeightVal) bcWeightVal.textContent = latestW != null ? latestW.toFixed(1) : "—";
+        if (bcWeightDelta) {
+          if (latestW != null && prevW != null) {
+            const diff = (latestW - prevW).toFixed(1);
+            bcWeightDelta.textContent = (parseFloat(diff) >= 0 ? "+" : "") + diff + " kg";
+            bcWeightDelta.className =
+              "bento-delta " + (parseFloat(diff) <= 0 ? "bento-delta-up" : "bento-delta-dn");
+          } else {
+            bcWeightDelta.textContent = "—";
+            bcWeightDelta.className = "bento-delta";
+          }
+        }
+        bentoSparkline(document.getElementById("bento-weight-spark"), weights, "78,205,196");
+
+        // Workouts card
+        let done = 0,
+          total = 5;
+        if (window.FitnessUI) {
+          ({ done, total } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule()));
+        }
+        let lastWkDone = 0;
+        for (let i = 7; i <= 13; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          if (state.trackerData[toDateKey(d)]?.isWorkout) lastWkDone++;
+        }
+        const bcWoCount = document.getElementById("bento-wo-count");
+        const bcWoTotal = document.getElementById("bento-wo-total");
+        const bcWoDelta = document.getElementById("bento-wo-delta");
+        if (bcWoCount) bcWoCount.textContent = done;
+        if (bcWoTotal) bcWoTotal.textContent = total;
+        if (bcWoDelta) {
+          const diff = done - lastWkDone;
+          bcWoDelta.textContent = (diff >= 0 ? "+" : "") + diff + " vs last wk";
+          bcWoDelta.className = "bento-delta " + (diff >= 0 ? "bento-delta-up" : "bento-delta-dn");
+        }
+
+        // Workout dots (Mon–Sun of current week)
+        const dotsEl = document.getElementById("bento-wo-dots");
+        if (dotsEl) {
+          const today = new Date();
+          const dow = today.getDay();
+          const monday = new Date(today);
+          monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+          const DAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
+          dotsEl.innerHTML = DAY_LABELS.map((lbl, i) => {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            const key = toDateKey(d);
+            const entry = state.trackerData[key];
+            const isFuture = d > today;
+            let type = isFuture
+              ? "future"
+              : !entry
+                ? "empty"
+                : entry.isWorkout
+                  ? "workout"
+                  : "rest";
+            return '<span class="bento-dot bento-dot-' + type + '">' + lbl + "</span>";
+          }).join("");
         }
       }
 
