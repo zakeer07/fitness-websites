@@ -980,6 +980,7 @@
         font-weight: 700;
         color: var(--text-primary);
         line-height: 1;
+        font-feature-settings: "zero" 0;
       }
       .bento-unit {
         font-size: 13px;
@@ -1091,29 +1092,20 @@
         flex-shrink: 0;
         pointer-events: none;
       }
-      /* Streak milestone badge */
+      /* Streak milestone badge — shown as a small row below the goal line */
       .streak-badge {
-        display: inline-flex;
-        align-items: center;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 6px;
-        border-radius: 20px;
-        letter-spacing: 0.03em;
-        background: rgba(255, 200, 87, 0.18);
+        font-size: 11px;
+        font-weight: 600;
         color: var(--warning);
-        margin-left: 4px;
+        margin-top: 1px;
       }
       .streak-badge.streak-fire {
-        background: rgba(255, 120, 50, 0.18);
         color: #ff7832;
       }
       .streak-badge.streak-gold {
-        background: rgba(255, 215, 0, 0.2);
         color: #ffd700;
       }
       .streak-badge.streak-legend {
-        background: rgba(180, 100, 255, 0.2);
         color: #b464ff;
       }
       /* Goal celebration glow pulse on bento card */
@@ -4602,16 +4594,14 @@
             <!-- Protein -->
             <div class="bento-card bento-protein">
               <div class="bento-head">
-                <span style="display: flex; align-items: center; gap: 5px; min-width: 0">
-                  <span class="bento-title">Protein</span>
-                  <span id="streak-badge" class="streak-badge" hidden></span>
-                </span>
+                <span class="bento-title">Protein</span>
                 <span class="bento-delta" id="bento-prot-delta"></span>
               </div>
               <div class="bento-num">
                 <span id="bento-prot-today">0</span><span class="bento-unit">g</span>
               </div>
               <div class="bento-goal-row">of <span id="kpi-protein">115</span>g goal</div>
+              <div id="streak-badge" class="streak-badge" hidden></div>
               <div class="bento-ratio-row" id="bento-prot-ratio"></div>
               <svg
                 class="bento-sparkline"
@@ -7183,15 +7173,15 @@
         const el = document.getElementById("streak-badge");
         if (!el) return;
         if (streak >= 30) {
-          el.textContent = "🏆 " + streak + "d";
+          el.textContent = streak + "-day streak — legend";
           el.className = "streak-badge streak-legend";
           el.hidden = false;
         } else if (streak >= 14) {
-          el.textContent = "🥇 " + streak + "d";
+          el.textContent = streak + "-day streak — on fire";
           el.className = "streak-badge streak-gold";
           el.hidden = false;
         } else if (streak >= 7) {
-          el.textContent = "🔥 " + streak + "d";
+          el.textContent = streak + "-day streak";
           el.className = "streak-badge streak-fire";
           el.hidden = false;
         } else {
