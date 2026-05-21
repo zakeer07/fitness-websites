@@ -5039,26 +5039,13 @@
       );
     </script>
     <script>
-      (function () {
-        var base = window.FITNESS_SHARED_BASE;
-        ["meal-library.js", "fitness-auth.js", "ui-utils.js"].forEach(function (file) {
-          var url = base + file;
-          try {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", url, false);
-            xhr.send(null);
-            if (xhr.status >= 200 && xhr.status < 300) {
-              var tag = document.createElement("script");
-              tag.text = xhr.responseText;
-              document.head.appendChild(tag);
-            } else {
-              console.error("Failed to load", url, xhr.status);
-            }
-          } catch (e) {
-            console.error("Failed to load", url, e);
-          }
-        });
-      })();
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'meal-library.js"><\\/script>');
+    </script>
+    <script>
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'fitness-auth.js"><\\/script>');
+    </script>
+    <script>
+      document.write('<script src="' + window.FITNESS_SHARED_BASE + 'ui-utils.js"><\\/script>');
     </script>
 
     <script>
