@@ -607,6 +607,17 @@
         text-transform: uppercase;
         margin-top: 6px;
       }
+      .hero-insight {
+        margin-top: 14px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-style: italic;
+        line-height: 1.5;
+        min-height: 0;
+      }
+      .hero-insight:empty {
+        display: none;
+      }
 
       .tracking-legend {
         display: grid;
@@ -3790,7 +3801,7 @@
               <div class="user-menu-panel-head">
                 <div class="user-menu-panel-title">Profile & targets</div>
                 <p class="user-menu-panel-sub" id="profile-sync-hint">
-                  Set your body stats and daily targets below — these drive everything on your
+                  Set your body stats and daily targets below. These drive everything on your
                   dashboard.
                 </p>
               </div>
@@ -3814,7 +3825,7 @@
                 <div class="profile-group">
                   <div class="profile-group-title">Calorie targets</div>
                   <div class="field-hint" style="margin-bottom: 10px">
-                    Your daily kcal goals — sets the bar on the dashboard
+                    Your daily kcal goals, sets the bar on the dashboard
                   </div>
                   <div class="profile-field">
                     <label for="profile-cal-workout">Workout day target</label>
@@ -3828,7 +3839,7 @@
                 <div class="profile-group profile-group-wide">
                   <div class="profile-group-title">Protein & water targets</div>
                   <div class="field-hint" style="margin-bottom: 10px">
-                    Daily protein and hydration goals — tracked in the Tracker tab
+                    Daily protein and hydration goals, tracked in the Tracker tab
                   </div>
                   <div class="profile-field">
                     <label for="profile-protein-g">Protein goal (g/day)</label>
@@ -3873,7 +3884,7 @@
                       id="profile-theme-recomp"
                       value="recomp"
                     />
-                    <span>RECOMP — red / teal</span>
+                    <span>RECOMP: red / teal</span>
                   </label>
                   <label class="profile-toggle" for="profile-theme-bloom">
                     <input
@@ -3882,7 +3893,7 @@
                       id="profile-theme-bloom"
                       value="bloom"
                     />
-                    <span>BLOOM — pink / purple</span>
+                    <span>BLOOM: pink / purple</span>
                   </label>
                 </div>
                 <div class="profile-group profile-group-wide">
@@ -3974,6 +3985,7 @@
         <div class="nav-tabs-outer" id="nav-tabs-outer">
           <nav class="nav-tabs">
             <button class="nav-tab active" data-tab="dashboard">⚡ Dashboard</button>
+            <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
             <button class="nav-tab" data-tab="ibs" id="nav-tab-ibs" hidden>🌿 IBS Guide</button>
             <button class="nav-tab" data-tab="tracker">📈 Tracker</button>
             <button class="nav-tab" data-tab="workouts">💪 Workouts</button>
@@ -3981,7 +3993,6 @@
               📸 Scan Food
               <span style="font-size: 10px; opacity: 0.7; font-weight: 500">(beta)</span>
             </button>
-            <button class="nav-tab" data-tab="meals">🍽️ Meals</button>
             <button class="nav-tab" data-tab="tips">💡 Tips</button>
           </nav>
         </div>
@@ -4030,6 +4041,7 @@
                 <div class="toggle-switch"></div>
               </div>
             </div>
+            <div class="hero-insight" id="hero-insight"></div>
           </div>
 
           <div class="bento-grid">
@@ -4053,7 +4065,7 @@
             <div class="bento-card bento-protein">
               <div class="bento-head">
                 <span class="bento-title">Protein</span>
-                <span class="bento-delta" id="bento-prot-delta">—</span>
+                <span class="bento-delta" id="bento-prot-delta"></span>
               </div>
               <div class="bento-num">
                 <span id="bento-prot-today">0</span><span class="bento-unit">g</span>
@@ -4072,10 +4084,10 @@
             <div class="bento-card bento-weight">
               <div class="bento-head">
                 <span class="bento-title">Weight</span>
-                <span class="bento-delta" id="bento-weight-delta">—</span>
+                <span class="bento-delta" id="bento-weight-delta"></span>
               </div>
               <div class="bento-num">
-                <span id="bento-weight-val">—</span
+                <span id="bento-weight-val">-</span
                 ><span class="bento-unit" id="bento-weight-unit">kg</span>
               </div>
               <svg
@@ -4090,7 +4102,7 @@
             <div class="bento-card bento-workouts">
               <div class="bento-head">
                 <span class="bento-title">Workouts</span>
-                <span class="bento-delta" id="bento-wo-delta">—</span>
+                <span class="bento-delta" id="bento-wo-delta"></span>
               </div>
               <div class="bento-num">
                 <span id="bento-wo-count">0</span
@@ -4112,22 +4124,22 @@
             </div>
             <div class="wsum-stats">
               <div class="wsum-stat">
-                <div class="wsum-val" id="wsum-pro">—</div>
+                <div class="wsum-val" id="wsum-pro">-</div>
                 <div class="wsum-unit">g avg</div>
                 <div class="wsum-label">Protein</div>
               </div>
               <div class="wsum-stat">
-                <div class="wsum-val" id="wsum-goal-days">—</div>
+                <div class="wsum-val" id="wsum-goal-days">-</div>
                 <div class="wsum-unit">/ 7</div>
                 <div class="wsum-label">Goal days</div>
               </div>
               <div class="wsum-stat">
-                <div class="wsum-val" id="wsum-workouts">—</div>
+                <div class="wsum-val" id="wsum-workouts">-</div>
                 <div class="wsum-unit">days</div>
                 <div class="wsum-label">Workouts</div>
               </div>
               <div class="wsum-stat" id="wsum-weight-stat" hidden>
-                <div class="wsum-val" id="wsum-weight">—</div>
+                <div class="wsum-val" id="wsum-weight">-</div>
                 <div class="wsum-unit">kg avg</div>
                 <div class="wsum-label">Weight</div>
               </div>
@@ -4137,18 +4149,18 @@
           <div class="card card-accent" style="margin-bottom: 24px">
             <div class="card-title"><span class="card-title-dot"></span>Today's Schedule</div>
             <div class="meal-list" id="today-meals"></div>
-            <div class="edit-hint">Tap a meal — adds kcal & protein to today's totals</div>
+            <div class="edit-hint">Tap a meal to add kcal &amp; protein to today's totals</div>
           </div>
 
           <div class="charts-grid">
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Protein by Meal</div>
-              <div class="chart-unit-hint">Grams (g) per meal — from checked meals</div>
+              <div class="chart-unit-hint">Grams (g) per meal, from checked meals</div>
               <canvas id="protein-chart" width="400" height="280"></canvas>
             </div>
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Calories by Meal</div>
-              <div class="chart-unit-hint">Kilocalories (kcal) per meal — from checked meals</div>
+              <div class="chart-unit-hint">Kilocalories (kcal) per meal, from checked meals</div>
               <canvas id="calorie-chart" width="400" height="280"></canvas>
             </div>
           </div>
@@ -4234,7 +4246,7 @@
             <button type="submit" class="btn-add-meal">+ Add to my library</button>
           </form>
           <div id="meals-empty-hint" class="meals-empty-hint" hidden>
-            Your library is empty. Add meals above, or import the optional example pack — new
+            Your library is empty. Add meals above, or import the optional example pack. New
             accounts never get someone else’s menu by default.
           </div>
 
@@ -4316,7 +4328,7 @@
                         <td>Oil / ghee</td>
                         <td>1 tsp</td>
                         <td>40</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr class="row-total">
                         <td>Total</td>
@@ -4414,13 +4426,13 @@
                         <td>Light mayo</td>
                         <td>1 tbsp</td>
                         <td>45</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr>
                         <td>Avocado</td>
                         <td>¼</td>
                         <td>60</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr class="row-total">
                         <td>Total</td>
@@ -4465,7 +4477,7 @@
                         <td>Mixed fruit</td>
                         <td>1 serving</td>
                         <td>80</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr>
                         <td>Peanut butter</td>
@@ -4643,7 +4655,7 @@
                         <td>Water</td>
                         <td>300ml</td>
                         <td>0</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr class="row-total">
                         <td>Total</td>
@@ -4786,7 +4798,7 @@
                         <td>Olive oil</td>
                         <td>1 tsp</td>
                         <td>40</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr class="row-total">
                         <td>Total</td>
@@ -4832,7 +4844,7 @@
                         <td>Olive oil</td>
                         <td>1 tsp</td>
                         <td>40</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr class="row-total">
                         <td>Total</td>
@@ -4861,27 +4873,27 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Lunch — Chicken Rice Bowl</td>
+                        <td>Lunch: Chicken Rice Bowl</td>
                         <td>620</td>
                         <td>47g</td>
                       </tr>
                       <tr>
-                        <td>Snack — Greek Yogurt</td>
+                        <td>Snack: Greek Yogurt</td>
                         <td>325</td>
                         <td>22g</td>
                       </tr>
                       <tr>
-                        <td>Pre-WO — Coffee + Banana</td>
+                        <td>Pre-WO: Coffee + Banana</td>
                         <td>55</td>
-                        <td>—</td>
+                        <td>-</td>
                       </tr>
                       <tr>
-                        <td>Post-WO — Protein Shake</td>
+                        <td>Post-WO: Protein Shake</td>
                         <td>130</td>
                         <td>28g</td>
                       </tr>
                       <tr>
-                        <td>Dinner — Chicken + Rice</td>
+                        <td>Dinner: Chicken + Rice</td>
                         <td>430</td>
                         <td>40g</td>
                       </tr>
@@ -5001,7 +5013,7 @@
           <div class="tracker-guide">
             <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for
             <strong>calories (kcal)</strong> + <strong>protein (g)</strong>.
-            <strong>Tracker</strong> rows are <strong>protein grams only</strong> — blue
+            <strong>Tracker</strong> rows are <strong>protein grams only</strong>. Blue
             <strong>Cal target</strong> = daily kcal goal (not protein).
           </div>
           <div class="tracker-targets">
@@ -5064,7 +5076,7 @@
                   <th rowspan="2" class="th-cal">
                     Cal target<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
-                  <th colspan="5" class="th-group">Protein per meal — enter grams (g)</th>
+                  <th colspan="5" class="th-group">Protein per meal: enter grams (g)</th>
                   <th rowspan="2" class="th-hydro" id="tracker-creatine-th" title="5g creatine">
                     Creatine<br /><span style="font-weight: 500; opacity: 0.8"
                       ><span id="tracker-creatine-g">5</span>g</span
@@ -5113,7 +5125,7 @@
           <div class="charts-grid">
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Protein Trend</div>
-              <div class="chart-unit-hint">Daily total (g) — dashed = goal · hover for values</div>
+              <div class="chart-unit-hint">Daily total (g), dashed = goal · hover for values</div>
               <canvas
                 id="tracker-protein-chart"
                 height="180"
@@ -5122,7 +5134,7 @@
             </div>
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Calories Burnt</div>
-              <div class="chart-unit-hint">Daily kcal burned — hover for values</div>
+              <div class="chart-unit-hint">Daily kcal burned, hover for values</div>
               <canvas
                 id="tracker-burnt-chart"
                 height="180"
@@ -5131,7 +5143,7 @@
             </div>
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Water Intake</div>
-              <div class="chart-unit-hint">Daily bottles — dashed = target · hover for values</div>
+              <div class="chart-unit-hint">Daily bottles, dashed = target · hover for values</div>
               <canvas
                 id="tracker-water-chart"
                 height="180"
@@ -5150,7 +5162,7 @@
             <div class="card chart-card-wrap">
               <div class="card-title"><span class="card-title-dot"></span>Weight Trend</div>
               <div class="chart-unit-hint">
-                Daily weigh-ins (kg) — log in ⚖️ column · hover for values
+                Daily weigh-ins (kg), log in ⚖️ column · hover for values
               </div>
               <canvas
                 id="tracker-weight-chart"
@@ -5470,7 +5482,7 @@
         {
           icon: "🎯",
           title: "Hit protein targets daily",
-          desc: "Aim for 110–125g across all meals — protein is the #1 lever for recomposition.",
+          desc: "Aim for 110-125g across all meals. Protein is the #1 lever for recomposition.",
         },
         {
           icon: "⚡",
@@ -5490,7 +5502,7 @@
         {
           icon: "🍫",
           title: "Manage cravings smartly",
-          desc: "Dark chocolate or small dessert (~100 kcal) is budgeted in — don't skip it then binge later.",
+          desc: "Dark chocolate or small dessert (~100 kcal) is budgeted in. Don't skip it then binge later.",
         },
         {
           icon: "🔄",
@@ -5641,7 +5653,7 @@
 
       function formatHeightImperial(cm) {
         const n = Number(cm);
-        if (!Number.isFinite(n) || n <= 0) return "—";
+        if (!Number.isFinite(n) || n <= 0) return "-";
         const totalIn = Math.round(n / 2.54);
         const ft = Math.floor(totalIn / 12);
         const inch = totalIn % 12;
@@ -5948,6 +5960,7 @@
           if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${total}</span>`;
         }
         renderBentoCards();
+        renderHeroInsight();
       }
 
       function bentoSparkline(svgEl, values, rgb) {
@@ -6072,7 +6085,7 @@
             bcProtDelta.className =
               "bento-delta " + (diff >= 0 ? "bento-delta-up" : "bento-delta-dn");
           } else {
-            bcProtDelta.textContent = "—";
+            bcProtDelta.textContent = "";
             bcProtDelta.className = "bento-delta";
           }
         }
@@ -6088,7 +6101,7 @@
         const prevW = weights[weights.length - 2];
         const bcWeightVal = document.getElementById("bento-weight-val");
         const bcWeightDelta = document.getElementById("bento-weight-delta");
-        if (bcWeightVal) bcWeightVal.textContent = latestW != null ? latestW.toFixed(1) : "—";
+        if (bcWeightVal) bcWeightVal.textContent = latestW != null ? latestW.toFixed(1) : "-";
         if (bcWeightDelta) {
           if (latestW != null && prevW != null) {
             const diff = (latestW - prevW).toFixed(1);
@@ -6096,7 +6109,7 @@
             bcWeightDelta.className =
               "bento-delta " + (parseFloat(diff) <= 0 ? "bento-delta-up" : "bento-delta-dn");
           } else {
-            bcWeightDelta.textContent = "—";
+            bcWeightDelta.textContent = "";
             bcWeightDelta.className = "bento-delta";
           }
         }
@@ -6149,6 +6162,102 @@
             return '<span class="bento-dot bento-dot-' + type + '">' + lbl + "</span>";
           }).join("");
         }
+      }
+
+      function renderHeroInsight() {
+        const el = document.getElementById("hero-insight");
+        if (!el) return;
+        const p = getProfile();
+        const today = new Date();
+        const yestKey = toDateKey(
+          new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
+        );
+        const yestProt = trackerDayProtein(yestKey);
+        const goal = p.proteinG || 130;
+
+        // Priority 1: yesterday's protein
+        if (yestProt > 0) {
+          const diff = Math.round(yestProt - goal);
+          if (diff >= 0) {
+            el.textContent =
+              "You nailed your protein goal yesterday (" +
+              Math.round(yestProt) +
+              "g). Keep that energy going today 💪";
+            return;
+          }
+          if (Math.abs(diff) <= 20) {
+            el.textContent =
+              "Yesterday you were just " +
+              Math.abs(diff) +
+              "g short on protein, so close. Today's your chance to hit it.";
+            return;
+          }
+          el.textContent =
+            "Yesterday you got " +
+            Math.round(yestProt) +
+            "g of protein, " +
+            Math.abs(diff) +
+            "g under your goal. Let's make today count.";
+          return;
+        }
+
+        // Priority 2: last week summary
+        if (window.FitnessUI) {
+          const summary = FitnessUI.computeWeeklySummary(state.trackerData, p);
+          if (summary) {
+            const days = summary.proGoalDays;
+            if (days >= 6) {
+              el.textContent =
+                "Last week you hit your protein goal " +
+                days +
+                "/7 days. Outstanding consistency, keep it going!";
+            } else if (days >= 4) {
+              el.textContent =
+                "Last week you hit protein on " +
+                days +
+                "/7 days. Solid week, let's push for one more day this week.";
+            } else if (days > 0) {
+              el.textContent =
+                "Last week you hit protein on " +
+                days +
+                "/7 days. This week, aim to beat that. Even one extra day makes a difference.";
+            } else {
+              el.textContent =
+                "No protein logged last week. This week, start strong. Even one good day builds momentum.";
+            }
+            return;
+          }
+
+          // Priority 3: workout pace this week
+          const { done, total } = FitnessUI.weekWorkoutsCount(
+            state.trackerData,
+            getWorkoutSchedule()
+          );
+          if (total > 0) {
+            const remaining = total - done;
+            if (remaining <= 0) {
+              el.textContent =
+                "You've already completed all your workouts this week. Great discipline!";
+            } else if (done === 0) {
+              el.textContent =
+                "No workouts logged yet this week. You have " +
+                total +
+                " planned. Today's a great day to start.";
+            } else {
+              el.textContent =
+                done +
+                " of " +
+                total +
+                " workouts done this week, " +
+                remaining +
+                " to go. You've got this.";
+            }
+            return;
+          }
+        }
+
+        el.textContent =
+          "Stay consistent today. Every meal and every rep adds up. You've got this.";
       }
 
       function renderHeatmap() {
@@ -6584,7 +6693,7 @@
       }
 
       function formatLeftDisplay(left, unit, hasValue, isMet) {
-        if (!hasValue) return "—";
+        if (!hasValue) return "-";
         if (isMet) return '0<span class="cell-unit">' + unit + "</span>";
         return left + '<span class="cell-unit">' + unit + "</span>";
       }
@@ -6593,7 +6702,7 @@
         if (tier === "met") return "✓";
         if (tier === "almost") return "almost";
         if (tier === "no") return "no";
-        return "—";
+        return "-";
       }
 
       function goalMetClass(tier) {
@@ -6817,9 +6926,9 @@
       <td><input class="burnt-input num" type="number" min="0" placeholder="0" value="${dayData.burnt || ""}" data-date="${dateKey}" data-field="burnt"></td>
       <td><span class="left-cell water num tracker-water-left ${waterLeft === 0 && bottles > 0 ? "done" : ""}">${waterLeftDisplay}</span></td>
       <td><span class="left-cell num tracker-pro-left ${left === 0 && total > 0 ? "done" : ""}">${leftDisplay}</span></td>
-      <td><input class="weight-input num" type="number" min="0" max="999" step="0.1" placeholder="—" value="${dayData.weightKg || ""}" data-date="${dateKey}" data-field="weightKg"></td>
-      <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.carbs || ""}" data-date="${dateKey}" data-field="carbs"></td>
-      <td><input class="macro-input num" type="number" min="0" placeholder="—" value="${dayData.fat || ""}" data-date="${dateKey}" data-field="fat"></td>
+      <td><input class="weight-input num" type="number" min="0" max="999" step="0.1" placeholder="" value="${dayData.weightKg || ""}" data-date="${dateKey}" data-field="weightKg"></td>
+      <td><input class="macro-input num" type="number" min="0" placeholder="" value="${dayData.carbs || ""}" data-date="${dateKey}" data-field="carbs"></td>
+      <td><input class="macro-input num" type="number" min="0" placeholder="" value="${dayData.fat || ""}" data-date="${dateKey}" data-field="fat"></td>
     `;
           rows.appendChild(tr);
         }
@@ -8190,7 +8299,7 @@
                 updateDashboardStats();
                 successEl.textContent = `✓ ${meal.name} logged!`;
               } else {
-                // Not in today's plan — update tracker protein directly
+                // Not in today's plan, update tracker protein directly
                 const todayKey = toDateKey(new Date());
                 if (!state.trackerData[todayKey]) {
                   state.trackerData[todayKey] = {
