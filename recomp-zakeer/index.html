@@ -3919,6 +3919,203 @@
           width: 100%;
         }
       }
+      /* ── Barcode scanner modal ───────────────────────────────────────────── */
+      .barcode-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+      }
+      .barcode-modal[hidden] {
+        display: none;
+      }
+      .barcode-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .barcode-modal-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        padding-top: max(14px, env(safe-area-inset-top));
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+      }
+      .barcode-modal-title {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .barcode-close-btn {
+        background: rgba(255, 255, 255, 0.18);
+        border: none;
+        color: #fff;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+      .barcode-finder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -65%);
+        width: 72%;
+        max-width: 290px;
+        aspect-ratio: 2.4 / 1;
+        border: 2px solid rgba(255, 255, 255, 0.85);
+        border-radius: 10px;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.52);
+        pointer-events: none;
+      }
+      .barcode-finder::before,
+      .barcode-finder::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-color: #4ecdc4;
+        border-style: solid;
+      }
+      .barcode-finder::before {
+        top: -2px;
+        left: -2px;
+        border-width: 3px 0 0 3px;
+        border-radius: 10px 0 0 0;
+      }
+      .barcode-finder::after {
+        bottom: -2px;
+        right: -2px;
+        border-width: 0 3px 3px 0;
+        border-radius: 0 0 10px 0;
+      }
+      .barcode-hint {
+        position: absolute;
+        bottom: 240px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 13px;
+        font-weight: 500;
+        pointer-events: none;
+      }
+      .barcode-unsupported {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        text-align: center;
+        gap: 12px;
+      }
+      .barcode-unsupported-icon {
+        font-size: 48px;
+      }
+      .barcode-unsupported-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .barcode-product {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border-radius: 20px 20px 0 0;
+        padding: 20px 16px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+        box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.6);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .barcode-product[hidden] {
+        display: none;
+      }
+      .barcode-product-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        line-height: 1.3;
+      }
+      .barcode-grams-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .barcode-grams-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+      .barcode-grams-input {
+        width: 74px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 7px 10px;
+        font-size: 15px;
+        font-family: "JetBrains Mono", monospace;
+        font-feature-settings: "zero" 0;
+      }
+      .barcode-grams-input:focus {
+        outline: none;
+        border-color: rgba(78, 205, 196, 0.5);
+      }
+      .barcode-macros {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .barcode-macro-chip {
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 11px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+      }
+      .barcode-macro-chip strong {
+        display: block;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: "JetBrains Mono", monospace;
+        font-feature-settings: "zero" 0;
+        letter-spacing: 0;
+        text-transform: none;
+        line-height: 1.1;
+      }
+      .barcode-scan-again-btn {
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 13px;
+        padding: 8px;
+      }
 
       /* ── Item 4: Weekly summary card ── */
       .setup-banner {
@@ -5940,6 +6137,9 @@
                 </button>
                 <button class="btn-secondary scan-upload-btn" type="button" id="scan-gallery-btn">
                   🖼️ Gallery
+                </button>
+                <button class="btn-secondary scan-upload-btn" type="button" id="barcode-scan-btn">
+                  🏷️ Barcode
                 </button>
               </div>
             </div>
@@ -9864,6 +10064,301 @@
           .forEach((el) =>
             observer.observe(el, { childList: true, characterData: true, subtree: true })
           );
+      })();
+    </script>
+
+    <!-- Barcode scanner modal -->
+    <div class="barcode-modal" id="barcode-modal" hidden>
+      <video class="barcode-video" id="barcode-video" autoplay playsinline muted></video>
+      <div class="barcode-finder" id="barcode-finder"></div>
+      <div class="barcode-modal-header">
+        <span class="barcode-modal-title">Scan Barcode</span>
+        <button class="barcode-close-btn" id="barcode-close-btn" type="button">✕</button>
+      </div>
+      <div class="barcode-hint" id="barcode-hint">Point at a barcode on the packaging</div>
+      <div class="barcode-product" id="barcode-product" hidden>
+        <div class="barcode-product-name" id="barcode-product-name"></div>
+        <div class="barcode-grams-row">
+          <span class="barcode-grams-label">Amount:</span>
+          <input
+            class="barcode-grams-input"
+            id="barcode-grams"
+            type="number"
+            value="100"
+            min="1"
+            max="2000"
+          />
+          <span class="barcode-grams-label">g</span>
+        </div>
+        <div class="barcode-macros" id="barcode-macros"></div>
+        <div class="scan-log-row">
+          <select class="scan-meal-select" id="barcode-meal-select">
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="snack">Snack</option>
+            <option value="shake">Post-WO Shake</option>
+            <option value="dinner">Dinner</option>
+          </select>
+          <button class="btn scan-log-btn" id="barcode-log-btn" type="button">+ Log</button>
+        </div>
+        <div class="scan-log-success" id="barcode-log-success" hidden></div>
+        <button
+          class="btn-secondary barcode-scan-again-btn"
+          id="barcode-scan-again-btn"
+          type="button"
+        >
+          Scan another
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ── Barcode Scanner ──────────────────────────────────────────────────────
+      (function () {
+        const modal = document.getElementById("barcode-modal");
+        const video = document.getElementById("barcode-video");
+        const finder = document.getElementById("barcode-finder");
+        const closeBtn = document.getElementById("barcode-close-btn");
+        const hint = document.getElementById("barcode-hint");
+        const productEl = document.getElementById("barcode-product");
+        const productNameEl = document.getElementById("barcode-product-name");
+        const gramsInput = document.getElementById("barcode-grams");
+        const macrosEl = document.getElementById("barcode-macros");
+        const logBtn = document.getElementById("barcode-log-btn");
+        const logSuccess = document.getElementById("barcode-log-success");
+        const openBtn = document.getElementById("barcode-scan-btn");
+        const scanAgainBtn = document.getElementById("barcode-scan-again-btn");
+        if (!openBtn) return;
+
+        let stream = null;
+        let scanning = false;
+        let per100g = null;
+
+        function stopCamera() {
+          scanning = false;
+          if (stream) {
+            stream.getTracks().forEach((t) => t.stop());
+            stream = null;
+          }
+          video.srcObject = null;
+        }
+
+        function closeModal() {
+          stopCamera();
+          modal.hidden = true;
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          hint.textContent = "Point at a barcode on the packaging";
+          per100g = null;
+        }
+
+        closeBtn.addEventListener("click", closeModal);
+        scanAgainBtn.addEventListener("click", () => {
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          per100g = null;
+          hint.textContent = "Point at a barcode on the packaging";
+          startCamera();
+        });
+
+        openBtn.addEventListener("click", () => {
+          if (!("BarcodeDetector" in window)) {
+            modal.hidden = false;
+            video.hidden = true;
+            finder.hidden = true;
+            hint.hidden = true;
+            const div = document.createElement("div");
+            div.className = "barcode-unsupported";
+            div.innerHTML =
+              '<div class="barcode-unsupported-icon">📵</div>' +
+              '<div class="barcode-unsupported-text">Barcode scanning requires Chrome on Android or Safari 17+.<br><br>Try updating your browser.</div>' +
+              '<button class="btn" style="margin-top:16px" type="button" id="barcode-unsup-close">Close</button>';
+            modal.appendChild(div);
+            document.getElementById("barcode-unsup-close").addEventListener("click", () => {
+              div.remove();
+              video.hidden = false;
+              finder.hidden = false;
+              hint.hidden = false;
+              closeModal();
+            });
+            return;
+          }
+          modal.hidden = false;
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          hint.textContent = "Point at a barcode on the packaging";
+          startCamera();
+        });
+
+        async function startCamera() {
+          stopCamera();
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+            });
+            video.srcObject = stream;
+            await video.play();
+            startScanning();
+          } catch (e) {
+            closeModal();
+            alert("Camera access denied: " + (e.message || e));
+          }
+        }
+
+        async function startScanning() {
+          const formats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"];
+          const detector = new BarcodeDetector({ formats });
+          scanning = true;
+
+          async function tick() {
+            if (!scanning) return;
+            if (video.readyState >= 2) {
+              try {
+                const found = await detector.detect(video);
+                if (found.length > 0) {
+                  scanning = false;
+                  hint.textContent = "Found! Looking up product...";
+                  await lookupBarcode(found[0].rawValue);
+                  return;
+                }
+              } catch (_) {}
+            }
+            if (scanning) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }
+
+        async function lookupBarcode(code) {
+          const controller = new AbortController();
+          const tid = setTimeout(() => controller.abort(), 8000);
+          try {
+            const res = await fetch(
+              "https://world.openfoodfacts.net/api/v2/product/" +
+                code +
+                "?fields=product_name,brands,nutriments,serving_quantity",
+              { signal: controller.signal }
+            );
+            clearTimeout(tid);
+            const data = await res.json();
+            if (data.status !== 1 || !data.product) {
+              hint.textContent = "Product not found. Try again.";
+              setTimeout(resumeScanning, 2500);
+              return;
+            }
+            showProduct(data.product);
+          } catch (e) {
+            clearTimeout(tid);
+            if (e.name === "AbortError") {
+              hint.textContent = "Lookup timed out. Check connection.";
+            } else {
+              hint.textContent = "Lookup failed. Try again.";
+            }
+            setTimeout(resumeScanning, 2500);
+          }
+        }
+
+        function resumeScanning() {
+          hint.textContent = "Point at a barcode on the packaging";
+          scanning = true;
+          startScanning();
+        }
+
+        function showProduct(product) {
+          const n = product.nutriments || {};
+          const calPer100 =
+            n["energy-kcal_100g"] != null
+              ? n["energy-kcal_100g"]
+              : n["energy_100g"] != null
+                ? Math.round(n["energy_100g"] / 4.184)
+                : 0;
+          per100g = {
+            cal: calPer100,
+            pro: n["proteins_100g"] || 0,
+            carbs: n["carbohydrates_100g"] || 0,
+            fat: n["fat_100g"] || 0,
+          };
+          const name = product.product_name || "Unknown product";
+          const brand = product.brands ? " · " + product.brands.split(",")[0].trim() : "";
+          productNameEl.textContent = name + brand;
+          const servingG = parseFloat(product.serving_quantity) || 100;
+          gramsInput.value = Math.round(servingG);
+          updateMacros();
+          stopCamera();
+          productEl.hidden = false;
+          hint.textContent = "Product found!";
+        }
+
+        function updateMacros() {
+          if (!per100g) return;
+          const g = parseFloat(gramsInput.value) || 100;
+          const f = g / 100;
+          macrosEl.innerHTML =
+            chip(Math.round(per100g.cal * f), "kcal") +
+            chip(Math.round(per100g.pro * f), "g protein") +
+            chip(Math.round(per100g.carbs * f), "g carbs") +
+            chip(Math.round(per100g.fat * f), "g fat");
+        }
+
+        function chip(val, unit) {
+          return '<div class="barcode-macro-chip"><strong>' + val + "</strong>" + unit + "</div>";
+        }
+
+        gramsInput.addEventListener("input", updateMacros);
+
+        logBtn.addEventListener("click", () => {
+          if (!per100g) return;
+          const g = parseFloat(gramsInput.value) || 100;
+          const f = g / 100;
+          const meal = document.getElementById("barcode-meal-select").value;
+          const todayKey = toDateKey(new Date());
+          if (!state.trackerData[todayKey]) {
+            state.trackerData[todayKey] = {
+              isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
+              breakfast: "",
+              lunch: "",
+              snack: "",
+              shake: "",
+              dinner: "",
+              creatine: false,
+              water: "",
+              burnt: "",
+              weightKg: "",
+              carbs: "",
+              fat: "",
+            };
+          }
+          const pro = Math.round(per100g.pro * f);
+          const cal = Math.round(per100g.cal * f);
+          const carbs = Math.round(per100g.carbs * f);
+          const fat = Math.round(per100g.fat * f);
+          const existPro = parseFloat(state.trackerData[todayKey][meal]) || 0;
+          state.trackerData[todayKey][meal] = String(Math.round(existPro + pro));
+          const calField = "cal" + meal.charAt(0).toUpperCase() + meal.slice(1);
+          const existCal = parseFloat(state.trackerData[todayKey][calField]) || 0;
+          state.trackerData[todayKey][calField] = String(Math.round(existCal + cal));
+          const existCarb = parseFloat(state.trackerData[todayKey].carbs) || 0;
+          const existFat = parseFloat(state.trackerData[todayKey].fat) || 0;
+          state.trackerData[todayKey].carbs = String(Math.round(existCarb + carbs));
+          state.trackerData[todayKey].fat = String(Math.round(existFat + fat));
+          saveState();
+          refreshTrackerRow(todayKey);
+          updateTrackerSummary();
+          updateDashboardStats();
+          renderBentoCards();
+          const mealLabel =
+            {
+              breakfast: "Breakfast",
+              lunch: "Lunch",
+              snack: "Snack",
+              shake: "Post-WO",
+              dinner: "Dinner",
+            }[meal] || meal;
+          logSuccess.textContent = "Logged " + Math.round(g) + "g to " + mealLabel + "!";
+          logSuccess.hidden = false;
+          setTimeout(() => {
+            logSuccess.hidden = true;
+          }, 3000);
+        });
       })();
     </script>
   </body>
