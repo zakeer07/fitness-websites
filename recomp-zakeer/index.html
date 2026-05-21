@@ -4134,6 +4134,47 @@
         font-size: 13px;
         padding: 8px;
       }
+      /* Button styles scoped to the modal (no global .btn definition) */
+      .barcode-modal .btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: inherit;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        background: var(--accent);
+        color: #fff;
+        letter-spacing: 0.02em;
+      }
+      .barcode-modal .btn-secondary {
+        display: block;
+        width: 100%;
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: inherit;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text-primary);
+      }
+      /* When product is found: hide scanner area, stretch product card to fill */
+      .barcode-modal.product-shown .barcode-video,
+      .barcode-modal.product-shown .barcode-finder,
+      .barcode-modal.product-shown .barcode-photo-btn {
+        display: none;
+      }
+      .barcode-modal.product-shown .barcode-product:not([hidden]) {
+        top: max(56px, calc(env(safe-area-inset-top) + 48px));
+        border-radius: 0;
+        overflow-y: auto;
+        box-shadow: none;
+        border-top: 1px solid var(--border);
+      }
       .barcode-photo-btn {
         position: absolute;
         bottom: 220px;
@@ -10197,6 +10238,7 @@
         }
 
         async function startScanner() {
+          modal.classList.remove("product-shown");
           await stopScanner();
           hint.textContent = "Starting camera...";
           try {
@@ -10226,6 +10268,7 @@
         function closeModal() {
           stopScanner();
           modal.hidden = true;
+          modal.classList.remove("product-shown");
           productEl.hidden = true;
           logSuccess.hidden = true;
           hint.textContent = "Point at a barcode on the packaging";
@@ -10321,6 +10364,7 @@
           gramsInput.value = Math.round(servingG);
           updateMacros();
           productEl.hidden = false;
+          modal.classList.add("product-shown");
           hint.textContent = "Product found!";
         }
 
