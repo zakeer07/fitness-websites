@@ -613,7 +613,9 @@
         color: var(--text-secondary);
         font-style: italic;
         line-height: 1.5;
-        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
       .hero-insight:empty {
         display: none;
@@ -6174,61 +6176,65 @@
         );
         const yestProt = trackerDayProtein(yestKey);
         const goal = p.proteinG || 130;
+        const lines = [];
 
-        // Priority 1: yesterday's protein
+        // Yesterday's protein
         if (yestProt > 0) {
           const diff = Math.round(yestProt - goal);
           if (diff >= 0) {
-            el.textContent =
+            lines.push(
               "You nailed your protein goal yesterday (" +
-              Math.round(yestProt) +
-              "g). Keep that energy going today 💪";
-            return;
-          }
-          if (Math.abs(diff) <= 20) {
-            el.textContent =
+                Math.round(yestProt) +
+                "g). Keep that energy going today 💪"
+            );
+          } else if (Math.abs(diff) <= 20) {
+            lines.push(
               "Yesterday you were just " +
-              Math.abs(diff) +
-              "g short on protein, so close. Today's your chance to hit it.";
-            return;
+                Math.abs(diff) +
+                "g short on protein, so close. Today's your chance to hit it."
+            );
+          } else {
+            lines.push(
+              "Yesterday you got " +
+                Math.round(yestProt) +
+                "g of protein, " +
+                Math.abs(diff) +
+                "g under your goal. Let's make today count."
+            );
           }
-          el.textContent =
-            "Yesterday you got " +
-            Math.round(yestProt) +
-            "g of protein, " +
-            Math.abs(diff) +
-            "g under your goal. Let's make today count.";
-          return;
         }
 
-        // Priority 2: last week summary
         if (window.FitnessUI) {
+          // Last week summary
           const summary = FitnessUI.computeWeeklySummary(state.trackerData, p);
           if (summary) {
             const days = summary.proGoalDays;
             if (days >= 6) {
-              el.textContent =
+              lines.push(
                 "Last week you hit your protein goal " +
-                days +
-                "/7 days. Outstanding consistency, keep it going!";
+                  days +
+                  "/7 days. Outstanding consistency, keep it going!"
+              );
             } else if (days >= 4) {
-              el.textContent =
+              lines.push(
                 "Last week you hit protein on " +
-                days +
-                "/7 days. Solid week, let's push for one more day this week.";
+                  days +
+                  "/7 days. Solid week, let's push for one more day this week."
+              );
             } else if (days > 0) {
-              el.textContent =
+              lines.push(
                 "Last week you hit protein on " +
-                days +
-                "/7 days. This week, aim to beat that. Even one extra day makes a difference.";
+                  days +
+                  "/7 days. This week, aim to beat that. Even one extra day makes a difference."
+              );
             } else {
-              el.textContent =
-                "No protein logged last week. This week, start strong. Even one good day builds momentum.";
+              lines.push(
+                "No protein logged last week. This week, start strong. Even one good day builds momentum."
+              );
             }
-            return;
           }
 
-          // Priority 3: workout pace this week
+          // Workout pace this week
           const { done, total } = FitnessUI.weekWorkoutsCount(
             state.trackerData,
             getWorkoutSchedule()
@@ -6236,28 +6242,31 @@
           if (total > 0) {
             const remaining = total - done;
             if (remaining <= 0) {
-              el.textContent =
-                "You've already completed all your workouts this week. Great discipline!";
+              lines.push("You've already completed all your workouts this week. Great discipline!");
             } else if (done === 0) {
-              el.textContent =
+              lines.push(
                 "No workouts logged yet this week. You have " +
-                total +
-                " planned. Today's a great day to start.";
+                  total +
+                  " planned. Today's a great day to start."
+              );
             } else {
-              el.textContent =
+              lines.push(
                 done +
-                " of " +
-                total +
-                " workouts done this week, " +
-                remaining +
-                " to go. You've got this.";
+                  " of " +
+                  total +
+                  " workouts done this week, " +
+                  remaining +
+                  " to go. You've got this."
+              );
             }
-            return;
           }
         }
 
-        el.textContent =
-          "Stay consistent today. Every meal and every rep adds up. You've got this.";
+        if (lines.length === 0) {
+          lines.push("Stay consistent today. Every meal and every rep adds up. You've got this.");
+        }
+
+        el.innerHTML = lines.map((l) => "<span>" + l + "</span>").join("");
       }
 
       function renderHeatmap() {
