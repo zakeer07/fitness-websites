@@ -44,7 +44,6 @@
   function loginUrl() {
     const path = location.pathname;
     if (path.includes("/recomp-zakeer")) return "../";
-    if (path.includes("/recomp-aadila")) return "../";
     if (path.includes("/dev/")) return "../../";
     return "./";
   }
