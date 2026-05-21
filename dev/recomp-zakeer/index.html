@@ -4540,7 +4540,11 @@
           <div class="card card-accent" style="margin-bottom: 24px">
             <div class="card-title"><span class="card-title-dot"></span>Today's Schedule</div>
             <div class="meal-list" id="today-meals"></div>
-            <div class="edit-hint">Tap a meal to add kcal &amp; protein to today's totals</div>
+            <div class="tracker-guide" style="margin-top: 16px; margin-bottom: 0">
+              <strong>How to use:</strong> Tap a meal when you eat it. The calories and protein are
+              added to your dashboard cards and tracker automatically. If you scanned the food
+              instead, that scan already logged it, so no need to tap here too.
+            </div>
           </div>
 
           <div class="charts-grid">
@@ -5813,6 +5817,15 @@
             <div class="scan-log-success" id="scan-log-success" hidden>
               ✅ Logged! Check your Tracker.
             </div>
+            <div class="tracker-guide" style="margin-top: 16px">
+              <strong>How logging works:</strong><br />
+              <strong>Scan Food (this page)</strong> -- take a photo, pick a portion size, choose a
+              meal, tap Log. The calories and protein are added to your dashboard and tracker.<br />
+              <strong>Today's Schedule (Home tab)</strong> -- if you follow a meal plan, tap each
+              meal as you eat it and it logs automatically.<br />
+              Use one or the other for each meal -- not both -- to avoid counting the same food
+              twice.
+            </div>
           </div>
         </section>
 
@@ -6497,7 +6510,47 @@
       <div class="meal-check"></div>
     `;
           el.addEventListener("click", () => {
-            state.mealsEaten[planItem.slot] = !state.mealsEaten[planItem.slot];
+            const nowEaten = !state.mealsEaten[planItem.slot];
+            state.mealsEaten[planItem.slot] = nowEaten;
+
+            // Sync planned nutrition into trackerData so bento + tracker stay in sync
+            const trackerSlot = {
+              breakfast: "breakfast",
+              lunch: "lunch",
+              snack: "snack",
+              shake: "shake",
+              dinner: "dinner",
+            }[planItem.slot];
+            if (trackerSlot) {
+              const todayKey = toDateKey(new Date());
+              if (!state.trackerData[todayKey]) {
+                state.trackerData[todayKey] = {
+                  isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
+                  breakfast: "",
+                  lunch: "",
+                  snack: "",
+                  shake: "",
+                  dinner: "",
+                  creatine: false,
+                  water: "",
+                  burnt: "",
+                  weightKg: "",
+                  carbs: "",
+                  fat: "",
+                };
+              }
+              const calField = "cal" + trackerSlot.charAt(0).toUpperCase() + trackerSlot.slice(1);
+              if (nowEaten) {
+                state.trackerData[todayKey][trackerSlot] = String(Math.round(meal.pro));
+                state.trackerData[todayKey][calField] = String(Math.round(meal.cal));
+              } else {
+                state.trackerData[todayKey][trackerSlot] = "";
+                state.trackerData[todayKey][calField] = "";
+              }
+              refreshTrackerRow(todayKey);
+              updateTrackerSummary();
+            }
+
             saveState();
             renderTodayMeals();
             updateDashboardStats();
