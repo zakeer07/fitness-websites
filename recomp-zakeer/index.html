@@ -4158,6 +4158,11 @@
                     <label for="profile-creatine-g">Creatine (g)</label>
                     <input type="number" id="profile-creatine-g" min="0" max="20" step="0.5" />
                   </div>
+                  <div class="profile-field">
+                    <label for="profile-wo-days">Workout days goal / week</label>
+                    <input type="number" id="profile-wo-days" min="1" max="7" step="1" />
+                    <div class="field-hint">How many workouts you aim to complete each week</div>
+                  </div>
                 </div>
                 <div class="profile-group profile-group-wide">
                   <div class="profile-group-title">🎨 Theme</div>
@@ -6070,6 +6075,7 @@
         theme: "recomp",
         colorScheme: "dark",
         profileConfigured: false,
+        workoutDaysGoal: 4,
       };
       const defaultState = {
         isWorkoutDay: true,
@@ -6134,6 +6140,7 @@
           "waterBottles",
           "waterBottleMl",
           "creatineG",
+          "workoutDaysGoal",
         ];
         for (const k of numericKeys) {
           const n = Number(merged[k]);
@@ -6551,12 +6558,10 @@
           if (streakFill) streakFill.style.width = Math.min((streak / 7) * 100, 100) + "%";
 
           // Dynamic workouts KPI (this week)
-          const { done, total } = FitnessUI.weekWorkoutsCount(
-            state.trackerData,
-            getWorkoutSchedule()
-          );
+          const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
+          const woGoal = getProfile().workoutDaysGoal;
           const woEl = document.getElementById("kpi-workouts");
-          if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${total}</span>`;
+          if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${woGoal}</span>`;
         }
         renderBentoCards();
         renderHeroInsight();
@@ -6721,11 +6726,11 @@
         bentoSparkline(document.getElementById("bento-weight-spark"), weights, "78,205,196");
 
         // Workouts card
-        let done = 0,
-          total = 5;
+        let done = 0;
         if (window.FitnessUI) {
-          ({ done, total } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule()));
+          ({ done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule()));
         }
+        const woGoal = p.workoutDaysGoal;
         let lastWkDone = 0;
         for (let i = 7; i <= 13; i++) {
           const d = new Date();
@@ -6736,7 +6741,7 @@
         const bcWoTotal = document.getElementById("bento-wo-total");
         const bcWoDelta = document.getElementById("bento-wo-delta");
         if (bcWoCount) bcWoCount.textContent = done;
-        if (bcWoTotal) bcWoTotal.textContent = total;
+        if (bcWoTotal) bcWoTotal.textContent = woGoal;
         if (bcWoDelta) {
           const diff = done - lastWkDone;
           bcWoDelta.textContent = (diff >= 0 ? "+" : "") + diff + " vs last wk";
@@ -6838,33 +6843,29 @@
           }
 
           // Workout pace this week
-          const { done, total } = FitnessUI.weekWorkoutsCount(
-            state.trackerData,
-            getWorkoutSchedule()
-          );
-          if (total > 0) {
-            const remaining = total - done;
-            if (remaining <= 0) {
-              lines.push(
-                "🏅 You've already completed all your workouts this week. Great discipline!"
-              );
-            } else if (done === 0) {
-              lines.push(
-                "🏋️ No workouts logged yet this week. You have " +
-                  total +
-                  " planned. Today's a great day to start."
-              );
-            } else {
-              lines.push(
-                "🏋️ " +
-                  done +
-                  " of " +
-                  total +
-                  " workouts done this week, " +
-                  remaining +
-                  " to go. You've got this."
-              );
-            }
+          const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
+          const woTarget = p.workoutDaysGoal;
+          const remaining = woTarget - done;
+          if (remaining <= 0) {
+            lines.push(
+              "🏅 You've already completed all your workouts this week. Great discipline!"
+            );
+          } else if (done === 0) {
+            lines.push(
+              "🏋️ No workouts logged yet this week. You have " +
+                woTarget +
+                " planned. Today's a great day to start."
+            );
+          } else {
+            lines.push(
+              "🏋️ " +
+                done +
+                " of " +
+                woTarget +
+                " workouts done this week, " +
+                remaining +
+                " to go. You've got this."
+            );
           }
         }
 
@@ -7127,6 +7128,7 @@
         document.getElementById("profile-water-bottles").value = p.waterBottles;
         document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
         document.getElementById("profile-creatine-g").value = p.creatineG;
+        document.getElementById("profile-wo-days").value = p.workoutDaysGoal;
         const ibsEl = document.getElementById("profile-ibs-enabled");
         if (ibsEl) ibsEl.checked = p.ibsTabEnabled === true;
         const themeEl = document.querySelector(
@@ -7230,6 +7232,7 @@
           waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
           waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
           creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
+          workoutDaysGoal: readInt("profile-wo-days", DEFAULT_PROFILE.workoutDaysGoal),
           ibsTabEnabled: (() => {
             const el = document.getElementById("profile-ibs-enabled");
             return el ? el.checked : DEFAULT_PROFILE.ibsTabEnabled;
@@ -7595,6 +7598,7 @@
             state.trackerData[dateKey][field] = !state.trackerData[dateKey][field];
             saveState();
             renderTracker();
+            updateDashboardStats();
           });
         });
       }
