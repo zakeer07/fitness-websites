@@ -4030,75 +4030,6 @@
                 <div class="toggle-switch"></div>
               </div>
             </div>
-
-            <div class="stats-stack">
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Calories eaten</div>
-                  <div class="stat-bar-value num">
-                    <span id="cal-current">0</span><span class="kpi-unit"> / </span
-                    ><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
-                  </div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="cal-fill"
-                    style="width: 0%; background: var(--info)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">💪 Protein (grams)</div>
-                  <div class="stat-bar-value num">
-                    <span id="prot-current">0</span><span class="kpi-unit">g</span> /
-                    <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
-                  </div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="prot-fill"
-                    style="width: 0%; background: var(--accent)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🍽️ Meals Logged</div>
-                  <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="meals-fill"
-                    style="width: 0%; background: var(--success)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Burnt today</div>
-                  <div class="stat-bar-value num">
-                    <span id="hero-burnt">0</span><span class="kpi-unit"> kcal</span>
-                  </div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Streak</div>
-                  <div class="stat-bar-value num"><span id="streak-days">0</span> Days</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="streak-fill"
-                    style="width: 0%; background: var(--warning)"
-                  ></div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div class="bento-grid">
@@ -4109,7 +4040,7 @@
                 <span class="bento-delta" id="bento-cal-delta">today</span>
               </div>
               <div class="bento-num">
-                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal</span>
+                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal eaten</span>
               </div>
               <div class="bento-goal-row">of <span id="kpi-cal">2000</span> kcal goal</div>
               <div class="bento-bar-track">
@@ -5989,18 +5920,7 @@
         });
 
         const target = getCalTarget();
-        document.getElementById("cal-current").textContent = cal;
-        document.getElementById("cal-target").textContent = target;
-        document.getElementById("prot-current").textContent = pro;
-        document.getElementById("meals-logged").textContent = mealsLogged;
-
-        document.getElementById("cal-fill").style.width = Math.min((cal / target) * 100, 100) + "%";
-
         const p = getProfile();
-        document.getElementById("prot-goal-label").textContent = p.proteinG;
-        document.getElementById("prot-fill").style.width =
-          Math.min((pro / p.proteinG) * 100, 100) + "%";
-        document.getElementById("meals-fill").style.width = (mealsLogged / 5) * 100 + "%";
 
         renderCharts();
 
@@ -6096,7 +6016,16 @@
         const p = getProfile();
 
         // Calories card
-        const calEaten = parseInt(document.getElementById("cal-current")?.textContent || "0") || 0;
+        let calEaten = 0,
+          _pro = 0;
+        getTodayPlan().forEach((plan) => {
+          if (state.mealsEaten[plan.slot]) {
+            const meal = getMeal(plan.mealId);
+            if (!meal) return;
+            calEaten += meal.cal;
+            _pro += meal.pro;
+          }
+        });
         const calGoal = getCalTarget();
         const bcCalEaten = document.getElementById("bento-cal-eaten");
         const bcCalBar = document.getElementById("bento-cal-bar");
@@ -6110,12 +6039,10 @@
         const todayBurnt = parseInt(state.trackerData[todayKey2]?.burnt || "0", 10) || 0;
         const netCal = calEaten - todayBurnt;
         const netRow = document.getElementById("bento-net-row");
-        if (netRow && todayBurnt > 0) {
-          netRow.textContent = "Net " + (netCal >= 0 ? "+" : "") + netCal + " kcal";
+        if (netRow) {
+          netRow.textContent =
+            "🔥 " + todayBurnt + " kcal burnt · Net " + (netCal >= 0 ? "+" : "") + netCal + " kcal";
           netRow.className = "bento-net-row " + (netCal <= 0 ? "net-deficit" : "net-surplus");
-        } else if (netRow) {
-          netRow.textContent = "";
-          netRow.className = "bento-net-row";
         }
 
         // Protein card
