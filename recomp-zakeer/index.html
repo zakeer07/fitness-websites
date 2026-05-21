@@ -1175,7 +1175,30 @@
         border-color: rgba(0, 0, 0, 0.12);
       }
       .meas-save-btn {
-        margin-top: 2px;
+        width: 100%;
+        margin-top: 6px;
+        padding: 11px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        font-family: inherit;
+        letter-spacing: 0.03em;
+        border: 1px solid rgba(78, 205, 196, 0.3);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        background: rgba(78, 205, 196, 0.1);
+        color: var(--accent-secondary);
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .meas-save-btn:hover {
+        background: rgba(78, 205, 196, 0.18);
+        border-color: rgba(78, 205, 196, 0.5);
+      }
+      .meas-save-btn.saved {
+        background: rgba(78, 205, 196, 0.18);
+        border-color: rgba(78, 205, 196, 0.5);
+        color: var(--accent-secondary);
       }
       .meas-chart-wrap {
         margin-top: 14px;
@@ -7730,9 +7753,11 @@
           if (arms > 0) state.trackerData[key].armsCm = String(arms);
           saveState();
           renderMeasChart();
-          saveBtn.textContent = "Saved!";
+          saveBtn.textContent = "✓ Saved!";
+          saveBtn.classList.add("saved");
           setTimeout(() => {
             saveBtn.textContent = "Save today's measurements";
+            saveBtn.classList.remove("saved");
           }, 2000);
         });
         renderMeasChart();
