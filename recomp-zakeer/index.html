@@ -59,6 +59,24 @@
       [data-theme="bloom"] body::after {
         background: radial-gradient(circle, rgba(206, 147, 216, 0.22) 0%, transparent 68%);
       }
+      [data-color-scheme="light"] {
+        --bg-primary: #f4f6fb;
+        --bg-secondary: #ebeef7;
+        --bg-card: rgba(255, 255, 255, 0.9);
+        --bg-card-solid: #ffffff;
+        --bg-elevated: rgba(248, 250, 255, 0.98);
+        --text-primary: #111827;
+        --text-secondary: #4b5568;
+        --text-muted: #9ca3af;
+        --border: rgba(0, 0, 0, 0.08);
+        --border-strong: rgba(0, 0, 0, 0.15);
+        --glass-highlight: rgba(0, 0, 0, 0.04);
+        --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.07);
+      }
+      [data-color-scheme="light"] body::before,
+      [data-color-scheme="light"] body::after {
+        opacity: 0.08;
+      }
       * {
         margin: 0;
         padding: 0;
@@ -3621,6 +3639,27 @@
                   </label>
                 </div>
                 <div class="profile-group profile-group-wide">
+                  <div class="profile-group-title">Appearance</div>
+                  <label class="profile-toggle" for="profile-color-scheme-dark">
+                    <input
+                      type="radio"
+                      name="profile-color-scheme"
+                      id="profile-color-scheme-dark"
+                      value="dark"
+                    />
+                    <span>Dark mode</span>
+                  </label>
+                  <label class="profile-toggle" for="profile-color-scheme-light">
+                    <input
+                      type="radio"
+                      name="profile-color-scheme"
+                      id="profile-color-scheme-light"
+                      value="light"
+                    />
+                    <span>Light mode</span>
+                  </label>
+                </div>
+                <div class="profile-group profile-group-wide">
                   <div class="profile-group-title">Features</div>
                   <label class="profile-toggle" for="profile-ibs-enabled">
                     <input type="checkbox" id="profile-ibs-enabled" />
@@ -5263,6 +5302,7 @@
         creatineG: 5,
         ibsTabEnabled: false,
         theme: "recomp",
+        colorScheme: "dark",
         profileConfigured: false,
       };
       const defaultState = {
@@ -5344,6 +5384,9 @@
         }
         if (merged.theme !== "recomp" && merged.theme !== "bloom") {
           merged.theme = DEFAULT_PROFILE.theme;
+        }
+        if (merged.colorScheme !== "dark" && merged.colorScheme !== "light") {
+          merged.colorScheme = DEFAULT_PROFILE.colorScheme;
         }
         state.profile = merged;
         saveState();
@@ -5841,9 +5884,13 @@
         });
       });
 
-      function applyTheme(theme) {
+      function applyTheme(theme, colorScheme) {
         const t = theme === "bloom" ? "bloom" : "recomp";
         document.documentElement.dataset.theme = t;
+        const cs = colorScheme === "light" ? "light" : "dark";
+        document.documentElement.dataset.colorScheme = cs;
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.content = cs === "light" ? "#f4f6fb" : "#06080f";
         const isBloom = t === "bloom";
         const logoMark = document.querySelector(".logo-mark");
         if (logoMark) logoMark.textContent = isBloom ? "B" : "R";
@@ -5872,6 +5919,10 @@
           `input[name="profile-theme"][value="${p.theme || "recomp"}"]`
         );
         if (themeEl) themeEl.checked = true;
+        const csEl = document.querySelector(
+          `input[name="profile-color-scheme"][value="${p.colorScheme || "dark"}"]`
+        );
+        if (csEl) csEl.checked = true;
       }
 
       function applyProfileToUI() {
@@ -5906,7 +5957,7 @@
         if (mealsMeta) mealsMeta.innerHTML = `<strong>${p.proteinG}g</strong> protein target`;
         updateMealsBanner();
         applyIbsTabVisibility();
-        applyTheme(p.theme);
+        applyTheme(p.theme, p.colorScheme);
         renderExamplePlan();
       }
 
@@ -5972,6 +6023,10 @@
           theme: (() => {
             const el = document.querySelector('input[name="profile-theme"]:checked');
             return el ? el.value : DEFAULT_PROFILE.theme;
+          })(),
+          colorScheme: (() => {
+            const el = document.querySelector('input[name="profile-color-scheme"]:checked');
+            return el ? el.value : DEFAULT_PROFILE.colorScheme;
           })(),
           profileConfigured: true,
         };
@@ -7497,7 +7552,8 @@
         const navRect = nav.getBoundingClientRect();
         const rect = active.getBoundingClientRect();
         indicator.style.width = rect.width + "px";
-        indicator.style.transform = "translateX(" + (rect.left - navRect.left) + "px)";
+        indicator.style.transform =
+          "translateX(" + (rect.left - navRect.left + nav.scrollLeft) + "px)";
       }
 
       document.querySelectorAll(".nav-tab").forEach((tab) => {
@@ -7514,6 +7570,7 @@
         });
       });
       window.addEventListener("resize", updateNavIndicator);
+      document.querySelector(".nav-tabs")?.addEventListener("scroll", updateNavIndicator);
 
       // Example day guide tab switching
       document.querySelectorAll(".ep-cat-btn").forEach((btn) => {
