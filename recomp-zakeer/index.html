@@ -362,7 +362,7 @@
         width: min(420px, calc(100vw - 32px));
         max-height: min(85vh, 720px);
         overflow-y: auto;
-        background: var(--bg-card);
+        background: var(--bg-card-solid);
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 16px 18px 18px;
@@ -1059,6 +1059,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 16px;
         background: var(--bg-card);
         backdrop-filter: blur(16px);
         border: 1px solid var(--border);
@@ -4012,19 +4013,6 @@
             </div>
           </div>
 
-          <div class="tracking-legend">
-            <div class="legend-item cal">
-              <span class="metric-tag">Calories · kcal</span>
-              <strong>Today dashboard</strong>
-              Tap meals below to add up calories & protein automatically.
-            </div>
-            <div class="legend-item pro">
-              <span class="metric-tag">Protein · grams</span>
-              <strong>Tracker tab</strong>
-              Type protein (g) per meal slot in the 30-day log.
-            </div>
-          </div>
-
           <div class="hero">
             <div class="hero-top">
               <div>
@@ -6183,19 +6171,19 @@
           const diff = Math.round(yestProt - goal);
           if (diff >= 0) {
             lines.push(
-              "You nailed your protein goal yesterday (" +
+              "🏆 You nailed your protein goal yesterday (" +
                 Math.round(yestProt) +
-                "g). Keep that energy going today 💪"
+                "g). Keep that energy going today!"
             );
           } else if (Math.abs(diff) <= 20) {
             lines.push(
-              "Yesterday you were just " +
+              "💪 Yesterday you were just " +
                 Math.abs(diff) +
                 "g short on protein, so close. Today's your chance to hit it."
             );
           } else {
             lines.push(
-              "Yesterday you got " +
+              "💪 Yesterday you got " +
                 Math.round(yestProt) +
                 "g of protein, " +
                 Math.abs(diff) +
@@ -6211,25 +6199,25 @@
             const days = summary.proGoalDays;
             if (days >= 6) {
               lines.push(
-                "Last week you hit your protein goal " +
+                "🔥 Last week you hit your protein goal " +
                   days +
                   "/7 days. Outstanding consistency, keep it going!"
               );
             } else if (days >= 4) {
               lines.push(
-                "Last week you hit protein on " +
+                "📈 Last week you hit protein on " +
                   days +
                   "/7 days. Solid week, let's push for one more day this week."
               );
             } else if (days > 0) {
               lines.push(
-                "Last week you hit protein on " +
+                "📈 Last week you hit protein on " +
                   days +
                   "/7 days. This week, aim to beat that. Even one extra day makes a difference."
               );
             } else {
               lines.push(
-                "No protein logged last week. This week, start strong. Even one good day builds momentum."
+                "📋 No protein logged last week. This week, start strong. Even one good day builds momentum."
               );
             }
           }
@@ -6242,16 +6230,19 @@
           if (total > 0) {
             const remaining = total - done;
             if (remaining <= 0) {
-              lines.push("You've already completed all your workouts this week. Great discipline!");
+              lines.push(
+                "🏅 You've already completed all your workouts this week. Great discipline!"
+              );
             } else if (done === 0) {
               lines.push(
-                "No workouts logged yet this week. You have " +
+                "🏋️ No workouts logged yet this week. You have " +
                   total +
                   " planned. Today's a great day to start."
               );
             } else {
               lines.push(
-                done +
+                "🏋️ " +
+                  done +
                   " of " +
                   total +
                   " workouts done this week, " +
@@ -6263,7 +6254,9 @@
         }
 
         if (lines.length === 0) {
-          lines.push("Stay consistent today. Every meal and every rep adds up. You've got this.");
+          lines.push(
+            "⚡ Stay consistent today. Every meal and every rep adds up. You've got this."
+          );
         }
 
         el.innerHTML = lines.map((l) => "<span>" + l + "</span>").join("");
@@ -8426,6 +8419,7 @@
       attachLogoutHandler();
       attachChangePasswordHandler();
       bootstrapApp();
+      setInterval(renderHero, 60000);
     </script>
 
     <script>
