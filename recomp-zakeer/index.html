@@ -7232,7 +7232,10 @@
           waterBottles: readInt("profile-water-bottles", DEFAULT_PROFILE.waterBottles),
           waterBottleMl: readInt("profile-water-bottle-ml", DEFAULT_PROFILE.waterBottleMl),
           creatineG: readNum("profile-creatine-g", DEFAULT_PROFILE.creatineG),
-          workoutDaysGoal: readInt("profile-wo-days", DEFAULT_PROFILE.workoutDaysGoal),
+          workoutDaysGoal: Math.min(
+            7,
+            Math.max(0, readInt("profile-wo-days", DEFAULT_PROFILE.workoutDaysGoal))
+          ),
           ibsTabEnabled: (() => {
             const el = document.getElementById("profile-ibs-enabled");
             return el ? el.checked : DEFAULT_PROFILE.ibsTabEnabled;
