@@ -1007,9 +1007,10 @@
       }
       .bento-sparkline {
         width: 100%;
-        height: 30px;
-        margin-top: 6px;
-        overflow: visible;
+        height: 72px;
+        margin-top: 10px;
+        overflow: hidden;
+        display: block;
       }
       .bento-dots {
         display: flex;
@@ -4465,7 +4466,7 @@
               <svg
                 class="bento-sparkline"
                 id="bento-prot-spark"
-                viewBox="0 0 100 30"
+                viewBox="0 0 100 72"
                 preserveAspectRatio="none"
               ></svg>
             </div>
@@ -4483,7 +4484,7 @@
               <svg
                 class="bento-sparkline"
                 id="bento-weight-spark"
-                viewBox="0 0 100 30"
+                viewBox="0 0 100 72"
                 preserveAspectRatio="none"
               ></svg>
             </div>
@@ -6574,24 +6575,30 @@
           return;
         }
         const W = 100,
-          H = 28,
-          pad = 3;
-        const min = Math.min(...values);
-        const max = Math.max(...values);
+          H = 72;
+        // Weighted moving average — smooths sharp kinks before bezier rendering
+        const smoothed = values.map((v, i) => {
+          const a = values[Math.max(0, i - 1)];
+          const c = values[Math.min(values.length - 1, i + 1)];
+          return (a + v * 2 + c) / 4;
+        });
+        const min = Math.min(...smoothed);
+        const max = Math.max(...smoothed);
         const range = max - min || 1;
-        const points = values.map((v, i) => ({
-          x: parseFloat((pad + (i / (values.length - 1)) * (W - pad * 2)).toFixed(1)),
-          y: parseFloat((pad + (1 - (v - min) / range) * (H - pad * 3)).toFixed(1)),
+        // y: 8px top pad so wave doesn't clip; bottom anchors to H+1 for full bleed
+        const points = smoothed.map((v, i) => ({
+          x: parseFloat(((i / (smoothed.length - 1)) * W).toFixed(1)),
+          y: parseFloat((8 + (1 - (v - min) / range) * (H - 16)).toFixed(1)),
         }));
 
-        // Build smooth catmull-rom bezier path
+        // Smooth catmull-rom bezier path
         let d = `M ${points[0].x},${points[0].y}`;
         for (let i = 1; i < points.length; i++) {
           const p0 = points[Math.max(0, i - 2)];
           const p1 = points[i - 1];
           const p2 = points[i];
           const p3 = points[Math.min(points.length - 1, i + 1)];
-          const t = 0.35;
+          const t = 0.4;
           const cp1x = (p1.x + (p2.x - p0.x) * t).toFixed(1);
           const cp1y = (p1.y + (p2.y - p0.y) * t).toFixed(1);
           const cp2x = (p2.x - (p3.x - p1.x) * t).toFixed(1);
@@ -6599,15 +6606,12 @@
           d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
         }
 
-        const first = points[0];
-        const last = points[points.length - 1];
-        const bottom = H - pad + 1;
-        const fillD = `${d} L ${last.x},${bottom} L ${first.x},${bottom} Z`;
+        // Fill closes at full bottom edge — solid wave fill all the way down
+        const fillD = `${d} L ${W},${H + 1} L 0,${H + 1} Z`;
 
         svgEl.innerHTML =
-          `<path d="${fillD}" fill="rgba(${rgb},0.22)" stroke="none"/>` +
-          `<path d="${d}" fill="none" stroke="rgba(${rgb},0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` +
-          `<circle cx="${last.x}" cy="${last.y}" r="2.5" fill="rgba(${rgb},1)"/>`;
+          `<path d="${fillD}" fill="rgba(${rgb},0.32)" stroke="none"/>` +
+          `<path d="${d}" fill="none" stroke="rgba(${rgb},0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
       }
 
       function trackerDayProtein(key) {
@@ -6642,6 +6646,43 @@
           vals.push(trackerDayProtein(toDateKey(d)));
         }
         return vals;
+      }
+
+      function monthToDateProtein() {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        const vals = [];
+        const d = new Date(start);
+        while (d <= today) {
+          vals.push(trackerDayProtein(toDateKey(d)) ?? 0);
+          d.setDate(d.getDate() + 1);
+        }
+        return vals;
+      }
+
+      function monthToDateWeight() {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        const vals = [];
+        const d = new Date(start);
+        let lastW = null;
+        while (d <= today) {
+          const w = parseFloat(state.trackerData[toDateKey(d)]?.weightKg) || null;
+          if (w) lastW = w;
+          if (lastW) vals.push(lastW);
+          d.setDate(d.getDate() + 1);
+        }
+        return vals.length >= 2 ? vals : monthToDateAllWeight();
+      }
+
+      function monthToDateAllWeight() {
+        const result = [];
+        const keys = Object.keys(state.trackerData).sort();
+        for (const key of keys) {
+          const w = parseFloat(state.trackerData[key]?.weightKg);
+          if (w > 0) result.push(w);
+        }
+        return result;
       }
 
       function recentWeightEntries(n) {
@@ -6680,9 +6721,10 @@
         }
 
         // Protein card
+        const protMtd = monthToDateProtein();
         const protVals = recentDailyProtein(7);
-        const todayProt = protVals[protVals.length - 1] || 0;
-        const yestProt = protVals[protVals.length - 2];
+        const todayProt = protMtd[protMtd.length - 1] || 0;
+        const yestProt = protMtd[protMtd.length - 2] || null;
         const bcProtToday = document.getElementById("bento-prot-today");
         const bcProtDelta = document.getElementById("bento-prot-delta");
         const bcProtGoal = document.getElementById("kpi-protein");
@@ -6710,16 +6752,13 @@
             bcProtDelta.className = "bento-delta";
           }
         }
-        bentoSparkline(
-          document.getElementById("bento-prot-spark"),
-          protVals.filter((v) => v != null),
-          "255,92,122"
-        );
+        bentoSparkline(document.getElementById("bento-prot-spark"), protMtd, "255,92,122");
 
         // Weight card
-        const weights = recentWeightEntries(14);
-        const latestW = weights[weights.length - 1];
-        const prevW = weights[weights.length - 2];
+        const weights = monthToDateWeight();
+        const recentW = recentWeightEntries(14);
+        const latestW = recentW[recentW.length - 1];
+        const prevW = recentW[recentW.length - 2];
         const bcWeightVal = document.getElementById("bento-weight-val");
         const bcWeightDelta = document.getElementById("bento-weight-delta");
         if (bcWeightVal) bcWeightVal.textContent = latestW != null ? latestW.toFixed(1) : "-";
@@ -7764,7 +7803,7 @@
             const p1 = pts[i - 1];
             const p2 = pts[i];
             const p3 = pts[Math.min(pts.length - 1, i + 1)];
-            const t = 0.35;
+            const t = 0.4;
             ctx.bezierCurveTo(
               p1.x + (p2.x - p0.x) * t,
               p1.y + (p2.y - p0.y) * t,
