@@ -6835,6 +6835,12 @@
                   days +
                   "/7 days. This week, aim to beat that. Even one extra day makes a difference."
               );
+            } else if (summary.daysLogged > 0) {
+              lines.push(
+                "📈 Last week you logged protein " +
+                  summary.daysLogged +
+                  "/7 days but didn't hit your goal. This week, push a little harder each meal."
+              );
             } else {
               lines.push(
                 "📋 No protein logged last week. This week, start strong. Even one good day builds momentum."
