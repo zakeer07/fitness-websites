@@ -3673,6 +3673,46 @@
         font-size: 14px;
         padding: 9px 20px;
       }
+      .scan-tips {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .scan-tip {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .scan-tip-icon {
+        font-size: 18px;
+        line-height: 1;
+        margin-bottom: 2px;
+      }
+      .scan-tip-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: 0.02em;
+      }
+      .scan-tip-uses {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.45;
+        margin-top: 2px;
+      }
+      .scan-tip-uses li {
+        list-style: none;
+        padding-left: 0;
+      }
+      .scan-tip-uses li::before {
+        content: "· ";
+        color: var(--accent-secondary);
+      }
       .scan-preview-wrap {
         position: relative;
         width: 100%;
@@ -6216,6 +6256,38 @@
                 <button class="btn-secondary scan-upload-btn" type="button" id="barcode-scan-btn">
                   🏷️ Barcode
                 </button>
+              </div>
+              <div class="scan-tips">
+                <div class="scan-tip">
+                  <div class="scan-tip-icon">📷</div>
+                  <div class="scan-tip-title">Camera</div>
+                  <ul class="scan-tip-uses">
+                    <li>Plated meals</li>
+                    <li>Restaurant food</li>
+                    <li>Home cooking</li>
+                    <li>Mixed dishes</li>
+                  </ul>
+                </div>
+                <div class="scan-tip">
+                  <div class="scan-tip-icon">🖼️</div>
+                  <div class="scan-tip-title">Gallery</div>
+                  <ul class="scan-tip-uses">
+                    <li>Already taken photo</li>
+                    <li>Screenshot of meal</li>
+                    <li>Food delivery app</li>
+                    <li>Saved meal pics</li>
+                  </ul>
+                </div>
+                <div class="scan-tip">
+                  <div class="scan-tip-icon">🏷️</div>
+                  <div class="scan-tip-title">Barcode</div>
+                  <ul class="scan-tip-uses">
+                    <li>Packaged snacks</li>
+                    <li>Protein bars</li>
+                    <li>Supplements</li>
+                    <li>Grocery items</li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
