@@ -1707,6 +1707,29 @@
         border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(255, 92, 122, 0.15);
       }
+      .cal-input {
+        width: 60px;
+        padding: 7px 8px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        text-align: center;
+        transition:
+          border-color 0.3s var(--ease-out),
+          box-shadow 0.3s var(--ease-out);
+      }
+      .cal-input::placeholder {
+        color: var(--text-muted);
+        font-size: 10px;
+      }
+      .cal-input:focus {
+        outline: none;
+        border-color: var(--info);
+        box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+      }
 
       .tracker-targets {
         display: flex;
@@ -5493,10 +5516,9 @@
           </div>
 
           <div class="tracker-guide">
-            <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for
-            <strong>calories (kcal)</strong> + <strong>protein (g)</strong>.
-            <strong>Tracker</strong> rows are <strong>protein grams only</strong>. Blue
-            <strong>Cal target</strong> = daily kcal goal (not protein).
+            Log <strong>protein (g)</strong> and <strong>calories (kcal)</strong> per meal — either
+            type directly or use Scan Food to auto-fill. The dashboard calorie and protein cards
+            read from these rows.
           </div>
           <div class="tracker-targets">
             <span
@@ -5559,6 +5581,7 @@
                     Cal target<br /><span style="font-weight: 500; opacity: 0.8">kcal</span>
                   </th>
                   <th colspan="5" class="th-group">Protein per meal: enter grams (g)</th>
+                  <th colspan="5" class="th-group cal-group">Calories per meal: enter kcal</th>
                   <th rowspan="2" class="th-hydro" id="tracker-creatine-th" title="5g creatine">
                     Creatine<br /><span style="font-weight: 500; opacity: 0.8"
                       ><span id="tracker-creatine-g">5</span>g</span
@@ -5587,6 +5610,11 @@
                   <th class="th-pro">Snack</th>
                   <th class="th-pro">Shake</th>
                   <th class="th-pro">Dinner</th>
+                  <th class="th-cal">Breakfast</th>
+                  <th class="th-cal">Lunch</th>
+                  <th class="th-cal">Snack</th>
+                  <th class="th-cal">Shake</th>
+                  <th class="th-cal">Dinner</th>
                   <th class="th-pro">
                     Carbs<br /><span style="font-weight: 500; opacity: 0.8">g</span>
                   </th>
@@ -6576,6 +6604,20 @@
         return sum > 0 ? sum : null;
       }
 
+      function trackerDayCal(key) {
+        const d = state.trackerData[key];
+        if (!d) return 0;
+        return [
+          "calBreakfast",
+          "calLunch",
+          "calSnack",
+          "calDinner",
+          "calShake",
+          "calPre",
+          "calPost",
+        ].reduce((acc, s) => acc + (parseFloat(d[s]) || 0), 0);
+      }
+
       function recentDailyProtein(n) {
         const vals = [];
         for (let i = n - 1; i >= 0; i--) {
@@ -6599,17 +6641,9 @@
       function renderBentoCards() {
         const p = getProfile();
 
-        // Calories card
-        let calEaten = 0,
-          _pro = 0;
-        getTodayPlan().forEach((plan) => {
-          if (state.mealsEaten[plan.slot]) {
-            const meal = getMeal(plan.mealId);
-            if (!meal) return;
-            calEaten += meal.cal;
-            _pro += meal.pro;
-          }
-        });
+        // Calories card — reads from trackerData like protein does
+        const todayKeyBento = toDateKey(new Date());
+        const calEaten = trackerDayCal(todayKeyBento);
         const calGoal = getCalTarget();
         const bcCalEaten = document.getElementById("bento-cal-eaten");
         const bcCalBar = document.getElementById("bento-cal-bar");
@@ -7515,6 +7549,11 @@
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.snack}" data-date="${dateKey}" data-field="snack"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.shake}" data-date="${dateKey}" data-field="shake"></td>
       <td><input class="protein-input num" type="number" placeholder="g" value="${dayData.dinner}" data-date="${dateKey}" data-field="dinner"></td>
+      <td><input class="cal-input num" type="number" placeholder="kcal" value="${dayData.calBreakfast || ""}" data-date="${dateKey}" data-field="calBreakfast"></td>
+      <td><input class="cal-input num" type="number" placeholder="kcal" value="${dayData.calLunch || ""}" data-date="${dateKey}" data-field="calLunch"></td>
+      <td><input class="cal-input num" type="number" placeholder="kcal" value="${dayData.calSnack || ""}" data-date="${dateKey}" data-field="calSnack"></td>
+      <td><input class="cal-input num" type="number" placeholder="kcal" value="${dayData.calShake || ""}" data-date="${dateKey}" data-field="calShake"></td>
+      <td><input class="cal-input num" type="number" placeholder="kcal" value="${dayData.calDinner || ""}" data-date="${dateKey}" data-field="calDinner"></td>
       <td><div class="check-cell creatine ${dayData.creatine ? "checked" : ""}" data-date="${dateKey}" data-field="creatine" title="${p.creatineG}g creatine"></div></td>
       <td><input class="water-input num" type="number" min="0" max="24" placeholder="0" value="${dayData.water || ""}" data-date="${dateKey}" data-field="water" title="${p.waterBottleMl}ml bottles"></td>
       <td><input class="burnt-input num" type="number" min="0" placeholder="0" value="${dayData.burnt || ""}" data-date="${dateKey}" data-field="burnt"></td>
@@ -7533,7 +7572,7 @@
         // Wire up inputs
         document
           .querySelectorAll(
-            ".protein-input, .water-input, .burnt-input, .weight-input, .macro-input"
+            ".protein-input, .cal-input, .water-input, .burnt-input, .weight-input, .macro-input"
           )
           .forEach((input) => {
             input.addEventListener("input", (e) => {
@@ -7544,6 +7583,7 @@
               refreshTrackerRow(dateKey);
               updateTrackerSummary();
               updateDashboardStats();
+              if (field.startsWith("cal")) renderBentoCards();
               clearTimeout(renderTrackerCharts._t);
               renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
             });
@@ -8533,21 +8573,28 @@
               fat: "",
             };
           }
-          // Add protein, carbs, fat to the chosen meal slot (accumulate)
+          // Add protein, calories, carbs, fat to the chosen meal slot (accumulate)
           let pro = 0,
+            cal = 0,
             carb = 0,
             fat = 0;
           scanFoods.forEach((food) => {
             const p = food.portions?.[food.selectedSize];
             if (p) {
               pro += p.protein || 0;
+              cal += p.cal || 0;
               carb += p.carbs || 0;
               fat += p.fat || 0;
             }
           });
-          const existing = parseFloat(state.trackerData[todayKey][meal]) || 0;
-          state.trackerData[todayKey][meal] = String(Math.round(existing + pro));
-          // Accumulate carbs & fat in tracker day
+          // Protein: stored per meal slot (e.g. "breakfast")
+          const existPro = parseFloat(state.trackerData[todayKey][meal]) || 0;
+          state.trackerData[todayKey][meal] = String(Math.round(existPro + pro));
+          // Calories: stored per meal slot with "cal" prefix (e.g. "calBreakfast")
+          const calField = "cal" + meal.charAt(0).toUpperCase() + meal.slice(1);
+          const existCal = parseFloat(state.trackerData[todayKey][calField]) || 0;
+          state.trackerData[todayKey][calField] = String(Math.round(existCal + cal));
+          // Carbs & fat: accumulated daily totals
           const existCarb = parseFloat(state.trackerData[todayKey].carbs) || 0;
           const existFat = parseFloat(state.trackerData[todayKey].fat) || 0;
           state.trackerData[todayKey].carbs = String(Math.round(existCarb + carb));
@@ -8556,10 +8603,19 @@
           refreshTrackerRow(todayKey);
           updateTrackerSummary();
           updateDashboardStats();
+          renderBentoCards();
+          elLogSuccess.textContent =
+            "✅ Logged " +
+            Math.round(cal) +
+            " kcal · " +
+            Math.round(pro) +
+            "g protein to " +
+            meal +
+            ".";
           elLogSuccess.hidden = false;
           setTimeout(() => {
             elLogSuccess.hidden = true;
-          }, 3000);
+          }, 4000);
         });
       })();
 
