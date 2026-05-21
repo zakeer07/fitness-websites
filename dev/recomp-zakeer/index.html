@@ -1007,9 +1007,10 @@
       }
       .bento-sparkline {
         width: 100%;
-        height: 30px;
-        margin-top: 6px;
-        overflow: visible;
+        height: 72px;
+        margin-top: 10px;
+        overflow: hidden;
+        display: block;
       }
       .bento-dots {
         display: flex;
@@ -4465,7 +4466,7 @@
               <svg
                 class="bento-sparkline"
                 id="bento-prot-spark"
-                viewBox="0 0 100 30"
+                viewBox="0 0 100 72"
                 preserveAspectRatio="none"
               ></svg>
             </div>
@@ -4483,7 +4484,7 @@
               <svg
                 class="bento-sparkline"
                 id="bento-weight-spark"
-                viewBox="0 0 100 30"
+                viewBox="0 0 100 72"
                 preserveAspectRatio="none"
               ></svg>
             </div>
@@ -6574,30 +6575,43 @@
           return;
         }
         const W = 100,
-          H = 28,
-          pad = 3;
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        const range = max - min || 1;
-        const pts = values.map((v, i) => {
-          const x = pad + (i / (values.length - 1)) * (W - pad * 2);
-          const y = pad + (1 - (v - min) / range) * (H - pad * 3);
-          return x.toFixed(1) + "," + y.toFixed(1);
+          H = 72;
+        // Weighted moving average — smooths sharp kinks before bezier rendering
+        const smoothed = values.map((v, i) => {
+          const a = values[Math.max(0, i - 1)];
+          const c = values[Math.min(values.length - 1, i + 1)];
+          return (a + v * 2 + c) / 4;
         });
-        const last = pts[pts.length - 1].split(",");
+        const min = Math.min(...smoothed);
+        const max = Math.max(...smoothed);
+        const range = max - min || 1;
+        // y: 8px top pad so wave doesn't clip; bottom anchors to H+1 for full bleed
+        const points = smoothed.map((v, i) => ({
+          x: parseFloat(((i / (smoothed.length - 1)) * W).toFixed(1)),
+          y: parseFloat((8 + (1 - (v - min) / range) * (H - 16)).toFixed(1)),
+        }));
+
+        // Smooth catmull-rom bezier path
+        let d = `M ${points[0].x},${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+          const p0 = points[Math.max(0, i - 2)];
+          const p1 = points[i - 1];
+          const p2 = points[i];
+          const p3 = points[Math.min(points.length - 1, i + 1)];
+          const t = 0.4;
+          const cp1x = (p1.x + (p2.x - p0.x) * t).toFixed(1);
+          const cp1y = (p1.y + (p2.y - p0.y) * t).toFixed(1);
+          const cp2x = (p2.x - (p3.x - p1.x) * t).toFixed(1);
+          const cp2y = (p2.y - (p3.y - p1.y) * t).toFixed(1);
+          d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+        }
+
+        // Fill closes at full bottom edge — solid wave fill all the way down
+        const fillD = `${d} L ${W},${H + 1} L 0,${H + 1} Z`;
+
         svgEl.innerHTML =
-          '<polyline points="' +
-          pts.join(" ") +
-          '" fill="none" stroke="rgba(' +
-          rgb +
-          ',0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<circle cx="' +
-          last[0] +
-          '" cy="' +
-          last[1] +
-          '" r="3" fill="rgba(' +
-          rgb +
-          ',1)"/>';
+          `<path d="${fillD}" fill="rgba(${rgb},0.32)" stroke="none"/>` +
+          `<path d="${d}" fill="none" stroke="rgba(${rgb},0.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
       }
 
       function trackerDayProtein(key) {
@@ -6632,6 +6646,43 @@
           vals.push(trackerDayProtein(toDateKey(d)));
         }
         return vals;
+      }
+
+      function monthToDateProtein() {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        const vals = [];
+        const d = new Date(start);
+        while (d <= today) {
+          vals.push(trackerDayProtein(toDateKey(d)) ?? 0);
+          d.setDate(d.getDate() + 1);
+        }
+        return vals;
+      }
+
+      function monthToDateWeight() {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        const vals = [];
+        const d = new Date(start);
+        let lastW = null;
+        while (d <= today) {
+          const w = parseFloat(state.trackerData[toDateKey(d)]?.weightKg) || null;
+          if (w) lastW = w;
+          if (lastW) vals.push(lastW);
+          d.setDate(d.getDate() + 1);
+        }
+        return vals.length >= 2 ? vals : monthToDateAllWeight();
+      }
+
+      function monthToDateAllWeight() {
+        const result = [];
+        const keys = Object.keys(state.trackerData).sort();
+        for (const key of keys) {
+          const w = parseFloat(state.trackerData[key]?.weightKg);
+          if (w > 0) result.push(w);
+        }
+        return result;
       }
 
       function recentWeightEntries(n) {
@@ -6670,9 +6721,10 @@
         }
 
         // Protein card
+        const protMtd = monthToDateProtein();
         const protVals = recentDailyProtein(7);
-        const todayProt = protVals[protVals.length - 1] || 0;
-        const yestProt = protVals[protVals.length - 2];
+        const todayProt = protMtd[protMtd.length - 1] || 0;
+        const yestProt = protMtd[protMtd.length - 2] || null;
         const bcProtToday = document.getElementById("bento-prot-today");
         const bcProtDelta = document.getElementById("bento-prot-delta");
         const bcProtGoal = document.getElementById("kpi-protein");
@@ -6700,16 +6752,13 @@
             bcProtDelta.className = "bento-delta";
           }
         }
-        bentoSparkline(
-          document.getElementById("bento-prot-spark"),
-          protVals.filter((v) => v != null),
-          "255,92,122"
-        );
+        bentoSparkline(document.getElementById("bento-prot-spark"), protMtd, "255,92,122");
 
         // Weight card
-        const weights = recentWeightEntries(14);
-        const latestW = weights[weights.length - 1];
-        const prevW = weights[weights.length - 2];
+        const weights = monthToDateWeight();
+        const recentW = recentWeightEntries(14);
+        const latestW = recentW[recentW.length - 1];
+        const prevW = recentW[recentW.length - 2];
         const bcWeightVal = document.getElementById("bento-weight-val");
         const bcWeightDelta = document.getElementById("bento-weight-delta");
         if (bcWeightVal) bcWeightVal.textContent = latestW != null ? latestW.toFixed(1) : "-";
@@ -7745,6 +7794,27 @@
           });
         }
 
+        // Smooth catmull-rom bezier through {x,y} point array
+        function traceSmoothPath(ctx, pts) {
+          if (!pts.length) return;
+          ctx.moveTo(pts[0].x, pts[0].y);
+          for (let i = 1; i < pts.length; i++) {
+            const p0 = pts[Math.max(0, i - 2)];
+            const p1 = pts[i - 1];
+            const p2 = pts[i];
+            const p3 = pts[Math.min(pts.length - 1, i + 1)];
+            const t = 0.4;
+            ctx.bezierCurveTo(
+              p1.x + (p2.x - p0.x) * t,
+              p1.y + (p2.y - p0.y) * t,
+              p2.x - (p3.x - p1.x) * t,
+              p2.y - (p3.y - p1.y) * t,
+              p2.x,
+              p2.y
+            );
+          }
+        }
+
         // ── Line chart (protein / water) ──────────────────────────────
         function drawLine(canvas, values, goalLine, color, noDataMsg) {
           const ctx = setupCanvas(canvas);
@@ -7771,38 +7841,26 @@
             ctx.textAlign = "center";
             ctx.fillText(noDataMsg || "No data logged yet", W / 2, H / 2 - 4);
           } else {
+            const pts = values.map((v, i) => ({ x: xOf(i), y: yOf(v) }));
+
+            // Solid-color fill under the wave
             const grad = ctx.createLinearGradient(0, mT, 0, mT + cH);
-            grad.addColorStop(0, color + "50");
-            grad.addColorStop(1, color + "00");
+            grad.addColorStop(0, color + "55");
+            grad.addColorStop(1, color + "10");
             ctx.beginPath();
-            let first = true;
-            values.forEach((v, i) => {
-              const x = xOf(i),
-                y = yOf(v);
-              if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-              } else ctx.lineTo(x, y);
-            });
-            ctx.lineTo(xOf(n - 1), mT + cH);
-            ctx.lineTo(xOf(0), mT + cH);
+            traceSmoothPath(ctx, pts);
+            ctx.lineTo(pts[pts.length - 1].x, mT + cH);
+            ctx.lineTo(pts[0].x, mT + cH);
             ctx.closePath();
             ctx.fillStyle = grad;
             ctx.fill();
 
+            // Smooth wave stroke
             ctx.strokeStyle = color;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.lineJoin = "round";
             ctx.beginPath();
-            first = true;
-            values.forEach((v, i) => {
-              const x = xOf(i),
-                y = yOf(v);
-              if (first) {
-                ctx.moveTo(x, y);
-                first = false;
-              } else ctx.lineTo(x, y);
-            });
+            traceSmoothPath(ctx, pts);
             ctx.stroke();
 
             dates.forEach((lbl, i) => {
