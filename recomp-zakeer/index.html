@@ -3932,10 +3932,28 @@
         display: none;
       }
       .barcode-video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: #000;
+      }
+      #barcode-video__scan_region {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+      #barcode-video__scan_region video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+      #barcode-video__scan_region canvas {
+        display: none !important;
+      }
+      #barcode-video__dashboard {
+        display: none !important;
       }
       .barcode-modal-header {
         position: absolute;
@@ -10084,7 +10102,7 @@
 
     <!-- Barcode scanner modal -->
     <div class="barcode-modal" id="barcode-modal" hidden>
-      <video class="barcode-video" id="barcode-video" autoplay playsinline muted></video>
+      <div class="barcode-video" id="barcode-video"></div>
       <div class="barcode-finder" id="barcode-finder"></div>
       <div class="barcode-modal-header">
         <span class="barcode-modal-title">Scan Barcode</span>
@@ -10136,8 +10154,7 @@
       // ── Barcode Scanner ──────────────────────────────────────────────────────
       (function () {
         const modal = document.getElementById("barcode-modal");
-        const video = document.getElementById("barcode-video");
-        const finder = document.getElementById("barcode-finder");
+        const videoContainer = document.getElementById("barcode-video");
         const closeBtn = document.getElementById("barcode-close-btn");
         const hint = document.getElementById("barcode-hint");
         const productEl = document.getElementById("barcode-product");
@@ -10152,11 +10169,86 @@
         const photoBtn = document.getElementById("barcode-photo-btn");
         if (!openBtn) return;
 
-        let stream = null;
-        let scanning = false;
+        let scanner = null;
         let per100g = null;
 
-        // ── Photo fallback (for when live scanning struggles) ─────────────────
+        function loadLib() {
+          return new Promise((resolve, reject) => {
+            if (window.Html5Qrcode) {
+              resolve();
+              return;
+            }
+            const s = document.createElement("script");
+            s.src = "https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js";
+            s.onload = resolve;
+            s.onerror = () => reject(new Error("Failed to load scanner library"));
+            document.head.appendChild(s);
+          });
+        }
+
+        async function stopScanner() {
+          if (scanner) {
+            try {
+              await scanner.stop();
+            } catch (_) {}
+            scanner = null;
+          }
+          videoContainer.innerHTML = "";
+        }
+
+        async function startScanner() {
+          await stopScanner();
+          hint.textContent = "Starting camera...";
+          try {
+            await loadLib();
+          } catch {
+            hint.textContent = "Could not load scanner. Check your connection.";
+            return;
+          }
+          scanner = new Html5Qrcode("barcode-video");
+          try {
+            await scanner.start(
+              { facingMode: "environment" },
+              { fps: 10 },
+              (text) => {
+                stopScanner();
+                hint.textContent = "Found! Looking up product...";
+                lookupBarcode(text);
+              },
+              () => {}
+            );
+            hint.textContent = "Point at a barcode on the packaging";
+          } catch {
+            hint.textContent = "Camera access denied. Allow camera in your browser settings.";
+          }
+        }
+
+        function closeModal() {
+          stopScanner();
+          modal.hidden = true;
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          hint.textContent = "Point at a barcode on the packaging";
+          per100g = null;
+        }
+
+        closeBtn.addEventListener("click", closeModal);
+
+        scanAgainBtn.addEventListener("click", () => {
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          per100g = null;
+          hint.textContent = "Point at a barcode on the packaging";
+          startScanner();
+        });
+
+        openBtn.addEventListener("click", () => {
+          modal.hidden = false;
+          productEl.hidden = true;
+          logSuccess.hidden = true;
+          startScanner();
+        });
+
         if (photoBtn) {
           photoBtn.addEventListener("click", () => photoInput && photoInput.click());
         }
@@ -10166,152 +10258,18 @@
             if (!file) return;
             photoInput.value = "";
             hint.textContent = "Reading barcode from photo...";
-            const url = URL.createObjectURL(file);
-            const img = new Image();
-            img.onload = async () => {
-              URL.revokeObjectURL(url);
-              try {
-                const det = new BarcodeDetector();
-                const found = await det.detect(img);
-                if (found.length > 0) {
-                  stopCamera();
-                  hint.textContent = "Found! Looking up product...";
-                  lookupBarcode(found[0].rawValue);
-                } else {
-                  hint.textContent = "No barcode found in photo. Try holding steady closer.";
-                  setTimeout(() => {
-                    hint.textContent = "Point at a barcode on the packaging";
-                  }, 3000);
-                }
-              } catch (e) {
-                hint.textContent = "Could not read photo. Try again.";
-                setTimeout(() => {
-                  hint.textContent = "Point at a barcode on the packaging";
-                }, 3000);
-              }
-            };
-            img.src = url;
-          });
-        }
-
-        function stopCamera() {
-          scanning = false;
-          if (stream) {
-            stream.getTracks().forEach((t) => t.stop());
-            stream = null;
-          }
-          video.srcObject = null;
-        }
-
-        function closeModal() {
-          stopCamera();
-          modal.hidden = true;
-          productEl.hidden = true;
-          logSuccess.hidden = true;
-          hint.textContent = "Point at a barcode on the packaging";
-          per100g = null;
-        }
-
-        closeBtn.addEventListener("click", closeModal);
-        scanAgainBtn.addEventListener("click", () => {
-          productEl.hidden = true;
-          logSuccess.hidden = true;
-          per100g = null;
-          hint.textContent = "Point at a barcode on the packaging";
-          startCamera();
-        });
-
-        openBtn.addEventListener("click", () => {
-          if (!("BarcodeDetector" in window)) {
-            modal.hidden = false;
-            video.hidden = true;
-            finder.hidden = true;
-            hint.hidden = true;
-            const div = document.createElement("div");
-            div.className = "barcode-unsupported";
-            div.innerHTML =
-              '<div class="barcode-unsupported-icon">📵</div>' +
-              '<div class="barcode-unsupported-text">Barcode scanning requires Chrome on Android or Safari 17+.<br><br>Try updating your browser.</div>' +
-              '<button class="btn" style="margin-top:16px" type="button" id="barcode-unsup-close">Close</button>';
-            modal.appendChild(div);
-            document.getElementById("barcode-unsup-close").addEventListener("click", () => {
-              div.remove();
-              video.hidden = false;
-              finder.hidden = false;
-              hint.hidden = false;
-              closeModal();
-            });
-            return;
-          }
-          modal.hidden = false;
-          productEl.hidden = true;
-          logSuccess.hidden = true;
-          hint.textContent = "Point at a barcode on the packaging";
-          startCamera();
-        });
-
-        async function startCamera() {
-          stopCamera();
-          hint.textContent = "Starting camera...";
-          try {
-            stream = await navigator.mediaDevices.getUserMedia({
-              video: {
-                facingMode: { ideal: "environment" },
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-              },
-            });
-            video.srcObject = stream;
-            video.play().catch(() => {});
-            hint.textContent = "Point at a barcode on the packaging";
-            startScanning();
-          } catch (e) {
-            hint.textContent =
-              "Camera access denied. Allow camera in your browser settings and try again.";
-          }
-        }
-
-        async function startScanning() {
-          // Filter to only formats the device actually supports to avoid constructor throwing
-          let detector;
-          try {
-            const supported = await BarcodeDetector.getSupportedFormats();
-            const want = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"];
-            const formats = want.filter((f) => supported.includes(f));
-            detector = new BarcodeDetector({ formats: formats.length ? formats : supported });
-          } catch (_) {
-            // Fallback: construct without format list
             try {
-              detector = new BarcodeDetector();
-            } catch (e2) {
-              hint.textContent = "Scanner could not start. Try refreshing the page.";
-              return;
+              await loadLib();
+              await stopScanner();
+              const s = new Html5Qrcode("barcode-video");
+              const text = await s.scanFile(file, false);
+              hint.textContent = "Found! Looking up product...";
+              lookupBarcode(text);
+            } catch {
+              hint.textContent = "No barcode found in photo. Try again.";
+              setTimeout(() => startScanner(), 3000);
             }
-          }
-
-          scanning = true;
-
-          // Use setTimeout loop — rAF + async causes overlapping detect() calls on mobile
-          function doScan() {
-            if (!scanning || !video.srcObject) return;
-            detector
-              .detect(video)
-              .then((barcodes) => {
-                if (!scanning) return;
-                if (barcodes.length > 0) {
-                  scanning = false;
-                  hint.textContent = "Found! Looking up product...";
-                  lookupBarcode(barcodes[0].rawValue);
-                } else {
-                  setTimeout(doScan, 200);
-                }
-              })
-              .catch(() => {
-                if (scanning) setTimeout(doScan, 300);
-              });
-          }
-
-          setTimeout(doScan, 600); // let camera warm up before first scan
+          });
         }
 
         async function lookupBarcode(code) {
@@ -10328,25 +10286,18 @@
             const data = await res.json();
             if (data.status !== 1 || !data.product) {
               hint.textContent = "Product not found. Try again.";
-              setTimeout(resumeScanning, 2500);
+              setTimeout(startScanner, 2500);
               return;
             }
             showProduct(data.product);
           } catch (e) {
             clearTimeout(tid);
-            if (e.name === "AbortError") {
-              hint.textContent = "Lookup timed out. Check connection.";
-            } else {
-              hint.textContent = "Lookup failed. Try again.";
-            }
-            setTimeout(resumeScanning, 2500);
+            hint.textContent =
+              e.name === "AbortError"
+                ? "Lookup timed out. Check connection."
+                : "Lookup failed. Try again.";
+            setTimeout(startScanner, 2500);
           }
-        }
-
-        function resumeScanning() {
-          hint.textContent = "Point at a barcode on the packaging";
-          scanning = true;
-          startScanning();
         }
 
         function showProduct(product) {
@@ -10369,7 +10320,6 @@
           const servingG = parseFloat(product.serving_quantity) || 100;
           gramsInput.value = Math.round(servingG);
           updateMacros();
-          stopCamera();
           productEl.hidden = false;
           hint.textContent = "Product found!";
         }
