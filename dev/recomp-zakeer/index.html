@@ -4116,6 +4116,21 @@
         font-size: 13px;
         padding: 8px;
       }
+      .barcode-photo-btn {
+        position: absolute;
+        bottom: 220px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 9px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
 
       /* ── Item 4: Weekly summary card ── */
       .setup-banner {
@@ -10076,6 +10091,11 @@
         <button class="barcode-close-btn" id="barcode-close-btn" type="button">✕</button>
       </div>
       <div class="barcode-hint" id="barcode-hint">Point at a barcode on the packaging</div>
+      <!-- Photo fallback for when live scanning struggles -->
+      <input type="file" id="barcode-photo-input" accept="image/*" capture="environment" hidden />
+      <button class="barcode-photo-btn" id="barcode-photo-btn" type="button">
+        📷 Take photo instead
+      </button>
       <div class="barcode-product" id="barcode-product" hidden>
         <div class="barcode-product-name" id="barcode-product-name"></div>
         <div class="barcode-grams-row">
@@ -10128,11 +10148,51 @@
         const logSuccess = document.getElementById("barcode-log-success");
         const openBtn = document.getElementById("barcode-scan-btn");
         const scanAgainBtn = document.getElementById("barcode-scan-again-btn");
+        const photoInput = document.getElementById("barcode-photo-input");
+        const photoBtn = document.getElementById("barcode-photo-btn");
         if (!openBtn) return;
 
         let stream = null;
         let scanning = false;
         let per100g = null;
+
+        // ── Photo fallback (for when live scanning struggles) ─────────────────
+        if (photoBtn) {
+          photoBtn.addEventListener("click", () => photoInput && photoInput.click());
+        }
+        if (photoInput) {
+          photoInput.addEventListener("change", async () => {
+            const file = photoInput.files && photoInput.files[0];
+            if (!file) return;
+            photoInput.value = "";
+            hint.textContent = "Reading barcode from photo...";
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = async () => {
+              URL.revokeObjectURL(url);
+              try {
+                const det = new BarcodeDetector();
+                const found = await det.detect(img);
+                if (found.length > 0) {
+                  stopCamera();
+                  hint.textContent = "Found! Looking up product...";
+                  lookupBarcode(found[0].rawValue);
+                } else {
+                  hint.textContent = "No barcode found in photo. Try holding steady closer.";
+                  setTimeout(() => {
+                    hint.textContent = "Point at a barcode on the packaging";
+                  }, 3000);
+                }
+              } catch (e) {
+                hint.textContent = "Could not read photo. Try again.";
+                setTimeout(() => {
+                  hint.textContent = "Point at a barcode on the packaging";
+                }, 3000);
+              }
+            };
+            img.src = url;
+          });
+        }
 
         function stopCamera() {
           scanning = false;
@@ -10192,40 +10252,66 @@
 
         async function startCamera() {
           stopCamera();
+          hint.textContent = "Starting camera...";
           try {
             stream = await navigator.mediaDevices.getUserMedia({
-              video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+              video: {
+                facingMode: { ideal: "environment" },
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              },
             });
             video.srcObject = stream;
-            await video.play();
+            video.play().catch(() => {});
+            hint.textContent = "Point at a barcode on the packaging";
             startScanning();
           } catch (e) {
-            closeModal();
-            alert("Camera access denied: " + (e.message || e));
+            hint.textContent =
+              "Camera access denied. Allow camera in your browser settings and try again.";
           }
         }
 
         async function startScanning() {
-          const formats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"];
-          const detector = new BarcodeDetector({ formats });
+          // Filter to only formats the device actually supports to avoid constructor throwing
+          let detector;
+          try {
+            const supported = await BarcodeDetector.getSupportedFormats();
+            const want = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"];
+            const formats = want.filter((f) => supported.includes(f));
+            detector = new BarcodeDetector({ formats: formats.length ? formats : supported });
+          } catch (_) {
+            // Fallback: construct without format list
+            try {
+              detector = new BarcodeDetector();
+            } catch (e2) {
+              hint.textContent = "Scanner could not start. Try refreshing the page.";
+              return;
+            }
+          }
+
           scanning = true;
 
-          async function tick() {
-            if (!scanning) return;
-            if (video.readyState >= 2) {
-              try {
-                const found = await detector.detect(video);
-                if (found.length > 0) {
+          // Use setTimeout loop — rAF + async causes overlapping detect() calls on mobile
+          function doScan() {
+            if (!scanning || !video.srcObject) return;
+            detector
+              .detect(video)
+              .then((barcodes) => {
+                if (!scanning) return;
+                if (barcodes.length > 0) {
                   scanning = false;
                   hint.textContent = "Found! Looking up product...";
-                  await lookupBarcode(found[0].rawValue);
-                  return;
+                  lookupBarcode(barcodes[0].rawValue);
+                } else {
+                  setTimeout(doScan, 200);
                 }
-              } catch (_) {}
-            }
-            if (scanning) requestAnimationFrame(tick);
+              })
+              .catch(() => {
+                if (scanning) setTimeout(doScan, 300);
+              });
           }
-          requestAnimationFrame(tick);
+
+          setTimeout(doScan, 600); // let camera warm up before first scan
         }
 
         async function lookupBarcode(code) {
