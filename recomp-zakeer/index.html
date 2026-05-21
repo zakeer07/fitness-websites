@@ -1066,6 +1066,147 @@
       .bento-ratio-row.ratio-close {
         color: var(--warning);
       }
+      .bento-budget-row {
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 6px;
+        color: var(--text-muted);
+      }
+      .bento-budget-row.budget-over {
+        color: var(--accent);
+      }
+      .bento-budget-row.budget-done {
+        color: var(--success);
+      }
+      /* Macro donut — sits in the num row right side */
+      .bento-num-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .macro-donut {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        pointer-events: none;
+      }
+      /* Streak milestone badge */
+      .streak-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 20px;
+        letter-spacing: 0.03em;
+        background: rgba(255, 200, 87, 0.18);
+        color: var(--warning);
+        margin-left: 4px;
+      }
+      .streak-badge.streak-fire {
+        background: rgba(255, 120, 50, 0.18);
+        color: #ff7832;
+      }
+      .streak-badge.streak-gold {
+        background: rgba(255, 215, 0, 0.2);
+        color: #ffd700;
+      }
+      .streak-badge.streak-legend {
+        background: rgba(180, 100, 255, 0.2);
+        color: #b464ff;
+      }
+      /* Goal celebration glow pulse on bento card */
+      @keyframes goalGlow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(var(--bento-rgb), 0.7);
+        }
+        50% {
+          box-shadow: 0 0 0 12px rgba(var(--bento-rgb), 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(var(--bento-rgb), 0);
+        }
+      }
+      .bento-card.goal-glow {
+        animation: goalGlow 1.2s ease-out 3;
+      }
+      /* Confetti pieces (spawned via JS) */
+      .confetti-piece {
+        position: fixed;
+        width: 7px;
+        height: 7px;
+        border-radius: 2px;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+      }
+      /* Body measurements card */
+      .meas-card {
+        margin-top: 20px;
+      }
+      .meas-inputs {
+        display: flex;
+        gap: 10px;
+        margin: 12px 0 10px;
+        flex-wrap: wrap;
+      }
+      .meas-field {
+        flex: 1;
+        min-width: 80px;
+      }
+      .meas-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .meas-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        padding: 7px 10px;
+        font-size: 14px;
+        font-family: "JetBrains Mono", monospace;
+        box-sizing: border-box;
+      }
+      .meas-input:focus {
+        outline: none;
+        border-color: rgba(78, 205, 196, 0.5);
+      }
+      [data-color-scheme="light"] .meas-input {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.12);
+      }
+      .meas-save-btn {
+        margin-top: 2px;
+      }
+      .meas-chart-wrap {
+        margin-top: 14px;
+        position: relative;
+      }
+      .meas-chart-legend {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .meas-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .meas-legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
 
       /* Consistency heatmap */
       .heatmap-section {
@@ -4442,20 +4583,29 @@
                 <span class="bento-title">Calories</span>
                 <span class="bento-delta" id="bento-cal-delta">today</span>
               </div>
-              <div class="bento-num">
-                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal eaten</span>
+              <div class="bento-num-row">
+                <div>
+                  <div class="bento-num">
+                    <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal eaten</span>
+                  </div>
+                  <div class="bento-goal-row">of <span id="kpi-cal">2000</span> kcal goal</div>
+                </div>
+                <svg class="macro-donut" id="macro-donut" viewBox="0 0 42 42"></svg>
               </div>
-              <div class="bento-goal-row">of <span id="kpi-cal">2000</span> kcal goal</div>
               <div class="bento-bar-track">
                 <div class="bento-bar-fill" id="bento-cal-bar" style="width: 0%"></div>
               </div>
               <div class="bento-net-row" id="bento-net-row"></div>
+              <div class="bento-budget-row" id="bento-budget-row"></div>
             </div>
 
             <!-- Protein -->
             <div class="bento-card bento-protein">
               <div class="bento-head">
-                <span class="bento-title">Protein</span>
+                <span style="display: flex; align-items: center; gap: 5px; min-width: 0">
+                  <span class="bento-title">Protein</span>
+                  <span id="streak-badge" class="streak-badge" hidden></span>
+                </span>
                 <span class="bento-delta" id="bento-prot-delta"></span>
               </div>
               <div class="bento-num">
@@ -5701,6 +5851,60 @@
               style="width: 100%; display: block"
             ></canvas>
           </div>
+
+          <!-- Body Measurements -->
+          <div class="card meas-card" id="meas-card">
+            <div class="card-title"><span class="card-title-dot"></span>Body Measurements</div>
+            <div class="chart-unit-hint">
+              Optional — log waist, chest, arms in cm to track changes over time
+            </div>
+            <div class="meas-inputs">
+              <div class="meas-field">
+                <div class="meas-label">Waist (cm)</div>
+                <input
+                  class="meas-input"
+                  id="meas-waist"
+                  type="number"
+                  placeholder="e.g. 82"
+                  min="40"
+                  max="200"
+                />
+              </div>
+              <div class="meas-field">
+                <div class="meas-label">Chest (cm)</div>
+                <input
+                  class="meas-input"
+                  id="meas-chest"
+                  type="number"
+                  placeholder="e.g. 96"
+                  min="40"
+                  max="200"
+                />
+              </div>
+              <div class="meas-field">
+                <div class="meas-label">Arms (cm)</div>
+                <input
+                  class="meas-input"
+                  id="meas-arms"
+                  type="number"
+                  placeholder="e.g. 35"
+                  min="10"
+                  max="80"
+                />
+              </div>
+            </div>
+            <button class="btn-secondary meas-save-btn" id="meas-save-btn" type="button">
+              Save today's measurements
+            </button>
+            <div class="meas-chart-wrap" id="meas-chart-wrap" hidden>
+              <div class="meas-chart-legend" id="meas-chart-legend"></div>
+              <canvas
+                id="meas-trend-chart"
+                height="160"
+                style="width: 100%; display: block"
+              ></canvas>
+            </div>
+          </div>
         </section>
 
         <!-- WORKOUTS SECTION -->
@@ -6757,7 +6961,7 @@
         const calGoal = getCalTarget();
         const bcCalEaten = document.getElementById("bento-cal-eaten");
         const bcCalBar = document.getElementById("bento-cal-bar");
-        if (bcCalEaten) bcCalEaten.textContent = calEaten;
+        if (bcCalEaten) animCountUp(bcCalEaten, calEaten);
         if (bcCalBar) bcCalBar.style.width = Math.min((calEaten / calGoal) * 100, 100) + "%";
         const kcalEl = document.getElementById("kpi-cal");
         if (kcalEl) kcalEl.textContent = calGoal;
@@ -6781,7 +6985,7 @@
         const bcProtToday = document.getElementById("bento-prot-today");
         const bcProtDelta = document.getElementById("bento-prot-delta");
         const bcProtGoal = document.getElementById("kpi-protein");
-        if (bcProtToday) bcProtToday.textContent = Math.round(todayProt);
+        if (bcProtToday) animCountUp(bcProtToday, Math.round(todayProt));
         if (bcProtGoal) bcProtGoal.textContent = p.proteinG;
 
         // Protein/kg ratio
@@ -6875,6 +7079,326 @@
             return '<span class="bento-dot bento-dot-' + type + '">' + lbl + "</span>";
           }).join("");
         }
+
+        // Streak badge (Feature 4)
+        if (window.FitnessUI) {
+          renderStreakBadge(FitnessUI.computeStreak(state.trackerData));
+        }
+
+        // Budget row (Feature 1)
+        renderBudgetRow(calEaten, calGoal);
+
+        // Macro donut (Feature 5)
+        renderMacroDonut();
+
+        // Goal celebration (Feature 3) — fire once per goal per day
+        const todayLabel = todayKeyBento;
+        if (calEaten >= calGoal && _celebratedGoals.cal !== todayLabel) {
+          _celebratedGoals.cal = todayLabel;
+          const calCard = document.querySelector(".bento-cal");
+          if (calCard) triggerGoalCelebration(calCard);
+        }
+        if (todayProt >= p.proteinG && _celebratedGoals.prot !== todayLabel) {
+          _celebratedGoals.prot = todayLabel;
+          const protCard = document.querySelector(".bento-protein");
+          if (protCard) triggerGoalCelebration(protCard);
+        }
+      }
+
+      // ── Feature 1: Remaining budget row ─────────────────────────────────────
+      function renderBudgetRow(calEaten, calGoal) {
+        const el = document.getElementById("bento-budget-row");
+        if (!el) return;
+        const calLeft = calGoal - calEaten;
+        el.textContent =
+          calLeft > 0 ? calLeft + " kcal remaining" : Math.abs(calLeft) + " kcal over budget";
+        el.className =
+          "bento-budget-row" +
+          (calLeft <= 0 ? " budget-over" : calLeft < 200 ? " budget-done" : "");
+      }
+
+      // ── Feature 2: Count-up animation ────────────────────────────────────────
+      function animCountUp(el, target, duration) {
+        if (!el) return;
+        duration = duration || 450;
+        const startVal = parseInt(el.dataset.countTarget || el.textContent, 10) || 0;
+        if (startVal === target) {
+          el.textContent = target;
+          return;
+        }
+        el.dataset.countTarget = target;
+        const startTime = performance.now();
+        const tick = (now) => {
+          if (parseInt(el.dataset.countTarget, 10) !== target) return;
+          const t = Math.min((now - startTime) / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(startVal + (target - startVal) * ease);
+          if (t < 1) requestAnimationFrame(tick);
+          else el.textContent = target;
+        };
+        requestAnimationFrame(tick);
+      }
+
+      // ── Feature 3: Goal celebration ──────────────────────────────────────────
+      const _celebratedGoals = { cal: null, prot: null };
+      function triggerGoalCelebration(cardEl) {
+        cardEl.classList.remove("goal-glow");
+        void cardEl.offsetWidth;
+        cardEl.classList.add("goal-glow");
+        setTimeout(() => cardEl.classList.remove("goal-glow"), 3800);
+        const rect = cardEl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const colors = ["#ff5c7a", "#4ecdc4", "#ffc857", "#3dd68c", "#b464ff"];
+        for (let i = 0; i < 28; i++) {
+          const c = document.createElement("div");
+          c.className = "confetti-piece";
+          const angle = (360 / 28) * i + Math.random() * 13;
+          const dist = 50 + Math.random() * 90;
+          const rad = (angle * Math.PI) / 180;
+          c.style.left = cx + "px";
+          c.style.top = cy + "px";
+          c.style.background = colors[i % colors.length];
+          document.body.appendChild(c);
+          c.animate(
+            [
+              { transform: "translate(-50%,-50%) scale(1)", opacity: 1 },
+              {
+                transform:
+                  "translate(" +
+                  (Math.cos(rad) * dist - 3.5) +
+                  "px," +
+                  (Math.sin(rad) * dist - 3.5) +
+                  "px) scale(0)",
+                opacity: 0,
+              },
+            ],
+            { duration: 650 + Math.random() * 350, easing: "ease-out", fill: "forwards" }
+          ).onfinish = () => c.remove();
+        }
+      }
+
+      // ── Feature 4: Streak milestone badge ────────────────────────────────────
+      function renderStreakBadge(streak) {
+        const el = document.getElementById("streak-badge");
+        if (!el) return;
+        if (streak >= 30) {
+          el.textContent = "🏆 " + streak + "d";
+          el.className = "streak-badge streak-legend";
+          el.hidden = false;
+        } else if (streak >= 14) {
+          el.textContent = "🥇 " + streak + "d";
+          el.className = "streak-badge streak-gold";
+          el.hidden = false;
+        } else if (streak >= 7) {
+          el.textContent = "🔥 " + streak + "d";
+          el.className = "streak-badge streak-fire";
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+        }
+      }
+
+      // ── Feature 5: Macro donut chart ─────────────────────────────────────────
+      function renderMacroDonut() {
+        const svg = document.getElementById("macro-donut");
+        if (!svg) return;
+        const key = toDateKey(new Date());
+        const dayData = state.trackerData[key] || {};
+        const prot = trackerDayProtein(key) || 0;
+        const carbs = parseFloat(dayData.carbs) || 0;
+        const fat = parseFloat(dayData.fat) || 0;
+        const R = 15.9155;
+        const bg =
+          '<circle cx="21" cy="21" r="' +
+          R +
+          '" fill="none" stroke="rgba(255,200,87,0.14)" stroke-width="3.8"/>';
+        const protCal = prot * 4;
+        const carbCal = carbs * 4;
+        const fatCal = fat * 9;
+        const total = protCal + carbCal + fatCal;
+        if (total < 10) {
+          svg.innerHTML = bg;
+          return;
+        }
+        const segs = [
+          { cal: protCal, rgb: "255,92,122" },
+          { cal: carbCal, rgb: "255,200,87" },
+          { cal: fatCal, rgb: "78,205,196" },
+        ];
+        let cumPct = 0;
+        let out = bg;
+        for (const seg of segs) {
+          const pct = (seg.cal / total) * 100;
+          if (pct < 1) {
+            cumPct += pct;
+            continue;
+          }
+          const rot = -90 + cumPct * 3.6;
+          out +=
+            '<circle cx="21" cy="21" r="' +
+            R +
+            '" fill="none" stroke="rgba(' +
+            seg.rgb +
+            ',0.9)" stroke-width="3.8" stroke-dasharray="' +
+            pct.toFixed(1) +
+            ' 100" transform="rotate(' +
+            rot.toFixed(1) +
+            " 21 21)" +
+            '"/>';
+          cumPct += pct;
+        }
+        svg.innerHTML = out;
+      }
+
+      // ── Feature 8: Body measurements chart ───────────────────────────────────
+      function renderMeasChart() {
+        const wrap = document.getElementById("meas-chart-wrap");
+        const legend = document.getElementById("meas-chart-legend");
+        const canvas = document.getElementById("meas-trend-chart");
+        if (!wrap || !canvas) return;
+        const MEAS_COLORS = {
+          waistCm: "255,92,122",
+          chestCm: "78,205,196",
+          armsCm: "255,200,87",
+        };
+        const MEAS_LABELS = { waistCm: "Waist", chestCm: "Chest", armsCm: "Arms" };
+        const keys = Object.keys(state.trackerData).sort().slice(-60);
+        const series = { waistCm: [], chestCm: [], armsCm: [] };
+        let hasAny = false;
+        for (const k of keys) {
+          const d = state.trackerData[k] || {};
+          for (const field of Object.keys(series)) {
+            const v = parseFloat(d[field]);
+            if (v > 0) {
+              series[field].push({ key: k, val: v });
+              hasAny = true;
+            }
+          }
+        }
+        if (!hasAny) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        const allKeys = [
+          ...new Set(Object.values(series).flatMap((a) => a.map((e) => e.key))),
+        ].sort();
+        if (allKeys.length < 2) {
+          wrap.hidden = true;
+          return;
+        }
+        const W = canvas.offsetWidth || 320;
+        const H = 160;
+        canvas.width = W * window.devicePixelRatio;
+        canvas.height = H * window.devicePixelRatio;
+        canvas.style.width = W + "px";
+        canvas.style.height = H + "px";
+        const ctx = canvas.getContext("2d");
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        ctx.clearRect(0, 0, W, H);
+        const pad = { t: 10, r: 10, b: 24, l: 32 };
+        const cw = W - pad.l - pad.r;
+        const ch = H - pad.t - pad.b;
+        let allVals = [];
+        for (const arr of Object.values(series)) allVals = allVals.concat(arr.map((e) => e.val));
+        const minV = Math.floor(Math.min(...allVals) - 2);
+        const maxV = Math.ceil(Math.max(...allVals) + 2);
+        const rangeV = maxV - minV || 1;
+        const xOf = (key) => pad.l + (allKeys.indexOf(key) / (allKeys.length - 1)) * cw;
+        const yOf = (val) => pad.t + (1 - (val - minV) / rangeV) * ch;
+        ctx.strokeStyle = "rgba(255,255,255,0.06)";
+        ctx.lineWidth = 1;
+        for (let g = 0; g <= 4; g++) {
+          const y = pad.t + (g / 4) * ch;
+          ctx.beginPath();
+          ctx.moveTo(pad.l, y);
+          ctx.lineTo(W - pad.r, y);
+          ctx.stroke();
+          const lbl = Math.round(minV + ((4 - g) / 4) * rangeV);
+          ctx.fillStyle = "rgba(255,255,255,0.3)";
+          ctx.font = "9px Inter,sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText(lbl, pad.l - 4, y + 3);
+        }
+        for (const [field, arr] of Object.entries(series)) {
+          if (!arr.length) continue;
+          const rgb = MEAS_COLORS[field];
+          ctx.strokeStyle = "rgba(" + rgb + ",0.9)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          arr.forEach((pt, i) => {
+            const x = xOf(pt.key);
+            const y = yOf(pt.val);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          arr.forEach((pt) => {
+            ctx.beginPath();
+            ctx.arc(xOf(pt.key), yOf(pt.val), 3, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(" + rgb + ",0.9)";
+            ctx.fill();
+          });
+        }
+        if (legend) {
+          legend.innerHTML = Object.entries(MEAS_LABELS)
+            .filter(([f]) => series[f].length > 0)
+            .map(
+              ([f, lbl]) =>
+                '<div class="meas-legend-item"><div class="meas-legend-dot" style="background:rgba(' +
+                MEAS_COLORS[f] +
+                ',0.9)"></div>' +
+                lbl +
+                "</div>"
+            )
+            .join("");
+        }
+      }
+
+      function initMeasurements() {
+        const waistEl = document.getElementById("meas-waist");
+        const chestEl = document.getElementById("meas-chest");
+        const armsEl = document.getElementById("meas-arms");
+        const saveBtn = document.getElementById("meas-save-btn");
+        if (!saveBtn) return;
+        const todayKey = toDateKey(new Date());
+        const d = state.trackerData[todayKey] || {};
+        if (waistEl && d.waistCm) waistEl.value = d.waistCm;
+        if (chestEl && d.chestCm) chestEl.value = d.chestCm;
+        if (armsEl && d.armsCm) armsEl.value = d.armsCm;
+        saveBtn.addEventListener("click", () => {
+          const key = toDateKey(new Date());
+          if (!state.trackerData[key]) {
+            state.trackerData[key] = {
+              isWorkout: getWorkoutSchedule().includes(new Date().getDay()),
+              breakfast: "",
+              lunch: "",
+              snack: "",
+              shake: "",
+              dinner: "",
+              creatine: false,
+              water: "",
+              burnt: "",
+              weightKg: "",
+              carbs: "",
+              fat: "",
+            };
+          }
+          const waist = parseFloat(waistEl ? waistEl.value : "");
+          const chest = parseFloat(chestEl ? chestEl.value : "");
+          const arms = parseFloat(armsEl ? armsEl.value : "");
+          if (waist > 0) state.trackerData[key].waistCm = String(waist);
+          if (chest > 0) state.trackerData[key].chestCm = String(chest);
+          if (arms > 0) state.trackerData[key].armsCm = String(arms);
+          saveState();
+          renderMeasChart();
+          saveBtn.textContent = "Saved!";
+          setTimeout(() => {
+            saveBtn.textContent = "Save today's measurements";
+          }, 2000);
+        });
+        renderMeasChart();
       }
 
       function renderHeroInsight() {
@@ -8932,6 +9456,7 @@
           if (tab.dataset.tab === "tracker") {
             requestAnimationFrame(renderTrackerCharts);
             requestAnimationFrame(renderHeatmap);
+            requestAnimationFrame(renderMeasChart);
           }
         });
       });
@@ -9179,6 +9704,8 @@
           renderWeeklySummary();
           // Item 5: quick-log
           initQuickLog();
+          // Feature 8: body measurements
+          initMeasurements();
           updateSetupBanner();
         } catch (err) {
           console.error("bootstrapApp failed:", err);
