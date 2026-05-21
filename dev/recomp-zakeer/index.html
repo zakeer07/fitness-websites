@@ -2902,6 +2902,74 @@
         text-transform: uppercase;
         color: var(--text-muted);
       }
+      .ep-import-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 8px 14px;
+        border-top: 1px solid var(--border);
+        gap: 8px;
+      }
+      .ep-import-btn {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--accent-secondary);
+        background: rgba(78, 205, 196, 0.1);
+        border: 1px solid rgba(78, 205, 196, 0.25);
+        border-radius: 999px;
+        padding: 5px 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .ep-import-btn:hover {
+        background: rgba(78, 205, 196, 0.2);
+      }
+      .ep-import-btn.added {
+        color: var(--success);
+        background: rgba(61, 214, 140, 0.1);
+        border-color: rgba(61, 214, 140, 0.25);
+        pointer-events: none;
+      }
+      .ep-slot-picker {
+        display: none;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px 14px 12px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-secondary);
+      }
+      .ep-slot-picker.open {
+        display: flex;
+      }
+      .ep-slot-label {
+        width: 100%;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+      }
+      .ep-slot-chip {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border-strong);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .ep-slot-chip:hover,
+      .ep-slot-chip.suggested {
+        background: rgba(78, 205, 196, 0.15);
+        color: var(--accent-secondary);
+        border-color: rgba(78, 205, 196, 0.35);
+      }
       .example-day-total {
         border-radius: var(--radius-md);
         overflow: hidden;
@@ -4295,6 +4363,16 @@
                   <span class="ep-option-label">Option 1</span>
                   <span class="ep-card-name">🍗 Chicken Rice Bowl</span>
                   <span class="ep-macros-badge">620 kcal · 47g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Chicken Rice Bowl"
+                    data-emoji="🍗"
+                    data-cal="620"
+                    data-pro="47"
+                    data-slot="lunch"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4347,6 +4425,16 @@
                   <span class="ep-option-label">Option 2</span>
                   <span class="ep-card-name">🐟 Salmon Quinoa Bowl</span>
                   <span class="ep-macros-badge">660 kcal · 44g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Salmon Quinoa Bowl"
+                    data-emoji="🐟"
+                    data-cal="660"
+                    data-pro="44"
+                    data-slot="lunch"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4393,6 +4481,16 @@
                   <span class="ep-option-label">Option 3</span>
                   <span class="ep-card-name">🥫 Tuna Rice Bowl</span>
                   <span class="ep-macros-badge">485 kcal · 41g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Tuna Rice Bowl"
+                    data-emoji="🥫"
+                    data-cal="485"
+                    data-pro="41"
+                    data-slot="lunch"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4456,6 +4554,16 @@
                   <span class="ep-option-label">Option 1</span>
                   <span class="ep-card-name">🥣 Greek Yogurt Parfait</span>
                   <span class="ep-macros-badge">325 kcal · 22g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Greek Yogurt Parfait"
+                    data-emoji="🥣"
+                    data-cal="325"
+                    data-pro="22"
+                    data-slot="snack"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4502,6 +4610,16 @@
                   <span class="ep-option-label">Option 2</span>
                   <span class="ep-card-name">🥚 Hard-boiled Eggs + Almonds</span>
                   <span class="ep-macros-badge">260 kcal · 16g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Hard-boiled Eggs + Almonds"
+                    data-emoji="🥚"
+                    data-cal="260"
+                    data-pro="16"
+                    data-slot="snack"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4547,6 +4665,16 @@
                   <span class="ep-option-label">Option 1 · Light</span>
                   <span class="ep-card-name">☕ Coffee + Banana</span>
                   <span class="ep-macros-badge">55 kcal</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Coffee + Banana"
+                    data-emoji="☕"
+                    data-cal="55"
+                    data-pro="0"
+                    data-slot="pre"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4583,6 +4711,16 @@
                   <span class="ep-option-label">Option 2 · Fuelling</span>
                   <span class="ep-card-name">☕ Coffee + Rice Cakes + PB</span>
                   <span class="ep-macros-badge">220 kcal · 5g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Coffee + Rice Cakes + PB"
+                    data-emoji="☕"
+                    data-cal="220"
+                    data-pro="5"
+                    data-slot="pre"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4634,6 +4772,16 @@
                   <span class="ep-option-label">Option 1</span>
                   <span class="ep-card-name">🥛 Protein Shake</span>
                   <span class="ep-macros-badge">130 kcal · 28g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Protein Shake"
+                    data-emoji="🥛"
+                    data-cal="130"
+                    data-pro="28"
+                    data-slot="post"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4674,6 +4822,16 @@
                   <span class="ep-option-label">Option 2 · Refuel</span>
                   <span class="ep-card-name">🥛 Shake + Banana</span>
                   <span class="ep-macros-badge">230 kcal · 29g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Shake + Banana"
+                    data-emoji="🥛"
+                    data-cal="230"
+                    data-pro="29"
+                    data-slot="post"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4719,6 +4877,16 @@
                   <span class="ep-option-label">Option 1</span>
                   <span class="ep-card-name">🍗 Chicken + Rice + Veg</span>
                   <span class="ep-macros-badge">430 kcal · 40g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Chicken + Rice + Veg"
+                    data-emoji="🍗"
+                    data-cal="430"
+                    data-pro="40"
+                    data-slot="dinner"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4765,6 +4933,16 @@
                   <span class="ep-option-label">Option 2</span>
                   <span class="ep-card-name">🥩 Ground Turkey Bowl</span>
                   <span class="ep-macros-badge">430 kcal · 39g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Ground Turkey Bowl"
+                    data-emoji="🥩"
+                    data-cal="430"
+                    data-pro="39"
+                    data-slot="dinner"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -4817,6 +4995,16 @@
                   <span class="ep-option-label">Option 3</span>
                   <span class="ep-card-name">🐟 Baked Fish + Veg</span>
                   <span class="ep-macros-badge">300 kcal · 41g protein</span>
+                  <button
+                    class="ep-import-btn"
+                    data-name="Baked Fish + Veg"
+                    data-emoji="🐟"
+                    data-cal="300"
+                    data-pro="41"
+                    data-slot="dinner"
+                  >
+                    + Add to library
+                  </button>
                 </div>
                 <div class="example-table-wrap">
                   <table class="example-table">
@@ -5824,6 +6012,84 @@
         const imp = document.getElementById("btn-import-starter-meals");
         if (imp) imp.addEventListener("click", importStarterMeals);
         updateMealsSectionMeta();
+      }
+
+      const SLOT_LABELS = {
+        breakfast: "🌅 Breakfast",
+        lunch: "🥗 Lunch",
+        snack: "🍎 Snack",
+        pre: "⚡ Pre-WO",
+        post: "🏋️ Post-WO",
+        dinner: "🌙 Dinner",
+      };
+
+      function initExamplePlanImport() {
+        const slots = [
+          { key: "breakfast", label: "🌅 Breakfast" },
+          { key: "lunch", label: "🥗 Lunch" },
+          { key: "snack", label: "🍎 Snack" },
+          { key: "pre", label: "⚡ Pre-WO" },
+          { key: "post", label: "🏋️ Post-WO" },
+          { key: "dinner", label: "🌙 Dinner" },
+        ];
+
+        document.querySelectorAll(".ep-import-btn").forEach((btn) => {
+          if (btn.dataset.bound === "1") return;
+          btn.dataset.bound = "1";
+
+          // Check if already in library
+          if (state.mealLibrary.some((m) => m.name === btn.dataset.name)) {
+            btn.textContent = "✓ Added";
+            btn.classList.add("added");
+            return;
+          }
+
+          // Inject slot picker into the card
+          const card = btn.closest(".ep-card");
+          const defaultSlot = btn.dataset.slot;
+          const picker = document.createElement("div");
+          picker.className = "ep-slot-picker";
+          picker.innerHTML =
+            '<div class="ep-slot-label">Save to which slot?</div>' +
+            slots
+              .map(
+                (s) =>
+                  `<button class="ep-slot-chip${s.key === defaultSlot ? " suggested" : ""}" data-slot="${s.key}">${s.label}</button>`
+              )
+              .join("");
+          card.appendChild(picker);
+
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".ep-slot-picker.open").forEach((p) => {
+              if (p !== picker) p.classList.remove("open");
+            });
+            picker.classList.toggle("open");
+          });
+
+          picker.querySelectorAll(".ep-slot-chip").forEach((chip) => {
+            chip.addEventListener("click", () => {
+              const name = btn.dataset.name;
+              const already = state.mealLibrary.some((m) => m.name === name);
+              if (!already) {
+                state.mealLibrary.push({
+                  id: MealLibrary.newMealId(),
+                  name,
+                  emoji: btn.dataset.emoji,
+                  cat: chip.dataset.slot,
+                  cal: Number(btn.dataset.cal) || 0,
+                  pro: Number(btn.dataset.pro) || 0,
+                  ingredients: [],
+                });
+                saveState();
+                renderMeals();
+              }
+              picker.classList.remove("open");
+              btn.textContent = "✓ Added";
+              btn.classList.add("added");
+            });
+          });
+        });
       }
 
       function getCalTarget() {
@@ -8394,6 +8660,7 @@
           updateDashboardStats();
           renderMeals();
           initMealLibraryUI();
+          initExamplePlanImport();
           renderTracker();
           renderHeatmap();
           renderIBS();
