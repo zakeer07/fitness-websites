@@ -4161,7 +4161,7 @@
                   <div class="profile-field">
                     <label for="profile-wo-days">Workout days goal / week</label>
                     <input type="number" id="profile-wo-days" min="1" max="7" step="1" />
-                    <div class="field-hint">Used for workout KPI and hero insights</div>
+                    <div class="field-hint">How many workouts you aim to complete each week</div>
                   </div>
                 </div>
                 <div class="profile-group profile-group-wide">
@@ -6140,6 +6140,7 @@
           "waterBottles",
           "waterBottleMl",
           "creatineG",
+          "workoutDaysGoal",
         ];
         for (const k of numericKeys) {
           const n = Number(merged[k]);
@@ -6558,7 +6559,7 @@
 
           // Dynamic workouts KPI (this week)
           const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
-          const woGoal = getProfile().workoutDaysGoal || DEFAULT_PROFILE.workoutDaysGoal;
+          const woGoal = getProfile().workoutDaysGoal;
           const woEl = document.getElementById("kpi-workouts");
           if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${woGoal}</span>`;
         }
@@ -6729,7 +6730,7 @@
         if (window.FitnessUI) {
           ({ done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule()));
         }
-        const total = getProfile().workoutDaysGoal || DEFAULT_PROFILE.workoutDaysGoal;
+        const woGoal = p.workoutDaysGoal;
         let lastWkDone = 0;
         for (let i = 7; i <= 13; i++) {
           const d = new Date();
@@ -6740,7 +6741,7 @@
         const bcWoTotal = document.getElementById("bento-wo-total");
         const bcWoDelta = document.getElementById("bento-wo-delta");
         if (bcWoCount) bcWoCount.textContent = done;
-        if (bcWoTotal) bcWoTotal.textContent = total;
+        if (bcWoTotal) bcWoTotal.textContent = woGoal;
         if (bcWoDelta) {
           const diff = done - lastWkDone;
           bcWoDelta.textContent = (diff >= 0 ? "+" : "") + diff + " vs last wk";
@@ -6843,7 +6844,7 @@
 
           // Workout pace this week
           const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
-          const woTarget = p.workoutDaysGoal || DEFAULT_PROFILE.workoutDaysGoal;
+          const woTarget = p.workoutDaysGoal;
           const remaining = woTarget - done;
           if (remaining <= 0) {
             lines.push(
@@ -7127,8 +7128,7 @@
         document.getElementById("profile-water-bottles").value = p.waterBottles;
         document.getElementById("profile-water-bottle-ml").value = p.waterBottleMl;
         document.getElementById("profile-creatine-g").value = p.creatineG;
-        const woDaysEl = document.getElementById("profile-wo-days");
-        if (woDaysEl) woDaysEl.value = p.workoutDaysGoal;
+        document.getElementById("profile-wo-days").value = p.workoutDaysGoal;
         const ibsEl = document.getElementById("profile-ibs-enabled");
         if (ibsEl) ibsEl.checked = p.ibsTabEnabled === true;
         const themeEl = document.querySelector(
