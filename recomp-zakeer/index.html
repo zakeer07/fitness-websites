@@ -904,6 +904,142 @@
         color: var(--text-muted);
         opacity: 0.4;
       }
+      .bento-net-row {
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 6px;
+        color: var(--text-muted);
+      }
+      .bento-net-row.net-deficit {
+        color: var(--success);
+      }
+      .bento-net-row.net-surplus {
+        color: var(--accent);
+      }
+      .bento-ratio-row {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .bento-ratio-row.ratio-hit {
+        color: var(--success);
+      }
+      .bento-ratio-row.ratio-close {
+        color: var(--warning);
+      }
+
+      /* Consistency heatmap */
+      .heatmap-section {
+        margin-bottom: 28px;
+      }
+      .heatmap-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .heatmap-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text-secondary);
+      }
+      .heatmap-legend {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .heatmap-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+      .hm-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+      .hm-sw-empty {
+        background: rgba(255, 255, 255, 0.07);
+      }
+      .hm-sw-miss {
+        background: rgba(255, 200, 87, 0.45);
+      }
+      .hm-sw-partial {
+        background: rgba(61, 214, 140, 0.45);
+      }
+      .hm-sw-hit {
+        background: rgba(61, 214, 140, 0.92);
+      }
+      .heatmap-scroll {
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .heatmap-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .heatmap-inner {
+        display: flex;
+        gap: 4px;
+        min-width: min-content;
+      }
+      .heatmap-day-labels {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding-top: 2px;
+        flex-shrink: 0;
+      }
+      .heatmap-day-label {
+        width: 10px;
+        height: 13px;
+        line-height: 13px;
+        font-size: 9px;
+        color: var(--text-muted);
+        text-align: right;
+      }
+      .heatmap-weeks {
+        display: flex;
+        gap: 2px;
+      }
+      .heatmap-week {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .hm-cell {
+        width: 13px;
+        height: 13px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.06);
+        cursor: default;
+        transition: opacity 0.15s;
+      }
+      .hm-cell:hover {
+        opacity: 0.75;
+      }
+      .hm-cell-miss {
+        background: rgba(255, 200, 87, 0.4);
+      }
+      .hm-cell-partial {
+        background: rgba(61, 214, 140, 0.45);
+      }
+      .hm-cell-hit {
+        background: rgba(61, 214, 140, 0.92);
+      }
+      .hm-cell-future {
+        background: transparent;
+      }
+      [data-color-scheme="light"] .hm-cell {
+        background: rgba(0, 0, 0, 0.07);
+      }
+      [data-color-scheme="light"] .hm-sw-empty {
+        background: rgba(0, 0, 0, 0.07);
+      }
 
       /* Workout toggle */
       .workout-toggle {
@@ -3344,23 +3480,6 @@
         margin-bottom: 20px;
         position: relative;
       }
-      .weekly-summary-dismiss {
-        position: absolute;
-        top: 10px;
-        right: 12px;
-        background: transparent;
-        border: none;
-        color: var(--text-muted);
-        font-size: 18px;
-        cursor: pointer;
-        line-height: 1;
-        padding: 2px 6px;
-        border-radius: 4px;
-        transition: color 0.15s;
-      }
-      .weekly-summary-dismiss:hover {
-        color: var(--text-secondary);
-      }
       .weekly-summary-heading {
         font-size: 10px;
         font-weight: 700;
@@ -3911,75 +4030,6 @@
                 <div class="toggle-switch"></div>
               </div>
             </div>
-
-            <div class="stats-stack">
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Calories eaten</div>
-                  <div class="stat-bar-value num">
-                    <span id="cal-current">0</span><span class="kpi-unit"> / </span
-                    ><span id="cal-target">2000</span><span class="kpi-unit"> kcal</span>
-                  </div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="cal-fill"
-                    style="width: 0%; background: var(--info)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">💪 Protein (grams)</div>
-                  <div class="stat-bar-value num">
-                    <span id="prot-current">0</span><span class="kpi-unit">g</span> /
-                    <span id="prot-goal-label">115</span><span class="kpi-unit">g</span>
-                  </div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="prot-fill"
-                    style="width: 0%; background: var(--accent)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🍽️ Meals Logged</div>
-                  <div class="stat-bar-value num"><span id="meals-logged">0</span> / 5</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="meals-fill"
-                    style="width: 0%; background: var(--success)"
-                  ></div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Burnt today</div>
-                  <div class="stat-bar-value num">
-                    <span id="hero-burnt">0</span><span class="kpi-unit"> kcal</span>
-                  </div>
-                </div>
-              </div>
-              <div class="stat-bar">
-                <div class="stat-bar-top">
-                  <div class="stat-bar-label">🔥 Streak</div>
-                  <div class="stat-bar-value num"><span id="streak-days">0</span> Days</div>
-                </div>
-                <div class="stat-bar-track">
-                  <div
-                    class="stat-bar-fill"
-                    id="streak-fill"
-                    style="width: 0%; background: var(--warning)"
-                  ></div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div class="bento-grid">
@@ -3990,12 +4040,13 @@
                 <span class="bento-delta" id="bento-cal-delta">today</span>
               </div>
               <div class="bento-num">
-                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal</span>
+                <span id="bento-cal-eaten">0</span><span class="bento-unit">kcal eaten</span>
               </div>
               <div class="bento-goal-row">of <span id="kpi-cal">2000</span> kcal goal</div>
               <div class="bento-bar-track">
                 <div class="bento-bar-fill" id="bento-cal-bar" style="width: 0%"></div>
               </div>
+              <div class="bento-net-row" id="bento-net-row"></div>
             </div>
 
             <!-- Protein -->
@@ -4008,6 +4059,7 @@
                 <span id="bento-prot-today">0</span><span class="bento-unit">g</span>
               </div>
               <div class="bento-goal-row">of <span id="kpi-protein">115</span>g goal</div>
+              <div class="bento-ratio-row" id="bento-prot-ratio"></div>
               <svg
                 class="bento-sparkline"
                 id="bento-prot-spark"
@@ -4055,9 +4107,6 @@
           <span id="kpi-workouts" hidden></span>
 
           <div id="weekly-summary-card" class="weekly-summary-card" hidden>
-            <button class="weekly-summary-dismiss" id="weekly-summary-dismiss" title="Dismiss">
-              ×
-            </button>
             <div class="weekly-summary-heading">
               Last week <span class="weekly-summary-range" id="wsum-range"></span>
             </div>
@@ -4915,6 +4964,40 @@
             <div class="section-meta">From <strong id="tracker-start">May 7, 2026</strong></div>
           </div>
 
+          <div class="heatmap-section">
+            <div class="heatmap-header">
+              <span class="heatmap-title">Consistency</span>
+              <div class="heatmap-legend">
+                <div class="heatmap-legend-item">
+                  <span class="hm-swatch hm-sw-empty"></span>no data
+                </div>
+                <div class="heatmap-legend-item">
+                  <span class="hm-swatch hm-sw-miss"></span>logged
+                </div>
+                <div class="heatmap-legend-item">
+                  <span class="hm-swatch hm-sw-partial"></span>close
+                </div>
+                <div class="heatmap-legend-item">
+                  <span class="hm-swatch hm-sw-hit"></span>goal hit
+                </div>
+              </div>
+            </div>
+            <div class="heatmap-scroll">
+              <div class="heatmap-inner">
+                <div class="heatmap-day-labels">
+                  <div class="heatmap-day-label">M</div>
+                  <div class="heatmap-day-label"></div>
+                  <div class="heatmap-day-label">W</div>
+                  <div class="heatmap-day-label"></div>
+                  <div class="heatmap-day-label">F</div>
+                  <div class="heatmap-day-label"></div>
+                  <div class="heatmap-day-label">S</div>
+                </div>
+                <div class="heatmap-weeks" id="heatmap-grid"></div>
+              </div>
+            </div>
+          </div>
+
           <div class="tracker-guide">
             <strong>Two metrics, two places:</strong> <strong>Today</strong> checks meals for
             <strong>calories (kcal)</strong> + <strong>protein (g)</strong>.
@@ -5475,7 +5558,6 @@
         mealLibrary: [],
         todayPlan: [],
         workouts: [],
-        dismissedWeeklySummary: null,
       };
       let state = { ...defaultState };
       let selectedRoutineId = null;
@@ -5838,18 +5920,7 @@
         });
 
         const target = getCalTarget();
-        document.getElementById("cal-current").textContent = cal;
-        document.getElementById("cal-target").textContent = target;
-        document.getElementById("prot-current").textContent = pro;
-        document.getElementById("meals-logged").textContent = mealsLogged;
-
-        document.getElementById("cal-fill").style.width = Math.min((cal / target) * 100, 100) + "%";
-
         const p = getProfile();
-        document.getElementById("prot-goal-label").textContent = p.proteinG;
-        document.getElementById("prot-fill").style.width =
-          Math.min((pro / p.proteinG) * 100, 100) + "%";
-        document.getElementById("meals-fill").style.width = (mealsLogged / 5) * 100 + "%";
 
         renderCharts();
 
@@ -5945,7 +6016,16 @@
         const p = getProfile();
 
         // Calories card
-        const calEaten = parseInt(document.getElementById("cal-current")?.textContent || "0") || 0;
+        let calEaten = 0,
+          _pro = 0;
+        getTodayPlan().forEach((plan) => {
+          if (state.mealsEaten[plan.slot]) {
+            const meal = getMeal(plan.mealId);
+            if (!meal) return;
+            calEaten += meal.cal;
+            _pro += meal.pro;
+          }
+        });
         const calGoal = getCalTarget();
         const bcCalEaten = document.getElementById("bento-cal-eaten");
         const bcCalBar = document.getElementById("bento-cal-bar");
@@ -5953,6 +6033,17 @@
         if (bcCalBar) bcCalBar.style.width = Math.min((calEaten / calGoal) * 100, 100) + "%";
         const kcalEl = document.getElementById("kpi-cal");
         if (kcalEl) kcalEl.textContent = calGoal;
+
+        // Net calories
+        const todayKey2 = toDateKey(new Date());
+        const todayBurnt = parseInt(state.trackerData[todayKey2]?.burnt || "0", 10) || 0;
+        const netCal = calEaten - todayBurnt;
+        const netRow = document.getElementById("bento-net-row");
+        if (netRow) {
+          netRow.textContent =
+            "🔥 " + todayBurnt + " kcal burnt · Net " + (netCal >= 0 ? "+" : "") + netCal + " kcal";
+          netRow.className = "bento-net-row " + (netCal <= 0 ? "net-deficit" : "net-surplus");
+        }
 
         // Protein card
         const protVals = recentDailyProtein(7);
@@ -5963,6 +6054,17 @@
         const bcProtGoal = document.getElementById("kpi-protein");
         if (bcProtToday) bcProtToday.textContent = Math.round(todayProt);
         if (bcProtGoal) bcProtGoal.textContent = p.proteinG;
+
+        // Protein/kg ratio
+        const ratioEl = document.getElementById("bento-prot-ratio");
+        if (ratioEl && p.weightKg > 0) {
+          const actualRatio = (todayProt / p.weightKg).toFixed(1);
+          const targetRatio = (p.proteinG / p.weightKg).toFixed(1);
+          ratioEl.textContent = actualRatio + " g/kg · target " + targetRatio;
+          const pct = todayProt / p.proteinG;
+          ratioEl.className =
+            "bento-ratio-row " + (pct >= 1 ? "ratio-hit" : pct >= 0.8 ? "ratio-close" : "");
+        }
         if (bcProtDelta) {
           if (yestProt != null) {
             const diff = Math.round(todayProt - yestProt);
@@ -6047,6 +6149,50 @@
             return '<span class="bento-dot bento-dot-' + type + '">' + lbl + "</span>";
           }).join("");
         }
+      }
+
+      function renderHeatmap() {
+        const grid = document.getElementById("heatmap-grid");
+        if (!grid) return;
+        const p = getProfile();
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+
+        // Start 16 weeks back, aligned to Monday
+        const start = new Date();
+        start.setDate(start.getDate() - 16 * 7);
+        const dow = start.getDay();
+        start.setDate(start.getDate() - (dow === 0 ? 6 : dow - 1));
+        start.setHours(0, 0, 0, 0);
+
+        const weeks = [];
+        const cursor = new Date(start);
+        while (cursor <= today) {
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            const key = toDateKey(new Date(cursor));
+            const isFuture = new Date(cursor) > today;
+            let level = "empty";
+            if (!isFuture) {
+              const entry = state.trackerData[key];
+              if (entry) {
+                const prot = ["breakfast", "lunch", "snack", "dinner", "shake"].reduce(
+                  (acc, s) => acc + (parseFloat(entry[s]) || 0),
+                  0
+                );
+                if (prot >= p.proteinG) level = "hit";
+                else if (prot >= (p.proteinAlmostMin || p.proteinG * 0.8)) level = "partial";
+                else if (prot > 0) level = "miss";
+              }
+            } else {
+              level = "future";
+            }
+            week.push('<div class="hm-cell hm-cell-' + level + '" title="' + key + '"></div>');
+            cursor.setDate(cursor.getDate() + 1);
+          }
+          weeks.push('<div class="heatmap-week">' + week.join("") + "</div>");
+        }
+        grid.innerHTML = weeks.join("");
       }
 
       function renderWorkoutToggle() {
@@ -7897,7 +8043,10 @@
           section.classList.add("active");
           updateNavIndicator();
           window.scrollTo({ top: 0, behavior: "smooth" });
-          if (tab.dataset.tab === "tracker") requestAnimationFrame(renderTrackerCharts);
+          if (tab.dataset.tab === "tracker") {
+            requestAnimationFrame(renderTrackerCharts);
+            requestAnimationFrame(renderHeatmap);
+          }
         });
       });
       window.addEventListener("resize", updateNavIndicator);
@@ -7957,11 +8106,6 @@
           card.hidden = true;
           return;
         }
-        if (state.dismissedWeeklySummary === summary.weekKey) {
-          card.hidden = true;
-          return;
-        }
-
         document.getElementById("wsum-range").textContent = summary.startLabel;
         document.getElementById("wsum-pro").textContent = summary.avgPro + "g";
         document.getElementById("wsum-goal-days").textContent = summary.proGoalDays;
@@ -7976,16 +8120,6 @@
         }
         card.hidden = false;
       }
-      document.getElementById("weekly-summary-dismiss")?.addEventListener("click", () => {
-        if (!window.FitnessUI) return;
-        const summary = FitnessUI.computeWeeklySummary(state.trackerData, getProfile());
-        if (summary) {
-          state.dismissedWeeklySummary = summary.weekKey;
-          saveState();
-        }
-        document.getElementById("weekly-summary-card").hidden = true;
-      });
-
       // ═══════════════════════════════════════════════════════════════════════
       // ITEM 5: Quick-log FAB
       // ═══════════════════════════════════════════════════════════════════════
@@ -8132,6 +8266,7 @@
           renderMeals();
           initMealLibraryUI();
           renderTracker();
+          renderHeatmap();
           renderIBS();
           renderTips();
           renderWorkouts();
