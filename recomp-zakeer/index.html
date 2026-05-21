@@ -583,9 +583,10 @@
       }
       .hero-top {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 20px;
         position: relative;
       }
       .greeting {
@@ -609,13 +610,15 @@
       }
       .hero-insight {
         margin-top: 14px;
-        font-size: 13px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+        font-size: 12px;
         color: var(--text-secondary);
         font-style: italic;
         line-height: 1.5;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 3px;
       }
       .hero-insight:empty {
         display: none;
@@ -1107,8 +1110,9 @@
       .toggle-text-value {
         font-family: "Syne", sans-serif;
         font-weight: 700;
-        font-size: 17px;
+        font-size: 15px;
         letter-spacing: -0.02em;
+        white-space: nowrap;
       }
       .toggle-switch {
         width: 52px;
@@ -1744,10 +1748,17 @@
           padding: 16px;
         }
         .hero {
-          padding: 24px 20px;
+          padding: 20px 16px;
         }
         .hero-date {
-          font-size: 28px;
+          font-size: 24px;
+        }
+        .hero-top {
+          gap: 8px;
+        }
+        .workout-toggle {
+          padding: 12px 14px;
+          flex-shrink: 0;
         }
         .stats-stack {
           width: 100%;
@@ -5850,7 +5861,14 @@
           `${fmtDate(now)}, ${now.getFullYear()}`;
 
         const hour = now.getHours();
-        const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+        const greeting =
+          hour < 5
+            ? "Good night"
+            : hour < 12
+              ? "Good morning"
+              : hour < 17
+                ? "Good afternoon"
+                : "Good evening";
         const who = getProfile().name;
         document.getElementById("greeting").textContent = `${greeting}, ${who} 💪`;
       }
