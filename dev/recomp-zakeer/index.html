@@ -5799,6 +5799,7 @@
             <!-- Log action -->
             <div class="scan-log-row">
               <select class="scan-meal-select" id="scan-meal-select">
+                <option value="breakfast">🌅 Breakfast</option>
                 <option value="lunch">🥗 Lunch</option>
                 <option value="snack">🍎 Snack</option>
                 <option value="shake">🏋️ Post-WO Shake</option>
@@ -6559,7 +6560,7 @@
 
           // Dynamic workouts KPI (this week)
           const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
-          const woGoal = getProfile().workoutDaysGoal;
+          const woGoal = p.workoutDaysGoal;
           const woEl = document.getElementById("kpi-workouts");
           if (woEl) woEl.innerHTML = `${done}<span class="kpi-unit">/${woGoal}</span>`;
         }
@@ -6835,6 +6836,12 @@
                   days +
                   "/7 days. This week, aim to beat that. Even one extra day makes a difference."
               );
+            } else if (summary.daysLogged > 0) {
+              lines.push(
+                "📈 Last week you logged protein " +
+                  summary.daysLogged +
+                  "/7 days but didn't hit your goal. This week, push a little harder each meal."
+              );
             } else {
               lines.push(
                 "📋 No protein logged last week. This week, start strong. Even one good day builds momentum."
@@ -6843,29 +6850,31 @@
           }
 
           // Workout pace this week
-          const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
           const woTarget = p.workoutDaysGoal;
-          const remaining = woTarget - done;
-          if (remaining <= 0) {
-            lines.push(
-              "🏅 You've already completed all your workouts this week. Great discipline!"
-            );
-          } else if (done === 0) {
-            lines.push(
-              "🏋️ No workouts logged yet this week. You have " +
-                woTarget +
-                " planned. Today's a great day to start."
-            );
-          } else {
-            lines.push(
-              "🏋️ " +
-                done +
-                " of " +
-                woTarget +
-                " workouts done this week, " +
-                remaining +
-                " to go. You've got this."
-            );
+          if (woTarget > 0) {
+            const { done } = FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule());
+            const remaining = woTarget - done;
+            if (remaining <= 0) {
+              lines.push(
+                "🏅 You've already completed all your workouts this week. Great discipline!"
+              );
+            } else if (done === 0) {
+              lines.push(
+                "🏋️ No workouts logged yet this week. You have " +
+                  woTarget +
+                  " planned. Today's a great day to start."
+              );
+            } else {
+              lines.push(
+                "🏋️ " +
+                  done +
+                  " of " +
+                  woTarget +
+                  " workouts done this week, " +
+                  remaining +
+                  " to go. You've got this."
+              );
+            }
           }
         }
 
