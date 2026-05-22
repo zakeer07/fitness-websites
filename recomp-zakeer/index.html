@@ -1691,9 +1691,23 @@
         backdrop-filter: blur(16px);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
-        overflow: hidden;
-        overflow-x: auto;
+        overflow: auto;
+        max-height: 70dvh;
         box-shadow: var(--shadow-card);
+      }
+      .tracker-table-wrap thead {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+      }
+      .tracker-table-wrap thead th {
+        background: var(--bg-secondary);
+      }
+      .tracker-table-wrap thead th.th-group {
+        background: color-mix(in srgb, var(--accent) 6%, var(--bg-secondary));
+      }
+      .tracker-table-wrap thead th.th-group.cal-group {
+        background: color-mix(in srgb, var(--info) 8%, var(--bg-secondary));
       }
       .tracker-expand-row {
         display: flex;
@@ -6113,7 +6127,7 @@
           </div>
           <div class="tracker-expand-row">
             <button class="btn-tracker-expand" id="btn-tracker-expand" type="button">
-              Show full year ↓
+              Show all history ↓
             </button>
           </div>
 
@@ -8477,26 +8491,21 @@
         const today = new Date();
         const p = getProfile();
 
-        // Collapsed: entire current month. Expanded: TRACKER_START through Dec 31.
+        // Collapsed: current month up to today. Expanded: TRACKER_START through today.
         const renderStart = trackerExpanded
           ? start
           : new Date(today.getFullYear(), today.getMonth(), 1);
-        const endDate = trackerExpanded
-          ? new Date(today.getFullYear(), 11, 31)
-          : new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
         const btn = document.getElementById("btn-tracker-expand");
         if (btn) {
-          btn.textContent = trackerExpanded ? "Show less ↑" : "Show full year ↓";
+          btn.textContent = trackerExpanded ? "Show less ↑" : "Show all history ↓";
         }
 
-        let i = 0;
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const d = new Date(renderStart);
-          d.setDate(d.getDate() + i);
-          if (d > endDate) break;
-          i++;
+        const totalDays = Math.round((endDate - renderStart) / 86400000);
+        for (let i = 0; i <= totalDays; i++) {
+          const d = new Date(endDate);
+          d.setDate(d.getDate() - i);
           const dateKey = toDateKey(d);
           const isToday = d.toDateString() === today.toDateString();
           const dow = d.getDay();
@@ -8598,6 +8607,7 @@
             state.trackerData[dateKey][field] = !state.trackerData[dateKey][field];
             saveState();
             renderTracker();
+
             updateDashboardStats();
           });
         });
