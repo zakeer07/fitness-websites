@@ -927,24 +927,46 @@
       .kpi-ticker-wrap {
         overflow: hidden;
         margin: 10px 0 4px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        padding: 0 0;
-        height: 34px;
+        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+        height: 36px;
         display: flex;
         align-items: center;
+        position: relative;
       }
-      [data-color-scheme="light"] .kpi-ticker-wrap {
-        background: rgba(0, 0, 0, 0.04);
-        border-color: rgba(0, 0, 0, 0.08);
+      .kpi-ticker-wrap::before,
+      .kpi-ticker-wrap::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 32px;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .kpi-ticker-wrap::before {
+        left: 0;
+        background: linear-gradient(to right, var(--bg-page, #06080f), transparent);
+      }
+      .kpi-ticker-wrap::after {
+        right: 0;
+        background: linear-gradient(to left, var(--bg-page, #06080f), transparent);
+      }
+      [data-color-scheme="light"] .kpi-ticker-wrap::before {
+        background: linear-gradient(to right, #f0f2f5, transparent);
+      }
+      [data-color-scheme="light"] .kpi-ticker-wrap::after {
+        background: linear-gradient(to left, #f0f2f5, transparent);
       }
       .kpi-ticker-track {
         display: flex;
         align-items: center;
-        gap: 0;
         white-space: nowrap;
-        animation: ticker-scroll 24s linear infinite;
+        animation: ticker-scroll 28s linear infinite;
         will-change: transform;
       }
       .kpi-ticker-track:hover {
@@ -961,25 +983,45 @@
       .ticker-item {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 0 16px;
+        gap: 6px;
+        padding: 0 18px;
         font-size: 12px;
         font-weight: 500;
-        letter-spacing: 0.02em;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
       }
-      [data-color-scheme="light"] .ticker-item {
-        border-right-color: rgba(0, 0, 0, 0.1);
+      .ticker-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .ticker-dot.t-green {
+        background: #4ecdc4;
+        box-shadow: 0 0 6px #4ecdc4aa;
+      }
+      .ticker-dot.t-amber {
+        background: #f4c753;
+        box-shadow: 0 0 6px #f4c753aa;
+      }
+      .ticker-dot.t-red {
+        background: #ff5c7a;
+        box-shadow: 0 0 6px #ff5c7aaa;
+      }
+      .ticker-dot.t-neutral {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      [data-color-scheme="light"] .ticker-dot.t-neutral {
+        background: rgba(0, 0, 0, 0.2);
       }
       .ticker-label {
-        opacity: 0.5;
+        opacity: 0.45;
         font-size: 10px;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.07em;
       }
       .ticker-val {
         font-variant-numeric: tabular-nums;
+        font-weight: 600;
       }
       .ticker-val.t-green {
         color: #4ecdc4;
@@ -991,7 +1033,14 @@
         color: #ff5c7a;
       }
       .ticker-val.t-neutral {
-        opacity: 0.7;
+        opacity: 0.6;
+      }
+      .ticker-sep {
+        opacity: 0.12;
+        font-size: 16px;
+        font-weight: 200;
+        padding: 0 2px;
+        user-select: none;
       }
       .bento-card {
         border-radius: var(--radius-md);
@@ -5027,7 +5076,6 @@
                 <span id="bento-prot-today">0</span><span class="bento-unit">g</span>
               </div>
               <div class="bento-goal-row">of <span id="kpi-protein">115</span>g goal</div>
-              <div id="streak-badge" class="streak-badge" hidden></div>
               <div class="bento-ratio-row" id="bento-prot-ratio"></div>
               <svg
                 class="bento-sparkline"
@@ -7286,10 +7334,8 @@
         const todayKey = toDateKey(new Date());
         const day = state.trackerData[todayKey] || {};
 
-        const proToday = trackerDayProtein(todayKey) || 0;
-        const calToday = trackerDayCal(todayKey);
-        const proGoal = p.proteinG;
-        const calGoal = getCalTarget();
+        const carbs = parseFloat(day.carbs) || 0;
+        const fat = parseFloat(day.fat) || 0;
         const waterDone = parseInt(day.water || "0", 10) || 0;
         const waterGoal = p.waterBottles;
         const burnt = parseInt(day.burnt || "0", 10) || 0;
@@ -7297,62 +7343,49 @@
         const weight = weightRaw > 0 ? weightRaw : null;
         const creatine = !!day.creatine;
         const streak = window.FitnessUI ? FitnessUI.computeStreak(state.trackerData) : 0;
-        const { done: woDone } = window.FitnessUI
-          ? FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule())
-          : { done: 0 };
-        const woGoal = p.workoutDaysGoal;
 
-        function cls(val, goal, almostPct) {
+        function cls(val, goal) {
           if (val >= goal) return "t-green";
-          if (val >= goal * (almostPct ?? 0.8)) return "t-amber";
+          if (val >= goal * 0.8) return "t-amber";
           return val > 0 ? "t-red" : "t-neutral";
         }
 
         const items = [
           {
-            label: "Protein",
-            val: Math.round(proToday) + "g",
-            cls: cls(proToday, proGoal, p.proteinAlmostMin / proGoal),
+            label: "Carbs",
+            val: Math.round(carbs) + "g",
+            cls: carbs > 0 ? "t-amber" : "t-neutral",
           },
-          { label: "Calories", val: Math.round(calToday) + " kcal", cls: cls(calToday, calGoal) },
+          { label: "Fat", val: Math.round(fat) + "g", cls: fat > 0 ? "t-green" : "t-neutral" },
           { label: "Burnt", val: burnt + " kcal", cls: burnt > 0 ? "t-green" : "t-neutral" },
-          {
-            label: "Water",
-            val: waterDone + "/" + waterGoal,
-            cls: cls(waterDone, waterGoal),
-          },
-          ...(woGoal > 0
-            ? [
-                {
-                  label: "Workouts",
-                  val: woDone + "/" + woGoal + " wk",
-                  cls: woDone >= woGoal ? "t-green" : woDone > 0 ? "t-amber" : "t-neutral",
-                },
-              ]
-            : []),
+          { label: "Water", val: waterDone + "/" + waterGoal, cls: cls(waterDone, waterGoal) },
           {
             label: "Streak",
-            val: streak + " days",
-            cls: streak >= 3 ? "t-green" : streak > 0 ? "t-amber" : "t-neutral",
+            val: streak + " day" + (streak !== 1 ? "s" : ""),
+            cls:
+              streak >= 7
+                ? "t-green"
+                : streak >= 3
+                  ? "t-amber"
+                  : streak > 0
+                    ? "t-red"
+                    : "t-neutral",
           },
-          {
-            label: "Creatine",
-            val: creatine ? "✓ done" : "○ today",
-            cls: creatine ? "t-green" : "t-neutral",
-          },
+          { label: "Creatine", val: creatine ? "✓" : "○", cls: creatine ? "t-green" : "t-neutral" },
           ...(weight !== null
             ? [{ label: "Weight", val: weight.toFixed(1) + " kg", cls: "t-neutral" }]
             : []),
         ];
 
+        const sep = `<span class="ticker-sep">·</span>`;
         const html = items
           .map(
             (it) =>
-              `<span class="ticker-item"><span class="ticker-label">${it.label}</span><span class="ticker-val ${it.cls}">${it.val}</span></span>`
+              `<span class="ticker-item"><span class="ticker-dot ${it.cls}"></span><span class="ticker-label">${it.label}</span><span class="ticker-val ${it.cls}">${it.val}</span></span>${sep}`
           )
           .join("");
 
-        // Preserve scroll position across content updates to avoid animation jump-to-start
+        // Preserve scroll position to avoid jump-to-start on every update
         const anim = track.getAnimations ? track.getAnimations()[0] : null;
         const elapsed = anim ? anim.currentTime : null;
         track.innerHTML = html + html;
