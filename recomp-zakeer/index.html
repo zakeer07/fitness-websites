@@ -950,17 +950,11 @@
       }
       .kpi-ticker-wrap::before {
         left: 0;
-        background: linear-gradient(to right, var(--bg-page, #06080f), transparent);
+        background: linear-gradient(to right, var(--bg-primary), transparent);
       }
       .kpi-ticker-wrap::after {
         right: 0;
-        background: linear-gradient(to left, var(--bg-page, #06080f), transparent);
-      }
-      [data-color-scheme="light"] .kpi-ticker-wrap::before {
-        background: linear-gradient(to right, #f0f2f5, transparent);
-      }
-      [data-color-scheme="light"] .kpi-ticker-wrap::after {
-        background: linear-gradient(to left, #f0f2f5, transparent);
+        background: linear-gradient(to left, var(--bg-primary), transparent);
       }
       .kpi-ticker-track {
         display: flex;
@@ -5043,6 +5037,8 @@
             </div>
           </div>
 
+          <div id="streak-badge" class="streak-badge" hidden></div>
+
           <div class="bento-grid">
             <!-- Calories -->
             <div class="bento-card bento-cal">
@@ -7359,18 +7355,15 @@
           { label: "Fat", val: Math.round(fat) + "g", cls: fat > 0 ? "t-green" : "t-neutral" },
           { label: "Burnt", val: burnt + " kcal", cls: burnt > 0 ? "t-green" : "t-neutral" },
           { label: "Water", val: waterDone + "/" + waterGoal, cls: cls(waterDone, waterGoal) },
-          {
-            label: "Streak",
-            val: streak + " day" + (streak !== 1 ? "s" : ""),
-            cls:
-              streak >= 7
-                ? "t-green"
-                : streak >= 3
-                  ? "t-amber"
-                  : streak > 0
-                    ? "t-red"
-                    : "t-neutral",
-          },
+          ...(streak > 0
+            ? [
+                {
+                  label: "Streak",
+                  val: streak + " day" + (streak !== 1 ? "s" : ""),
+                  cls: streak >= 7 ? "t-green" : streak >= 3 ? "t-amber" : "t-red",
+                },
+              ]
+            : []),
           { label: "Creatine", val: creatine ? "✓" : "○", cls: creatine ? "t-green" : "t-neutral" },
           ...(weight !== null
             ? [{ label: "Weight", val: weight.toFixed(1) + " kg", cls: "t-neutral" }]
