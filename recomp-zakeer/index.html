@@ -988,24 +988,6 @@
         border-radius: 50%;
         flex-shrink: 0;
       }
-      .ticker-dot.t-green {
-        background: #4ecdc4;
-        box-shadow: 0 0 6px #4ecdc4aa;
-      }
-      .ticker-dot.t-amber {
-        background: #f4c753;
-        box-shadow: 0 0 6px #f4c753aa;
-      }
-      .ticker-dot.t-red {
-        background: #ff5c7a;
-        box-shadow: 0 0 6px #ff5c7aaa;
-      }
-      .ticker-dot.t-neutral {
-        background: rgba(255, 255, 255, 0.25);
-      }
-      [data-color-scheme="light"] .ticker-dot.t-neutral {
-        background: rgba(0, 0, 0, 0.2);
-      }
       .ticker-label {
         opacity: 0.45;
         font-size: 10px;
@@ -1017,17 +999,70 @@
         font-variant-numeric: tabular-nums;
         font-weight: 600;
       }
-      .ticker-val.t-green {
-        color: #4ecdc4;
+      /* Per-item pastel palette */
+      .ti-carbs .ticker-dot {
+        background: #ffb347;
+        box-shadow: 0 0 6px #ffb34799;
       }
-      .ticker-val.t-amber {
-        color: #f4c753;
+      .ti-carbs .ticker-val {
+        color: #ffb347;
       }
-      .ticker-val.t-red {
-        color: #ff5c7a;
+      .ti-fat .ticker-dot {
+        background: #b39ddb;
+        box-shadow: 0 0 6px #b39ddb99;
       }
-      .ticker-val.t-neutral {
-        opacity: 0.6;
+      .ti-fat .ticker-val {
+        color: #b39ddb;
+      }
+      .ti-burnt .ticker-dot {
+        background: #ff8a65;
+        box-shadow: 0 0 6px #ff8a6599;
+      }
+      .ti-burnt .ticker-val {
+        color: #ff8a65;
+      }
+      .ti-water .ticker-dot {
+        background: #64b5f6;
+        box-shadow: 0 0 6px #64b5f699;
+      }
+      .ti-water .ticker-val {
+        color: #64b5f6;
+      }
+      .ti-streak .ticker-dot {
+        background: #f06292;
+        box-shadow: 0 0 6px #f0629299;
+      }
+      .ti-streak .ticker-val {
+        color: #f06292;
+      }
+      .ti-creatine .ticker-dot {
+        background: #81c784;
+        box-shadow: 0 0 6px #81c78499;
+      }
+      .ti-creatine .ticker-val {
+        color: #81c784;
+      }
+      .ti-weight .ticker-dot {
+        background: #4dd0e1;
+        box-shadow: 0 0 6px #4dd0e199;
+      }
+      .ti-weight .ticker-val {
+        color: #4dd0e1;
+      }
+      /* dim dot when no data logged */
+      .ticker-dot.t-none {
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: none;
+      }
+      [data-color-scheme="light"] .ticker-dot.t-none {
+        background: rgba(0, 0, 0, 0.15);
+      }
+      .ticker-val.t-none {
+        opacity: 0.4;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      [data-color-scheme="light"] .ticker-val.t-none {
+        color: rgba(0, 0, 0, 0.3);
       }
       .ticker-sep {
         opacity: 0.12;
@@ -1205,22 +1240,6 @@
         height: 40px;
         flex-shrink: 0;
         pointer-events: none;
-      }
-      /* Streak milestone badge — shown as a small row below the goal line */
-      .streak-badge {
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--warning);
-        margin-top: 1px;
-      }
-      .streak-badge.streak-fire {
-        color: #ff7832;
-      }
-      .streak-badge.streak-gold {
-        color: #ffd700;
-      }
-      .streak-badge.streak-legend {
-        color: #b464ff;
       }
       /* Goal celebration glow pulse on bento card */
       @keyframes goalGlow {
@@ -4421,6 +4440,7 @@
         border: 1px solid rgba(255, 92, 122, 0.22);
         border-radius: var(--radius-lg);
         padding: 14px 16px 16px;
+        margin-top: 16px;
         margin-bottom: 20px;
         position: relative;
       }
@@ -5036,8 +5056,6 @@
               <!-- populated by renderKpiTicker() -->
             </div>
           </div>
-
-          <div id="streak-badge" class="streak-badge" hidden></div>
 
           <div class="bento-grid">
             <!-- Calories -->
@@ -7340,33 +7358,41 @@
         const creatine = !!day.creatine;
         const streak = window.FitnessUI ? FitnessUI.computeStreak(state.trackerData) : 0;
 
-        function cls(val, goal) {
-          if (val >= goal) return "t-green";
-          if (val >= goal * 0.8) return "t-amber";
-          return val > 0 ? "t-red" : "t-neutral";
-        }
-
         const items = [
+          { label: "Carbs", val: Math.round(carbs) + "g", itemCls: "ti-carbs", empty: carbs <= 0 },
+          { label: "Fat", val: Math.round(fat) + "g", itemCls: "ti-fat", empty: fat <= 0 },
+          { label: "Burnt", val: burnt + " kcal", itemCls: "ti-burnt", empty: burnt <= 0 },
           {
-            label: "Carbs",
-            val: Math.round(carbs) + "g",
-            cls: carbs > 0 ? "t-amber" : "t-neutral",
+            label: "Water",
+            val: waterDone + "/" + waterGoal,
+            itemCls: "ti-water",
+            empty: waterDone <= 0,
           },
-          { label: "Fat", val: Math.round(fat) + "g", cls: fat > 0 ? "t-green" : "t-neutral" },
-          { label: "Burnt", val: burnt + " kcal", cls: burnt > 0 ? "t-green" : "t-neutral" },
-          { label: "Water", val: waterDone + "/" + waterGoal, cls: cls(waterDone, waterGoal) },
           ...(streak > 0
             ? [
                 {
                   label: "Streak",
                   val: streak + " day" + (streak !== 1 ? "s" : ""),
-                  cls: streak >= 7 ? "t-green" : streak >= 3 ? "t-amber" : "t-red",
+                  itemCls: "ti-streak",
+                  empty: false,
                 },
               ]
             : []),
-          { label: "Creatine", val: creatine ? "✓" : "○", cls: creatine ? "t-green" : "t-neutral" },
+          {
+            label: "Creatine",
+            val: creatine ? "✓" : "○",
+            itemCls: "ti-creatine",
+            empty: !creatine,
+          },
           ...(weight !== null
-            ? [{ label: "Weight", val: weight.toFixed(1) + " kg", cls: "t-neutral" }]
+            ? [
+                {
+                  label: "Weight",
+                  val: weight.toFixed(1) + " kg",
+                  itemCls: "ti-weight",
+                  empty: false,
+                },
+              ]
             : []),
         ];
 
@@ -7374,7 +7400,7 @@
         const html = items
           .map(
             (it) =>
-              `<span class="ticker-item"><span class="ticker-dot ${it.cls}"></span><span class="ticker-label">${it.label}</span><span class="ticker-val ${it.cls}">${it.val}</span></span>${sep}`
+              `<span class="ticker-item ${it.itemCls}"><span class="ticker-dot${it.empty ? " t-none" : ""}"></span><span class="ticker-label">${it.label}</span><span class="ticker-val${it.empty ? " t-none" : ""}">${it.val}</span></span>${sep}`
           )
           .join("");
 
@@ -7643,11 +7669,6 @@
           }).join("");
         }
 
-        // Streak badge (Feature 4)
-        if (window.FitnessUI) {
-          renderStreakBadge(FitnessUI.computeStreak(state.trackerData));
-        }
-
         // Budget row (Feature 1)
         renderBudgetRow(calEaten, calGoal);
 
@@ -7738,27 +7759,6 @@
             ],
             { duration: 650 + Math.random() * 350, easing: "ease-out", fill: "forwards" }
           ).onfinish = () => c.remove();
-        }
-      }
-
-      // ── Feature 4: Streak milestone badge ────────────────────────────────────
-      function renderStreakBadge(streak) {
-        const el = document.getElementById("streak-badge");
-        if (!el) return;
-        if (streak >= 30) {
-          el.textContent = streak + "-day streak — legend";
-          el.className = "streak-badge streak-legend";
-          el.hidden = false;
-        } else if (streak >= 14) {
-          el.textContent = streak + "-day streak — on fire";
-          el.className = "streak-badge streak-gold";
-          el.hidden = false;
-        } else if (streak >= 7) {
-          el.textContent = streak + "-day streak";
-          el.className = "streak-badge streak-fire";
-          el.hidden = false;
-        } else {
-          el.hidden = true;
         }
       }
 
