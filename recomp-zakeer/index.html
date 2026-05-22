@@ -750,16 +750,6 @@
         align-items: center;
         gap: 6px;
       }
-      .hero-day::before {
-        content: "";
-        display: inline-block;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: var(--accent);
-        opacity: 0.6;
-        flex-shrink: 0;
-      }
       .hero-insight {
         margin-top: 18px;
         display: flex;
@@ -792,9 +782,9 @@
         color: var(--text-muted);
         white-space: nowrap;
       }
-      .hero-insight span {
+      .hero-insight > span {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 11px;
         padding: 10px 14px 10px 14px;
         border-radius: 12px;
@@ -808,11 +798,11 @@
         overflow: hidden;
         animation: fadeSlideUp 0.5s var(--ease-out) both;
       }
-      [data-color-scheme="light"] .hero-insight span {
+      [data-color-scheme="light"] .hero-insight > span {
         background: rgba(0, 0, 0, 0.03);
         border-color: rgba(0, 0, 0, 0.07);
       }
-      .hero-insight span::before {
+      .hero-insight > span::before {
         content: "";
         position: absolute;
         left: 0;
@@ -822,13 +812,13 @@
         background: linear-gradient(180deg, var(--accent), rgba(78, 205, 196, 0.5));
         border-radius: 2px;
       }
-      .hero-insight span:nth-of-type(1) {
+      .hero-insight > span:nth-of-type(1) {
         animation-delay: 0.05s;
       }
-      .hero-insight span:nth-of-type(2) {
+      .hero-insight > span:nth-of-type(2) {
         animation-delay: 0.15s;
       }
-      .hero-insight span:nth-of-type(3) {
+      .hero-insight > span:nth-of-type(3) {
         animation-delay: 0.25s;
       }
       .insight-icon {
@@ -8192,7 +8182,7 @@
         }
         function splitEmoji(line) {
           const parts = line.split(" ");
-          if (parts[0] && /\p{Emoji}/u.test(parts[0])) {
+          if (parts[0] && /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/u.test(parts[0])) {
             return { icon: parts[0], text: parts.slice(1).join(" ") };
           }
           return { icon: "·", text: line };
