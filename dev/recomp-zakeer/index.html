@@ -4988,7 +4988,7 @@
             <div class="hero-insight" id="hero-insight"></div>
           </div>
 
-          <div class="kpi-ticker-wrap">
+          <div class="kpi-ticker-wrap" id="kpi-ticker-wrap" hidden>
             <div class="kpi-ticker-track" id="kpi-ticker-track">
               <!-- populated by renderKpiTicker() -->
             </div>
@@ -7279,26 +7279,28 @@
       }
 
       function renderKpiTicker() {
+        const wrap = document.getElementById("kpi-ticker-wrap");
         const track = document.getElementById("kpi-ticker-track");
-        if (!track) return;
+        if (!track || !wrap) return;
         const p = getProfile();
         const todayKey = toDateKey(new Date());
         const day = state.trackerData[todayKey] || {};
 
         const proToday = trackerDayProtein(todayKey) || 0;
         const calToday = trackerDayCal(todayKey);
-        const proGoal = p.proteinG || 115;
+        const proGoal = p.proteinG;
         const calGoal = getCalTarget();
         const waterDone = parseInt(day.water || "0", 10) || 0;
-        const waterGoal = p.waterBottles || 6;
+        const waterGoal = p.waterBottles;
         const burnt = parseInt(day.burnt || "0", 10) || 0;
-        const weight = parseFloat(day.weightKg) || null;
+        const weightRaw = parseFloat(day.weightKg);
+        const weight = weightRaw > 0 ? weightRaw : null;
         const creatine = !!day.creatine;
         const streak = window.FitnessUI ? FitnessUI.computeStreak(state.trackerData) : 0;
         const { done: woDone } = window.FitnessUI
           ? FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule())
           : { done: 0 };
-        const woGoal = p.workoutDaysGoal || 4;
+        const woGoal = p.workoutDaysGoal;
 
         function cls(val, goal, almostPct) {
           if (val >= goal) return "t-green";
@@ -7319,11 +7321,15 @@
             val: waterDone + "/" + waterGoal,
             cls: cls(waterDone, waterGoal),
           },
-          {
-            label: "Workouts",
-            val: woDone + "/" + woGoal + " wk",
-            cls: woDone >= woGoal ? "t-green" : woDone > 0 ? "t-amber" : "t-neutral",
-          },
+          ...(woGoal > 0
+            ? [
+                {
+                  label: "Workouts",
+                  val: woDone + "/" + woGoal + " wk",
+                  cls: woDone >= woGoal ? "t-green" : woDone > 0 ? "t-amber" : "t-neutral",
+                },
+              ]
+            : []),
           {
             label: "Streak",
             val: streak + " days",
@@ -7345,8 +7351,16 @@
               `<span class="ticker-item"><span class="ticker-label">${it.label}</span><span class="ticker-val ${it.cls}">${it.val}</span></span>`
           )
           .join("");
-        // duplicate for seamless loop
+
+        // Preserve scroll position across content updates to avoid animation jump-to-start
+        const anim = track.getAnimations ? track.getAnimations()[0] : null;
+        const elapsed = anim ? anim.currentTime : null;
         track.innerHTML = html + html;
+        wrap.hidden = false;
+        if (elapsed !== null) {
+          const newAnim = track.getAnimations()[0];
+          if (newAnim) newAnim.currentTime = elapsed;
+        }
       }
 
       function bentoSparkline(svgEl, values, rgb) {
