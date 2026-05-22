@@ -922,6 +922,77 @@
         gap: 12px;
         margin-top: 8px;
       }
+
+      /* KPI ticker */
+      .kpi-ticker-wrap {
+        overflow: hidden;
+        margin: 10px 0 4px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 0 0;
+        height: 34px;
+        display: flex;
+        align-items: center;
+      }
+      [data-color-scheme="light"] .kpi-ticker-wrap {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.08);
+      }
+      .kpi-ticker-track {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        white-space: nowrap;
+        animation: ticker-scroll 24s linear infinite;
+        will-change: transform;
+      }
+      .kpi-ticker-track:hover {
+        animation-play-state: paused;
+      }
+      @keyframes ticker-scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      .ticker-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 16px;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      [data-color-scheme="light"] .ticker-item {
+        border-right-color: rgba(0, 0, 0, 0.1);
+      }
+      .ticker-label {
+        opacity: 0.5;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .ticker-val {
+        font-variant-numeric: tabular-nums;
+      }
+      .ticker-val.t-green {
+        color: #4ecdc4;
+      }
+      .ticker-val.t-amber {
+        color: #f4c753;
+      }
+      .ticker-val.t-red {
+        color: #ff5c7a;
+      }
+      .ticker-val.t-neutral {
+        opacity: 0.7;
+      }
       .bento-card {
         border-radius: var(--radius-md);
         padding: 14px 16px;
@@ -4917,6 +4988,12 @@
             <div class="hero-insight" id="hero-insight"></div>
           </div>
 
+          <div class="kpi-ticker-wrap" id="kpi-ticker-wrap" hidden>
+            <div class="kpi-ticker-track" id="kpi-ticker-track">
+              <!-- populated by renderKpiTicker() -->
+            </div>
+          </div>
+
           <div class="bento-grid">
             <!-- Calories -->
             <div class="bento-card bento-cal">
@@ -7198,6 +7275,92 @@
         }
         renderBentoCards();
         renderHeroInsight();
+        renderKpiTicker();
+      }
+
+      function renderKpiTicker() {
+        const wrap = document.getElementById("kpi-ticker-wrap");
+        const track = document.getElementById("kpi-ticker-track");
+        if (!track || !wrap) return;
+        const p = getProfile();
+        const todayKey = toDateKey(new Date());
+        const day = state.trackerData[todayKey] || {};
+
+        const proToday = trackerDayProtein(todayKey) || 0;
+        const calToday = trackerDayCal(todayKey);
+        const proGoal = p.proteinG;
+        const calGoal = getCalTarget();
+        const waterDone = parseInt(day.water || "0", 10) || 0;
+        const waterGoal = p.waterBottles;
+        const burnt = parseInt(day.burnt || "0", 10) || 0;
+        const weightRaw = parseFloat(day.weightKg);
+        const weight = weightRaw > 0 ? weightRaw : null;
+        const creatine = !!day.creatine;
+        const streak = window.FitnessUI ? FitnessUI.computeStreak(state.trackerData) : 0;
+        const { done: woDone } = window.FitnessUI
+          ? FitnessUI.weekWorkoutsCount(state.trackerData, getWorkoutSchedule())
+          : { done: 0 };
+        const woGoal = p.workoutDaysGoal;
+
+        function cls(val, goal, almostPct) {
+          if (val >= goal) return "t-green";
+          if (val >= goal * (almostPct ?? 0.8)) return "t-amber";
+          return val > 0 ? "t-red" : "t-neutral";
+        }
+
+        const items = [
+          {
+            label: "Protein",
+            val: Math.round(proToday) + "g",
+            cls: cls(proToday, proGoal, p.proteinAlmostMin / proGoal),
+          },
+          { label: "Calories", val: Math.round(calToday) + " kcal", cls: cls(calToday, calGoal) },
+          { label: "Burnt", val: burnt + " kcal", cls: burnt > 0 ? "t-green" : "t-neutral" },
+          {
+            label: "Water",
+            val: waterDone + "/" + waterGoal,
+            cls: cls(waterDone, waterGoal),
+          },
+          ...(woGoal > 0
+            ? [
+                {
+                  label: "Workouts",
+                  val: woDone + "/" + woGoal + " wk",
+                  cls: woDone >= woGoal ? "t-green" : woDone > 0 ? "t-amber" : "t-neutral",
+                },
+              ]
+            : []),
+          {
+            label: "Streak",
+            val: streak + " days",
+            cls: streak >= 3 ? "t-green" : streak > 0 ? "t-amber" : "t-neutral",
+          },
+          {
+            label: "Creatine",
+            val: creatine ? "✓ done" : "○ today",
+            cls: creatine ? "t-green" : "t-neutral",
+          },
+          ...(weight !== null
+            ? [{ label: "Weight", val: weight.toFixed(1) + " kg", cls: "t-neutral" }]
+            : []),
+        ];
+
+        const html = items
+          .map(
+            (it) =>
+              `<span class="ticker-item"><span class="ticker-label">${it.label}</span><span class="ticker-val ${it.cls}">${it.val}</span></span>`
+          )
+          .join("");
+
+        // Preserve scroll position across content updates to avoid animation jump-to-start
+        const anim = track.getAnimations ? track.getAnimations()[0] : null;
+        const elapsed = anim ? anim.currentTime : null;
+        track.innerHTML = html + html;
+        wrap.hidden = false;
+        if (elapsed !== null) {
+          const newAnim = track.getAnimations()[0];
+          if (newAnim) newAnim.currentTime = elapsed;
+        }
       }
 
       function bentoSparkline(svgEl, values, rgb) {
