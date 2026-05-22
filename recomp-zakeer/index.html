@@ -8402,6 +8402,11 @@
         const tr = document.querySelector(`#tracker-rows tr[data-date-key="${dateKey}"]`);
         const dayData = state.trackerData[dateKey];
         if (!tr || !dayData) return;
+        // Sync all input values from state (in case a log/scan updated them externally)
+        tr.querySelectorAll("input[data-field]").forEach((input) => {
+          const val = dayData[input.dataset.field];
+          if (val !== undefined) input.value = val ?? "";
+        });
         const m = computeTrackerDay(dayData);
         const targetEl = tr.querySelector(".target-cell");
         if (targetEl) targetEl.innerHTML = m.target + '<span class="cell-unit">kcal</span>';
