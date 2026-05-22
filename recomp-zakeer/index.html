@@ -1059,6 +1059,10 @@
       }
       .ticker-val.t-none {
         opacity: 0.4;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      [data-color-scheme="light"] .ticker-val.t-none {
+        color: rgba(0, 0, 0, 0.3);
       }
       .ticker-sep {
         opacity: 0.12;
@@ -1236,22 +1240,6 @@
         height: 40px;
         flex-shrink: 0;
         pointer-events: none;
-      }
-      /* Streak milestone badge — shown as a small row below the goal line */
-      .streak-badge {
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--warning);
-        margin-top: 1px;
-      }
-      .streak-badge.streak-fire {
-        color: #ff7832;
-      }
-      .streak-badge.streak-gold {
-        color: #ffd700;
-      }
-      .streak-badge.streak-legend {
-        color: #b464ff;
       }
       /* Goal celebration glow pulse on bento card */
       @keyframes goalGlow {
