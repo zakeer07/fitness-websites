@@ -3899,87 +3899,103 @@
          SCAN FOOD TAB
       ══════════════════════════════════════════════════ */
       .scan-upload-area {
-        border: 2px dashed var(--border);
+        border: 1.5px dashed rgba(255, 255, 255, 0.15);
         border-radius: var(--radius-lg);
-        min-height: 180px;
         display: flex;
-        align-items: center;
+        align-items: stretch;
         justify-content: center;
         margin-bottom: 16px;
         overflow: hidden;
         transition: border-color 0.2s;
-        cursor: pointer;
+        background: rgba(255, 255, 255, 0.015);
       }
       .scan-upload-area:hover {
-        border-color: var(--accent);
+        border-color: rgba(255, 92, 122, 0.35);
+      }
+      [data-color-scheme="light"] .scan-upload-area {
+        border-color: rgba(0, 0, 0, 0.12);
+        background: rgba(0, 0, 0, 0.015);
       }
       .scan-placeholder {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
-        padding: 32px 20px;
+        gap: 6px;
+        padding: 24px 16px 20px;
+        width: 100%;
         text-align: center;
       }
-      .scan-placeholder-icon {
-        font-size: 40px;
-        opacity: 0.6;
+      .scan-placeholder-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
       }
-      .scan-placeholder-text {
-        font-size: 14px;
-        color: var(--text-secondary);
-        max-width: 220px;
-      }
-      .scan-upload-btns {
-        display: flex;
-        gap: 10px;
-        margin-top: 4px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .scan-upload-btn {
-        font-size: 14px;
-        padding: 9px 20px;
-      }
-      .scan-tips {
+      .scan-action-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        margin-top: 18px;
+        width: 100%;
       }
-      .scan-tip {
+      .scan-action-tile {
         background: var(--bg-elevated);
         border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 12px 10px;
+        border-radius: 14px;
+        padding: 14px 8px 16px;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          transform 0.2s var(--ease-spring),
+          background 0.2s;
+        text-align: center;
+        font-family: inherit;
+        color: inherit;
+        position: relative;
+        overflow: hidden;
       }
-      .scan-tip-icon {
-        font-size: 18px;
-        line-height: 1;
-        margin-bottom: 2px;
+      .scan-action-tile:hover {
+        border-color: var(--accent);
+        background: rgba(255, 92, 122, 0.06);
+        transform: translateY(-2px);
       }
-      .scan-tip-title {
+      .scan-action-tile:active {
+        transform: scale(0.96);
+      }
+      .scan-action-icon {
+        font-size: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .scan-icon-camera {
+        background: rgba(255, 92, 122, 0.15);
+      }
+      .scan-icon-gallery {
+        background: rgba(100, 181, 246, 0.15);
+      }
+      .scan-icon-barcode {
+        background: rgba(255, 183, 77, 0.15);
+      }
+      .scan-action-label {
         font-size: 12px;
         font-weight: 700;
         color: var(--text-primary);
-        letter-spacing: 0.02em;
+        letter-spacing: 0.01em;
+        font-family: "Syne", sans-serif;
       }
-      .scan-tip-uses {
-        font-size: 11px;
+      .scan-action-hint {
+        font-size: 10px;
         color: var(--text-muted);
-        line-height: 1.45;
-        margin-top: 2px;
-      }
-      .scan-tip-uses li {
-        list-style: none;
-        padding-left: 0;
-      }
-      .scan-tip-uses li::before {
-        content: "· ";
-        color: var(--accent-secondary);
+        line-height: 1.4;
       }
       .scan-preview-wrap {
         position: relative;
@@ -3993,17 +4009,18 @@
       }
       .scan-retake-btn {
         position: absolute;
-        top: 8px;
-        right: 8px;
-        padding: 5px 10px;
-        border-radius: var(--radius-sm);
-        border: none;
-        background: rgba(0, 0, 0, 0.6);
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        border-radius: 100px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.55);
         color: #fff;
         font-size: 12px;
         font-weight: 600;
         cursor: pointer;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(8px);
+        letter-spacing: 0.01em;
       }
       .scan-analyze-btn {
         width: 100%;
@@ -6519,50 +6536,23 @@
               hidden
             />
             <div class="scan-placeholder" id="scan-placeholder">
-              <div class="scan-placeholder-icon">📷</div>
-              <div class="scan-placeholder-text">Take a photo or choose from your gallery</div>
-              <div class="scan-upload-btns">
-                <button class="btn scan-upload-btn" type="button" id="scan-camera-btn">
-                  📷 Camera
+              <div class="scan-placeholder-label">Choose a method</div>
+              <div class="scan-action-grid">
+                <button class="scan-action-tile" type="button" id="scan-camera-btn">
+                  <div class="scan-action-icon scan-icon-camera">📷</div>
+                  <div class="scan-action-label">Camera</div>
+                  <div class="scan-action-hint">Meals &amp; restaurant food</div>
                 </button>
-                <button class="btn-secondary scan-upload-btn" type="button" id="scan-gallery-btn">
-                  🖼️ Gallery
+                <button class="scan-action-tile" type="button" id="scan-gallery-btn">
+                  <div class="scan-action-icon scan-icon-gallery">🖼️</div>
+                  <div class="scan-action-label">Gallery</div>
+                  <div class="scan-action-hint">Photos &amp; screenshots</div>
                 </button>
-                <button class="btn-secondary scan-upload-btn" type="button" id="barcode-scan-btn">
-                  🏷️ Barcode
+                <button class="scan-action-tile" type="button" id="barcode-scan-btn">
+                  <div class="scan-action-icon scan-icon-barcode">🏷️</div>
+                  <div class="scan-action-label">Barcode</div>
+                  <div class="scan-action-hint">Packaged &amp; grocery items</div>
                 </button>
-              </div>
-              <div class="scan-tips">
-                <div class="scan-tip">
-                  <div class="scan-tip-icon">📷</div>
-                  <div class="scan-tip-title">Camera</div>
-                  <ul class="scan-tip-uses">
-                    <li>Plated meals</li>
-                    <li>Restaurant food</li>
-                    <li>Home cooking</li>
-                    <li>Mixed dishes</li>
-                  </ul>
-                </div>
-                <div class="scan-tip">
-                  <div class="scan-tip-icon">🖼️</div>
-                  <div class="scan-tip-title">Gallery</div>
-                  <ul class="scan-tip-uses">
-                    <li>Already taken photo</li>
-                    <li>Screenshot of meal</li>
-                    <li>Food delivery app</li>
-                    <li>Saved meal pics</li>
-                  </ul>
-                </div>
-                <div class="scan-tip">
-                  <div class="scan-tip-icon">🏷️</div>
-                  <div class="scan-tip-title">Barcode</div>
-                  <ul class="scan-tip-uses">
-                    <li>Packaged snacks</li>
-                    <li>Protein bars</li>
-                    <li>Supplements</li>
-                    <li>Grocery items</li>
-                  </ul>
-                </div>
               </div>
             </div>
             <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
