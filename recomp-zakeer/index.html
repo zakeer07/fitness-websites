@@ -4000,10 +4000,15 @@
       .scan-preview-wrap {
         position: relative;
         width: 100%;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 12px;
+        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.35);
+        animation: fadeSlideUp 0.4s var(--ease-out) both;
       }
       .scan-preview-img {
         width: 100%;
-        max-height: 320px;
+        max-height: 300px;
         object-fit: cover;
         display: block;
       }
@@ -6525,7 +6530,13 @@
             </div>
           </div>
 
-          <!-- Upload area -->
+          <!-- Photo preview — shown above everything when image is selected -->
+          <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
+            <img id="scan-preview-img" class="scan-preview-img" alt="Food photo" />
+            <button class="scan-retake-btn" type="button" id="scan-retake-btn">✕ Change</button>
+          </div>
+
+          <!-- Upload area — hidden once a photo is chosen -->
           <div class="scan-upload-area" id="scan-upload-area">
             <input type="file" id="scan-file-input" accept="image/*" hidden />
             <input
@@ -6554,10 +6565,6 @@
                   <div class="scan-action-hint">Packaged &amp; grocery items</div>
                 </button>
               </div>
-            </div>
-            <div class="scan-preview-wrap" id="scan-preview-wrap" hidden>
-              <img id="scan-preview-img" class="scan-preview-img" alt="Food photo" />
-              <button class="scan-retake-btn" type="button" id="scan-retake-btn">✕ Remove</button>
             </div>
           </div>
 
@@ -9621,6 +9628,7 @@
 
         const elFileInput = document.getElementById("scan-file-input");
         const elCameraInput = document.getElementById("scan-camera-input");
+        const elUploadArea = document.getElementById("scan-upload-area");
         const elPlaceholder = document.getElementById("scan-placeholder");
         const elPreviewWrap = document.getElementById("scan-preview-wrap");
         const elPreviewImg = document.getElementById("scan-preview-img");
@@ -9653,7 +9661,7 @@
           imageMime = null;
           scanFoods = [];
           elPreviewWrap.hidden = true;
-          elPlaceholder.hidden = false;
+          elUploadArea.hidden = false;
           elAnalyzeBtn.hidden = true;
           elResults.hidden = true;
           elLoading.hidden = true;
@@ -9700,7 +9708,7 @@
                 return;
               }
               elPreviewImg.src = compressed;
-              elPlaceholder.hidden = true;
+              elUploadArea.hidden = true;
               elPreviewWrap.hidden = false;
               elAnalyzeBtn.hidden = false;
             };
