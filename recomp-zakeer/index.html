@@ -3905,9 +3905,12 @@
         align-items: stretch;
         justify-content: center;
         margin-bottom: 16px;
-        overflow: hidden;
+        overflow: visible;
         transition: border-color 0.2s;
         background: rgba(255, 255, 255, 0.015);
+      }
+      .scan-upload-area[hidden] {
+        display: none;
       }
       .scan-upload-area:hover {
         border-color: rgba(255, 92, 122, 0.35);
@@ -9629,7 +9632,6 @@
         const elFileInput = document.getElementById("scan-file-input");
         const elCameraInput = document.getElementById("scan-camera-input");
         const elUploadArea = document.getElementById("scan-upload-area");
-        const elPlaceholder = document.getElementById("scan-placeholder");
         const elPreviewWrap = document.getElementById("scan-preview-wrap");
         const elPreviewImg = document.getElementById("scan-preview-img");
         const elRetakeBtn = document.getElementById("scan-retake-btn");
@@ -9710,6 +9712,10 @@
               elPreviewImg.src = compressed;
               elUploadArea.hidden = true;
               elPreviewWrap.hidden = false;
+              // Force animation restart on every show (static CSS animation won't replay after first play)
+              elPreviewWrap.style.animation = "none";
+              elPreviewWrap.offsetHeight; // trigger reflow
+              elPreviewWrap.style.animation = "";
               elAnalyzeBtn.hidden = false;
             };
             img.src = dataUrl;
