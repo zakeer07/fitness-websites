@@ -7849,22 +7849,38 @@
           if (protCard) triggerGoalCelebration(protCard);
         }
 
-        // Hero weight strip
+        // Hero weight strip — 7 calendar days only (not historical slice)
         const hwsEl = document.getElementById("hero-weight-strip");
         const hwsVal = document.getElementById("hero-wt-val");
         const hwsTrend = document.getElementById("hero-wt-trend");
         const hwsSpark = document.getElementById("hero-wt-spark");
-        const recentWt7 = recentWeightEntries(7);
+        const recentWt7 = [];
+        for (let _i = 6; _i >= 0; _i--) {
+          const _d = new Date();
+          _d.setDate(_d.getDate() - _i);
+          const _w = parseFloat(state.trackerData[toDateKey(_d)]?.weightKg);
+          if (_w > 0) recentWt7.push(_w);
+        }
         if (hwsEl && recentWt7.length >= 1) {
           const latest = recentWt7[recentWt7.length - 1];
           const prev = recentWt7.length >= 2 ? recentWt7[recentWt7.length - 2] : null;
           if (hwsVal) hwsVal.textContent = latest.toFixed(1);
-          if (hwsTrend && prev != null) {
-            const diff = latest - prev;
-            hwsTrend.textContent = diff < -0.05 ? "↓" : diff > 0.05 ? "↑" : "→";
-            hwsTrend.style.color = diff <= 0.05 ? "rgba(78,205,196,0.9)" : "rgba(255,92,122,0.9)";
+          if (hwsTrend) {
+            if (prev != null) {
+              const diff = latest - prev;
+              hwsTrend.textContent = diff < -0.05 ? "↓" : diff > 0.05 ? "↑" : "→";
+              hwsTrend.style.color =
+                diff < -0.05
+                  ? "rgba(78,205,196,0.9)"
+                  : diff > 0.05
+                    ? "rgba(255,92,122,0.9)"
+                    : "rgba(255,255,255,0.45)";
+            } else {
+              hwsTrend.textContent = "";
+              hwsTrend.style.color = "";
+            }
           }
-          if (recentWt7.length >= 2) bentoSparkline(hwsSpark, recentWt7, "78,205,196");
+          bentoSparkline(hwsSpark, recentWt7, "78,205,196");
           hwsEl.hidden = false;
         } else if (hwsEl) {
           hwsEl.hidden = true;
@@ -8992,7 +9008,7 @@
               refreshTrackerRow(dateKey);
               updateTrackerSummary();
               updateDashboardStats();
-              if (field.startsWith("cal")) renderBentoCards();
+              if (field.startsWith("cal") || field === "weightKg") renderBentoCards();
               clearTimeout(renderTrackerCharts._t);
               renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
             });
@@ -10243,6 +10259,7 @@
         document.addEventListener(
           "touchstart",
           (e) => {
+            if (!e.touches.length) return;
             swipeStartX = e.touches[0].clientX;
             swipeStartY = e.touches[0].clientY;
           },
@@ -10251,13 +10268,15 @@
         document.addEventListener(
           "touchend",
           (e) => {
+            if (e.target.closest("input, textarea, select")) return;
             const dx = e.changedTouches[0].clientX - swipeStartX;
             const dy = e.changedTouches[0].clientY - swipeStartY;
-            if (Math.abs(dx) < 50 || Math.abs(dx) <= Math.abs(dy)) return;
+            if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
             const visibleTabs = [...document.querySelectorAll(".nav-tab")].filter(
               (t) => !t.hidden && !t.classList.contains("nav-tab-hidden")
             );
             const activeIdx = visibleTabs.findIndex((t) => t.classList.contains("active"));
+            if (activeIdx === -1) return;
             const targetIdx = dx < 0 ? activeIdx + 1 : activeIdx - 1;
             if (targetIdx < 0 || targetIdx >= visibleTabs.length) return;
             visibleTabs[targetIdx].click();
