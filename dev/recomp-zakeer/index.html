@@ -844,6 +844,54 @@
         font-style: normal;
       }
 
+      .hero-weight-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: rgba(78, 205, 196, 0.06);
+        border: 1px solid rgba(78, 205, 196, 0.15);
+        animation: fadeSlideUp 0.4s var(--ease-out) both;
+      }
+      .hero-weight-strip[hidden] {
+        display: none;
+      }
+      .hws-left {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+      .hws-label {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .hws-val {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--accent);
+        font-family: "Syne", sans-serif;
+        letter-spacing: -0.02em;
+      }
+      .hws-unit {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .hws-trend {
+        font-size: 14px;
+        line-height: 1;
+      }
+      .hws-spark {
+        width: 90px;
+        height: 36px;
+        flex-shrink: 0;
+        overflow: visible;
+      }
+
       .tracking-legend {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -5172,6 +5220,20 @@
                 <div class="toggle-switch"></div>
               </div>
             </div>
+            <div class="hero-weight-strip" id="hero-weight-strip" hidden>
+              <div class="hws-left">
+                <span class="hws-label">Weight</span>
+                <span class="hws-val" id="hero-wt-val">-</span>
+                <span class="hws-unit">kg</span>
+                <span class="hws-trend" id="hero-wt-trend"></span>
+              </div>
+              <svg
+                class="hws-spark"
+                id="hero-wt-spark"
+                viewBox="0 0 100 72"
+                preserveAspectRatio="none"
+              ></svg>
+            </div>
             <div class="hero-insight" id="hero-insight"></div>
           </div>
 
@@ -7786,6 +7848,43 @@
           const protCard = document.querySelector(".bento-protein");
           if (protCard) triggerGoalCelebration(protCard);
         }
+
+        // Hero weight strip — 7 calendar days only (not historical slice)
+        const hwsEl = document.getElementById("hero-weight-strip");
+        const hwsVal = document.getElementById("hero-wt-val");
+        const hwsTrend = document.getElementById("hero-wt-trend");
+        const hwsSpark = document.getElementById("hero-wt-spark");
+        const recentWt7 = [];
+        for (let _i = 6; _i >= 0; _i--) {
+          const _d = new Date();
+          _d.setDate(_d.getDate() - _i);
+          const _w = parseFloat(state.trackerData[toDateKey(_d)]?.weightKg);
+          if (_w > 0) recentWt7.push(_w);
+        }
+        if (hwsEl && recentWt7.length >= 1) {
+          const latest = recentWt7[recentWt7.length - 1];
+          const prev = recentWt7.length >= 2 ? recentWt7[recentWt7.length - 2] : null;
+          if (hwsVal) hwsVal.textContent = latest.toFixed(1);
+          if (hwsTrend) {
+            if (prev != null) {
+              const diff = latest - prev;
+              hwsTrend.textContent = diff < -0.05 ? "↓" : diff > 0.05 ? "↑" : "→";
+              hwsTrend.style.color =
+                diff < -0.05
+                  ? "rgba(78,205,196,0.9)"
+                  : diff > 0.05
+                    ? "rgba(255,92,122,0.9)"
+                    : "rgba(255,255,255,0.45)";
+            } else {
+              hwsTrend.textContent = "";
+              hwsTrend.style.color = "";
+            }
+          }
+          bentoSparkline(hwsSpark, recentWt7, "78,205,196");
+          hwsEl.hidden = false;
+        } else if (hwsEl) {
+          hwsEl.hidden = true;
+        }
       }
 
       // ── Feature 1: Remaining budget row ─────────────────────────────────────
@@ -8909,7 +9008,7 @@
               refreshTrackerRow(dateKey);
               updateTrackerSummary();
               updateDashboardStats();
-              if (field.startsWith("cal")) renderBentoCards();
+              if (field.startsWith("cal") || field === "weightKg") renderBentoCards();
               clearTimeout(renderTrackerCharts._t);
               renderTrackerCharts._t = setTimeout(renderTrackerCharts, 700);
             });
@@ -10152,6 +10251,39 @@
       });
       window.addEventListener("resize", updateNavIndicator);
       document.querySelector(".nav-tabs")?.addEventListener("scroll", updateNavIndicator);
+
+      // Swipe between tabs on mobile
+      (function () {
+        let swipeStartX = 0;
+        let swipeStartY = 0;
+        document.addEventListener(
+          "touchstart",
+          (e) => {
+            if (!e.touches.length) return;
+            swipeStartX = e.touches[0].clientX;
+            swipeStartY = e.touches[0].clientY;
+          },
+          { passive: true }
+        );
+        document.addEventListener(
+          "touchend",
+          (e) => {
+            if (e.target.closest("input, textarea, select")) return;
+            const dx = e.changedTouches[0].clientX - swipeStartX;
+            const dy = e.changedTouches[0].clientY - swipeStartY;
+            if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+            const visibleTabs = [...document.querySelectorAll(".nav-tab")].filter(
+              (t) => !t.hidden && !t.classList.contains("nav-tab-hidden")
+            );
+            const activeIdx = visibleTabs.findIndex((t) => t.classList.contains("active"));
+            if (activeIdx === -1) return;
+            const targetIdx = dx < 0 ? activeIdx + 1 : activeIdx - 1;
+            if (targetIdx < 0 || targetIdx >= visibleTabs.length) return;
+            visibleTabs[targetIdx].click();
+          },
+          { passive: true }
+        );
+      })();
 
       // Example day guide tab switching
       document.querySelectorAll(".ep-cat-btn").forEach((btn) => {
