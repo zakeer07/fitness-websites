@@ -7855,17 +7855,21 @@
         const hwsTrend = document.getElementById("hero-wt-trend");
         const hwsSpark = document.getElementById("hero-wt-spark");
         const recentWt7 = [];
+        const _loggedWts = [];
         let _lastWt = null;
         for (let _i = 6; _i >= 0; _i--) {
           const _d = new Date();
           _d.setDate(_d.getDate() - _i);
           const _w = parseFloat(state.trackerData[toDateKey(_d)]?.weightKg);
-          if (_w > 0) _lastWt = _w;
+          if (_w > 0) {
+            _lastWt = _w;
+            _loggedWts.push(_w);
+          }
           if (_lastWt != null) recentWt7.push(_lastWt);
         }
         if (hwsEl && recentWt7.length >= 1) {
-          const latest = recentWt7[recentWt7.length - 1];
-          const prev = recentWt7.length >= 2 ? recentWt7[recentWt7.length - 2] : null;
+          const latest = _loggedWts[_loggedWts.length - 1];
+          const prev = _loggedWts.length >= 2 ? _loggedWts[_loggedWts.length - 2] : null;
           if (hwsVal) hwsVal.textContent = latest.toFixed(1);
           if (hwsTrend) {
             if (prev != null) {
