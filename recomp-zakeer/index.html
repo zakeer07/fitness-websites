@@ -844,54 +844,6 @@
         font-style: normal;
       }
 
-      .hero-weight-strip {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 14px;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: rgba(78, 205, 196, 0.06);
-        border: 1px solid rgba(78, 205, 196, 0.15);
-        animation: fadeSlideUp 0.4s var(--ease-out) both;
-      }
-      .hero-weight-strip[hidden] {
-        display: none;
-      }
-      .hws-left {
-        display: flex;
-        align-items: baseline;
-        gap: 6px;
-      }
-      .hws-label {
-        font-size: 10px;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-      }
-      .hws-val {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--accent);
-        font-family: "Syne", sans-serif;
-        letter-spacing: -0.02em;
-      }
-      .hws-unit {
-        font-size: 11px;
-        color: var(--text-muted);
-      }
-      .hws-trend {
-        font-size: 14px;
-        line-height: 1;
-      }
-      .hws-spark {
-        width: 90px;
-        height: 36px;
-        flex-shrink: 0;
-        overflow: visible;
-      }
-
       .tracking-legend {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -5220,20 +5172,6 @@
                 <div class="toggle-switch"></div>
               </div>
             </div>
-            <div class="hero-weight-strip" id="hero-weight-strip" hidden>
-              <div class="hws-left">
-                <span class="hws-label">Weight</span>
-                <span class="hws-val" id="hero-wt-val">-</span>
-                <span class="hws-unit">kg</span>
-                <span class="hws-trend" id="hero-wt-trend"></span>
-              </div>
-              <svg
-                class="hws-spark"
-                id="hero-wt-spark"
-                viewBox="0 0 100 72"
-                preserveAspectRatio="none"
-              ></svg>
-            </div>
             <div class="hero-insight" id="hero-insight"></div>
           </div>
 
@@ -7592,10 +7530,14 @@
         const min = Math.min(...smoothed);
         const max = Math.max(...smoothed);
         const range = max - min || 1;
+        // Pad the data range by 15% each side so the line never hugs the chart floor/ceiling
+        const pad = range * 0.15;
+        const paddedMin = min - pad;
+        const paddedRange = range + 2 * pad;
         // y: 8px top pad so wave doesn't clip; bottom anchors to H+1 for full bleed
         const points = smoothed.map((v, i) => ({
           x: parseFloat(((i / (smoothed.length - 1)) * W).toFixed(1)),
-          y: parseFloat((8 + (1 - (v - min) / range) * (H - 16)).toFixed(1)),
+          y: parseFloat((8 + (1 - (v - paddedMin) / paddedRange) * (H - 16)).toFixed(1)),
         }));
 
         // Smooth catmull-rom bezier path
@@ -7847,49 +7789,6 @@
           _celebratedGoals.prot = todayLabel;
           const protCard = document.querySelector(".bento-protein");
           if (protCard) triggerGoalCelebration(protCard);
-        }
-
-        // Hero weight strip — 7 calendar days only (not historical slice)
-        const hwsEl = document.getElementById("hero-weight-strip");
-        const hwsVal = document.getElementById("hero-wt-val");
-        const hwsTrend = document.getElementById("hero-wt-trend");
-        const hwsSpark = document.getElementById("hero-wt-spark");
-        const recentWt7 = [];
-        const _loggedWts = [];
-        let _lastWt = null;
-        for (let _i = 6; _i >= 0; _i--) {
-          const _d = new Date();
-          _d.setDate(_d.getDate() - _i);
-          const _w = parseFloat(state.trackerData[toDateKey(_d)]?.weightKg);
-          if (_w > 0) {
-            _lastWt = _w;
-            _loggedWts.push(_w);
-          }
-          if (_lastWt != null) recentWt7.push(_lastWt);
-        }
-        if (hwsEl && recentWt7.length >= 1) {
-          const latest = _loggedWts[_loggedWts.length - 1];
-          const prev = _loggedWts.length >= 2 ? _loggedWts[_loggedWts.length - 2] : null;
-          if (hwsVal) hwsVal.textContent = latest.toFixed(1);
-          if (hwsTrend) {
-            if (prev != null) {
-              const diff = latest - prev;
-              hwsTrend.textContent = diff < -0.05 ? "↓" : diff > 0.05 ? "↑" : "→";
-              hwsTrend.style.color =
-                diff < -0.05
-                  ? "rgba(78,205,196,0.9)"
-                  : diff > 0.05
-                    ? "rgba(255,92,122,0.9)"
-                    : "rgba(255,255,255,0.45)";
-            } else {
-              hwsTrend.textContent = "";
-              hwsTrend.style.color = "";
-            }
-          }
-          bentoSparkline(hwsSpark, recentWt7, "78,205,196");
-          hwsEl.hidden = false;
-        } else if (hwsEl) {
-          hwsEl.hidden = true;
         }
       }
 
